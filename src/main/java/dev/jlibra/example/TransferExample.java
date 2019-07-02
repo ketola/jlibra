@@ -1,7 +1,6 @@
 package dev.jlibra.example;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
@@ -31,13 +30,13 @@ public class TransferExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         PrivateKey privateKey = LibraHelper.privateKeyFromHexString(
-                "3051020101300506032b65700422042028b947a9c0780f2cbac06ee0e4625f185871b44d9906faf41183eb08a8e2729e812100a395692a41e033f0cf28fa9d07de53075354ab15a81e34e0782b042ad9ac50db");
+                "3051020101300506032b6570042204207422e9df27029f7b83c37035622f93cd0e9b3a2a705d0745d573252756fd8c888121008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
         PublicKey publicKey = LibraHelper.publicKeyFromHexString(
-                "302a300506032b6570032100a395692a41e033f0cf28fa9d07de53075354ab15a81e34e0782b042ad9ac50db");
-        String fromAddress = "64e56e6820de313eb6149d46e95bf26c697e48e723281584573e6f1c8ab31814";
+                "302a300506032b65700321008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
+        String fromAddress = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
 
         String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
-        long amount = 100;
+        long amount = 200;
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -53,21 +52,22 @@ public class TransferExample {
         TransactionArgument arg2 = TransactionArgument.newBuilder()
                 .setType(ArgType.U64)
                 .setData(ByteString
-                        .copyFrom(ByteBuffer.wrap(new byte[8]).order(ByteOrder.BIG_ENDIAN).putLong(amount).array()))
+                        .copyFrom(ByteBuffer.allocate(Long.BYTES).putLong(amount).array()))
                 .build();
 
-        Program program = Program.newBuilder().addAllArguments(Arrays.asList(arg, arg2))
+        Program program = Program.newBuilder()
+                .addAllArguments(Arrays.asList(arg, arg2))
                 .setCode(ByteString.copyFrom(LibraHelper.transferMoveScript()))
                 .addAllModules(new ArrayList<ByteString>())
                 .build();
 
         RawTransaction rawTransaction = RawTransaction.newBuilder()
                 .setProgram(program)
-                .setExpirationTime(0)
+                .setExpirationTime(600)
                 .setGasUnitPrice(1)
                 .setMaxGasAmount(6000)
                 .setSenderAccount(ByteString.copyFrom(Hex.decode(fromAddress)))
-                .setSequenceNumber(1)
+                .setSequenceNumber(2)
                 .build();
 
         SignedTransaction signedTransaction = SignedTransaction.newBuilder()
@@ -86,4 +86,5 @@ public class TransferExample {
 
         channel.shutdown();
     }
+
 }
