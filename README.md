@@ -1,6 +1,8 @@
 # jlibra
 A Java library for interacting with the Libra blockchain 
 
+![Overview](docs/img/jlibra.png)
+
 # Prerequisites
 
 * JDK 8+
