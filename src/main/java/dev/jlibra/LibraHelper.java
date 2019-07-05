@@ -151,7 +151,7 @@ public class LibraHelper {
         try {
             in.read(data);
         } catch (IOException e) {
-            throw new RuntimeException("Could not read integer from stream", e);
+            throw new RuntimeException("Could not read input stream", e);
         }
         return data;
     }
