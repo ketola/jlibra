@@ -9,7 +9,6 @@ public class AccountState {
 
     public AccountState(byte[] address, long balanceInMicroLibras, long receivedEvents, long sentEvents,
             long sequenceNumber) {
-        super();
         this.address = address;
         this.balanceInMicroLibras = balanceInMicroLibras;
         this.receivedEvents = receivedEvents;

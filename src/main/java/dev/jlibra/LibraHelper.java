@@ -130,10 +130,10 @@ public class LibraHelper {
             DataInputStream stateStream = new DataInputStream(new ByteArrayInputStream(state));
             int addressLength = readInt(stateStream, 4);
             byte[] address = readBytes(stateStream, addressLength);
-            int balance = readInt(stateStream, 8);
-            int receivedEvents = readInt(stateStream, 8);
-            int sentEvents = readInt(stateStream, 8);
-            int sequenceNumber = readInt(stateStream, 8);
+            long balance = readLong(stateStream, 8);
+            long receivedEvents = readLong(stateStream, 8);
+            long sentEvents = readLong(stateStream, 8);
+            long sequenceNumber = readLong(stateStream, 8);
 
             accountStates.add(new AccountState(address, balance, receivedEvents, sentEvents, sequenceNumber));
         });
@@ -146,12 +146,17 @@ public class LibraHelper {
         return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getInt();
     }
 
+    private static long readLong(DataInputStream in, int len) {
+        byte[] data = readBytes(in, len);
+        return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getLong();
+    }
+
     private static byte[] readBytes(DataInputStream in, int len) {
         byte[] data = new byte[len];
         try {
             in.read(data);
         } catch (IOException e) {
-            throw new RuntimeException("Could not read integer from stream", e);
+            throw new RuntimeException("Could not read input stream", e);
         }
         return data;
     }
