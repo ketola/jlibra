@@ -1,6 +1,7 @@
 package dev.jlibra.example;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
@@ -38,7 +39,8 @@ public class TransferExample {
         String fromAddress = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
 
         String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
-        long amount = 200;
+
+        long amount = 5;
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -54,7 +56,9 @@ public class TransferExample {
         TransactionArgument arg2 = TransactionArgument.newBuilder()
                 .setType(ArgType.U64)
                 .setData(ByteString
-                        .copyFrom(ByteBuffer.allocate(Long.BYTES).putLong(amount).array()))
+                        .copyFrom(
+                                ByteBuffer.allocate(Long.BYTES).order(ByteOrder.LITTLE_ENDIAN).putLong(amount * 1000000)
+                                        .order(ByteOrder.LITTLE_ENDIAN).array()))
                 .build();
 
         Program program = Program.newBuilder()
@@ -69,7 +73,7 @@ public class TransferExample {
                 .setGasUnitPrice(1)
                 .setMaxGasAmount(6000)
                 .setSenderAccount(ByteString.copyFrom(Hex.decode(fromAddress)))
-                .setSequenceNumber(2)
+                .setSequenceNumber(36)
                 .build();
 
         SignedTransaction signedTransaction = SignedTransaction.newBuilder()
