@@ -8,7 +8,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
 
-import dev.jlibra.LibraHelper;
+import dev.jlibra.KeyUtils;
 
 public class GenerateKeysExample {
 
@@ -26,7 +26,9 @@ public class GenerateKeysExample {
         BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
 
         System.out.println(
-                "Libra address: " + new String(Hex.encode(digestSHA3.digest(LibraHelper.stripPrefix(publicKey)))));
+                "Libra address: "
+                        + new String(
+                                Hex.encode(digestSHA3.digest(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())))));
         System.out.println("Public key: " + new String(Hex.encode(publicKey.getEncoded())));
         System.out.println("Private key: " + new String(Hex.encode(privateKey.getEncoded())));
     }

@@ -15,7 +15,9 @@ import admission_control.AdmissionControlGrpc;
 import admission_control.AdmissionControlGrpc.AdmissionControlBlockingStub;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
+import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
+import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import types.Transaction.Program;
@@ -29,9 +31,9 @@ public class TransferExample {
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-        PrivateKey privateKey = LibraHelper.privateKeyFromHexString(
+        PrivateKey privateKey = KeyUtils.privateKeyFromHexString(
                 "3051020101300506032b6570042204207422e9df27029f7b83c37035622f93cd0e9b3a2a705d0745d573252756fd8c888121008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
-        PublicKey publicKey = LibraHelper.publicKeyFromHexString(
+        PublicKey publicKey = KeyUtils.publicKeyFromHexString(
                 "302a300506032b65700321008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
         String fromAddress = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
 
@@ -57,7 +59,7 @@ public class TransferExample {
 
         Program program = Program.newBuilder()
                 .addAllArguments(Arrays.asList(arg, arg2))
-                .setCode(ByteString.copyFrom(LibraHelper.transferMoveScript()))
+                .setCode(ByteString.copyFrom(Move.peerToPeerTransfer()))
                 .addAllModules(new ArrayList<ByteString>())
                 .build();
 
@@ -72,7 +74,7 @@ public class TransferExample {
 
         SignedTransaction signedTransaction = SignedTransaction.newBuilder()
                 .setRawTxnBytes(rawTransaction.toByteString())
-                .setSenderPublicKey(ByteString.copyFrom(LibraHelper.stripPrefix(publicKey)))
+                .setSenderPublicKey(ByteString.copyFrom(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())))
                 .setSenderSignature(ByteString.copyFrom(LibraHelper.signTransaction(rawTransaction, privateKey)))
                 .build();
 
