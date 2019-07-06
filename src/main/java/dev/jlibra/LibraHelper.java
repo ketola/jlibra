@@ -27,9 +27,6 @@ import types.Transaction.RawTransaction;
 
 public class LibraHelper {
 
-    private static final byte[] ACCOUNT_STATE_PATH = Hex
-            .decode("01217da6c6b3e19f1825cfb2676daecce3bf3de03cf26647c78df00b371b25cc97");
-
     public static byte[] signTransaction(RawTransaction rawTransaction, PrivateKey privateKey) {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
         byte[] saltDigest = digestSHA3.digest("RawTransaction@@$$LIBRA$$@@".getBytes());
