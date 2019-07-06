@@ -1,6 +1,10 @@
 package dev.jlibra;
 
+import lombok.Getter;
+
+@Getter
 public class AccountState {
+
     private byte[] address;
     private long balanceInMicroLibras;
     private long receivedEvents;
@@ -14,26 +18,6 @@ public class AccountState {
         this.receivedEvents = receivedEvents;
         this.sentEvents = sentEvents;
         this.sequenceNumber = sequenceNumber;
-    }
-
-    public byte[] getAddress() {
-        return address;
-    }
-
-    public long getBalanceInMicroLibras() {
-        return balanceInMicroLibras;
-    }
-
-    public long getReceivedEvents() {
-        return receivedEvents;
-    }
-
-    public long getSentEvents() {
-        return sentEvents;
-    }
-
-    public long getSequenceNumber() {
-        return sequenceNumber;
     }
 
 }
