@@ -8,6 +8,10 @@ A Java library for interacting with the Libra blockchain
 * JDK 8+
 * Maven 3+
 
+# Development Prerequisites
+
+* Lombok 1.18.8+
+
 # Setup
 
 * Clone this repo
@@ -15,7 +19,8 @@ A Java library for interacting with the Libra blockchain
 
 # Usage
 
-Start sample Main classes in `dev.jlibra.example` package for `Transfer` and `KeyGeneration` examples.
+Start unit tests in `dev.jlibra.example` package for `Transfer`, `KeyGeneration` and `AccountState` examples.  
+_Note:_ The tests will run against the official Libra Testnet.
 
 # Known Issues
 

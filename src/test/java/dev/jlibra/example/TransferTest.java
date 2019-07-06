@@ -7,6 +7,7 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import lombok.extern.java.Log;
 import org.bouncycastle.util.encoders.Hex;
 
 import com.google.protobuf.ByteString;
@@ -18,15 +19,18 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.LibraHelper;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import org.junit.Test;
 import types.Transaction.Program;
 import types.Transaction.RawTransaction;
 import types.Transaction.SignedTransaction;
 import types.Transaction.TransactionArgument;
 import types.Transaction.TransactionArgument.ArgType;
 
-public class TransferExample {
+@Log
+public class TransferTest {
 
-    public static void main(String[] args) throws Exception {
+    @Test
+    public void shouldTransferLibra() {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         PrivateKey privateKey = LibraHelper.privateKeyFromHexString(
@@ -82,7 +86,7 @@ public class TransferExample {
 
         SubmitTransactionResponse response = stub.submitTransaction(submitTransactionRequest);
 
-        System.out.println("response: " + response);
+        log.info(System.lineSeparator()+ "response: " + response);
 
         channel.shutdown();
     }
