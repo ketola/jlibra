@@ -15,8 +15,5 @@ A Java library for interacting with the Libra blockchain
 
 # Usage
 
-Start sample Main classes in `dev.jlibra.example` package for `Transfer` and `KeyGeneration` examples.
+Start sample Main classes in `dev.jlibra.example` package for `Transfer`, `GetAccountState` and `KeyGeneration` examples.
 
-# Known Issues
-
-Currently the transaction signing works and the transactions are accepted by the admission control but the values are shown incorrectly when viewed with a transaction browser
