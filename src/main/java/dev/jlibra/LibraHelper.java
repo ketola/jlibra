@@ -14,7 +14,9 @@ import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
+import dev.jlibra.PaymentEvent.EventPath;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
+import types.Events.Event;
 import types.Transaction.RawTransaction;
 
 public class LibraHelper {
@@ -74,6 +76,22 @@ public class LibraHelper {
         });
 
         return accountStates;
+    }
+
+    public static PaymentEvent readPaymentEvent(Event event) {
+        byte[] pathBytes = event.getAccessPath().getPath().toByteArray();
+        DataInputStream pathStream = new DataInputStream(new ByteArrayInputStream(pathBytes));
+        byte[] tag = readBytes(pathStream, 1);
+        byte[] path = readBytes(pathStream, 32);
+        byte[] suffixBytes = readBytes(pathStream, pathBytes.length - 32);
+        EventPath eventPath = new EventPath(tag[0], path, new String(suffixBytes));
+
+        byte[] eventBytes = event.getEventData().toByteArray();
+        DataInputStream eventStream = new DataInputStream(new ByteArrayInputStream(eventBytes));
+        long balance = readInt(eventStream, 8);
+        int addressLength = readInt(eventStream, 4);
+        byte[] address = readBytes(eventStream, addressLength);
+        return new PaymentEvent(address, balance, eventPath);
     }
 
     private static int readInt(DataInputStream in, int len) {
