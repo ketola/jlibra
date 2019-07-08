@@ -9,6 +9,7 @@ This guide shows how to use jlibra with the Libra CLI to transfer coins.
 * Check with query balance <ACCOUNT_ADDRESS> if you got coins
 
 Now you have money at your "account" ACCOUNT_ADDRESS and you can spend it with the corresponding private key.
+
 _Note: You cannot transfer the coins in the CLI for now as the CLI lets you transfer with real accounts only. You have to use the 
 `TransferExample` in jlibra to transfer coins._
 
