@@ -3,6 +3,8 @@ A Java library for interacting with the Libra blockchain
 
 ![Overview](docs/img/jlibra.png)
 
+*Note: Due to breaking changes in the Libra testnet, there might be errors due to old protobuf files. This remark will be removed when the new files are committed.* https://community.libra.org/t/testnet-update-scheduled-for-july-10th-with-breaking-changes/1143
+
 # Prerequisites
 
 * JDK 8+
