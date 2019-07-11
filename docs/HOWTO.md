@@ -7,12 +7,12 @@ This guide shows how to use jlibra with the Libra CLI to transfer coins.
 
 **For local or Testnet**
 * Start Libra CLI (local or against Libra Testnet).
-* Call account mint <ACCOUNT_ADDRESS> 100, this will ask the faucet to transfer 100 coins to your ACCOUNT_ADDRESS
+* Call `account mint <ACCOUNT_ADDRESS> 100`, this will ask the faucet to transfer 100 coins to your ACCOUNT_ADDRESS
 
 Or, **for Testnet** only
-* Call http://faucet.testnet.libra.org/?address=<ACCOUNT_ADDRESS>&amount=10000000000
+* Call http://faucet.testnet.libra.org/?address=<ACCOUNT_ADDRESS>&amount=1000000000 in a browser, you will receive a txid.
 
-* Check with query balance <ACCOUNT_ADDRESS> if you got coins
+* Check with `query balance <ACCOUNT_ADDRESS>` if you got coins
 
 Now you have money at your "account" ACCOUNT_ADDRESS and you can spend it with the corresponding private key.
 
