@@ -61,6 +61,7 @@ public class GetAccountStateExample {
             System.out.println("Sequence number: " + accountState.getSequenceNumber());
             System.out.println();
         });
+
     }
 
 }

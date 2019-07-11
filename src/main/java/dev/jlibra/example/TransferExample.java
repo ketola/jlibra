@@ -40,7 +40,7 @@ public class TransferExample {
 
         String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
 
-        long amount = 5;
+        long amount = 7;
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -73,7 +73,7 @@ public class TransferExample {
                 .setGasUnitPrice(1)
                 .setMaxGasAmount(6000)
                 .setSenderAccount(ByteString.copyFrom(Hex.decode(fromAddress)))
-                .setSequenceNumber(36)
+                .setSequenceNumber(0)
                 .build();
 
         SignedTransaction signedTransaction = SignedTransaction.newBuilder()
@@ -87,6 +87,8 @@ public class TransferExample {
                 .build();
 
         SubmitTransactionResponse response = stub.submitTransaction(submitTransactionRequest);
+
+        Thread.sleep(2000); // add sleep to prevent premature closing of channel
 
         System.out.println("response: " + response);
 
