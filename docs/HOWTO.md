@@ -4,8 +4,14 @@ jlibra currently only supports public/private key "accounts", ie. a key pair is 
 This guide shows how to use jlibra with the Libra CLI to transfer coins.
 
 * Create public/private key pair with jlibra `GenerateKeys`. An address is printed, this is your "account" (from now on ACCOUNT_ADDRESS).
+
+**For local or Testnet**
 * Start Libra CLI (local or against Libra Testnet).
 * Call account mint <ACCOUNT_ADDRESS> 100, this will ask the faucet to transfer 100 coins to your ACCOUNT_ADDRESS
+
+Or, **for Testnet** only
+* Call http://faucet.testnet.libra.org/?address=<ACCOUNT_ADDRESS>&amount=10000000000
+
 * Check with query balance <ACCOUNT_ADDRESS> if you got coins
 
 Now you have money at your "account" ACCOUNT_ADDRESS and you can spend it with the corresponding private key.
