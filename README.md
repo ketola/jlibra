@@ -21,7 +21,7 @@ Start sample Main classes in `dev.jlibra.example` package for `Transfer`, `GetAc
 
 # How-Tos & Step-by-Step Guides
 
-How-Tos and Step-by-Step Guides are gathered in a [seperate document](docs/HOWTO.md).
+How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO.md).
 
 # Known Issues
 
