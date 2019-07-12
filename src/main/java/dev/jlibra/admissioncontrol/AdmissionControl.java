@@ -29,6 +29,15 @@ import types.Transaction.TransactionArgument.ArgType;
 
 public class AdmissionControl {
 
+    private String host;
+
+    private int port;
+
+    public AdmissionControl(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
     private static Map<Type, ArgType> jlibraArgumentTypeToGrpcArgumentType;
 
     static {
@@ -39,7 +48,7 @@ public class AdmissionControl {
 
     public Result sendTransaction(PublicKey publicKey, PrivateKey privateKey, Transaction transaction) {
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
 
@@ -60,9 +69,9 @@ public class AdmissionControl {
 
         RawTransaction rawTransaction = RawTransaction.newBuilder()
                 .setProgram(program)
-                .setExpirationTime(600)
-                .setGasUnitPrice(1)
-                .setMaxGasAmount(6000)
+                .setExpirationTime(transaction.getExpirationTime())
+                .setGasUnitPrice(transaction.getGasUnitPrice())
+                .setMaxGasAmount(transaction.getMaxGasAmount())
                 .setSenderAccount(ByteString.copyFrom(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded())))
                 .setSequenceNumber(transaction.getSequenceNumber())
                 .build();
@@ -82,7 +91,6 @@ public class AdmissionControl {
         channel.shutdown();
 
         return new Result(response.getAcStatus(), response.getMempoolStatus(), response.getVmStatus());
-
     }
 
     private ByteString readCodeFromStream(Transaction transaction) {

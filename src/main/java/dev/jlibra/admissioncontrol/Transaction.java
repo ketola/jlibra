@@ -6,9 +6,42 @@ public class Transaction {
 
     private Program program;
 
-    public Transaction(long sequenceNumber, Program program) {
-        this.sequenceNumber = sequenceNumber;
+    private long expirationTime;
+
+    private long gasUnitPrice;
+
+    private long maxGasAmount;
+
+    private Transaction() {
+    }
+
+    public static Transaction create() {
+        return new Transaction();
+    }
+
+    public Transaction withProgram(Program program) {
         this.program = program;
+        return this;
+    }
+
+    public Transaction withSequenceNumber(long sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+        return this;
+    }
+
+    public Transaction withExpirationTime(long expirationTime) {
+        this.expirationTime = expirationTime;
+        return this;
+    }
+
+    public Transaction withGasUnitPrice(long gasUnitPrice) {
+        this.gasUnitPrice = gasUnitPrice;
+        return this;
+    }
+
+    public Transaction withMaxGasAmount(long maxGasAmount) {
+        this.maxGasAmount = maxGasAmount;
+        return this;
     }
 
     public long getSequenceNumber() {
@@ -17,6 +50,18 @@ public class Transaction {
 
     public Program getProgram() {
         return program;
+    }
+
+    public long getExpirationTime() {
+        return expirationTime;
+    }
+
+    public long getGasUnitPrice() {
+        return gasUnitPrice;
+    }
+
+    public long getMaxGasAmount() {
+        return maxGasAmount;
     }
 
 }
