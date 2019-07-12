@@ -30,8 +30,8 @@ public class TransferExample {
 
         String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
 
-        long amount = 5;
-        int sequenceNumber = 2;
+        long amount = 8;
+        int sequenceNumber = 5;
 
         System.out.println(
                 String.format("Sending from %s to %s", toHexStringLibraAddress(publicKey.getEncoded()), toAddress));
@@ -46,7 +46,7 @@ public class TransferExample {
                 .withSequenceNumber(sequenceNumber)
                 .withMaxGasAmount(6000)
                 .withGasUnitPrice(1)
-                .withExpirationTime(0)
+                .withExpirationTime(10000)
                 .withProgram(
                         new Program(Move.peerToPeerTransfer(), asList(addressArgument, amountArgument)));
         Result result = admissionControl.sendTransaction(publicKey, privateKey,
