@@ -6,7 +6,6 @@ import static java.util.Arrays.asList;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
-import java.util.HashSet;
 
 import org.bouncycastle.util.encoders.Hex;
 
@@ -37,13 +36,20 @@ public class TransferExample {
         System.out.println(
                 String.format("Sending from %s to %s", toHexStringLibraAddress(publicKey.getEncoded()), toAddress));
 
+        AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
+
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
         AddressArgument addressArgument = new AddressArgument(Hex.decode(toAddress));
 
-        Transaction transaction = new Transaction(sequenceNumber,
-                new Program(Move.peerToPeerTransfer(), new HashSet<>(asList(amountArgument, addressArgument))));
-        Result result = new AdmissionControl().sendTransaction(publicKey, privateKey,
+        Transaction transaction = Transaction.create()
+                .withSequenceNumber(sequenceNumber)
+                .withMaxGasAmount(6000)
+                .withGasUnitPrice(1)
+                .withExpirationTime(0)
+                .withProgram(
+                        new Program(Move.peerToPeerTransfer(), asList(addressArgument, amountArgument)));
+        Result result = admissionControl.sendTransaction(publicKey, privateKey,
                 transaction);
 
         System.out.println("Admission control status: " + result.getAdmissionControlStatus());
