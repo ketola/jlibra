@@ -1,4 +1,7 @@
-package dev.jlibra;
+package dev.jlibra.admissioncontrol.query;
+
+import static dev.jlibra.admissioncontrol.query.PaymentEvent.EventPath.EventType.RECEIVE_LIBRA;
+import static dev.jlibra.admissioncontrol.query.PaymentEvent.EventPath.EventType.SEND_LIBRA;
 
 public class PaymentEvent {
 
@@ -26,20 +29,31 @@ public class PaymentEvent {
 
     public static class EventPath {
 
+        public enum EventType {
+            SEND_LIBRA, RECEIVE_LIBRA
+        }
+
         public static final byte TAG_CODE = 0;
         public static final byte TAG_RESOURCE = 1;
 
         public static final String SUFFIX_SENT = "/sent_events_count/";
-        public static final String SUFFIX_RECEIVED = "/sent_events_count/";
+        public static final String SUFFIX_RECEIVED = "/received_events_count/";
 
         private byte tag;
         private byte[] accountResourcePath;
         private String suffix;
 
+        private EventType eventType;
+
         public EventPath(byte tag, byte[] accountResourcePath, String suffix) {
             this.tag = tag;
             this.accountResourcePath = accountResourcePath;
             this.suffix = suffix;
+            this.eventType = suffix.equals(SUFFIX_SENT) ? SEND_LIBRA : RECEIVE_LIBRA;
+        }
+
+        public EventType getEventType() {
+            return this.eventType;
         }
 
         public byte getTag() {

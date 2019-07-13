@@ -17,6 +17,7 @@ import com.google.protobuf.ByteString;
 
 import types.AccountStateBlobOuterClass.AccountStateBlob;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
+import types.GetWithProof.GetAccountStateResponse;
 import types.Transaction.RawTransaction;
 
 public class LibraHelperTest {
@@ -41,10 +42,13 @@ public class LibraHelperTest {
 
     @Test
     public void testReadAccountStates() {
-        List<AccountState> accountStates = LibraHelper.readAccountStates(AccountStateWithProof.newBuilder().setBlob(
-                AccountStateBlob.newBuilder().setBlob(ByteString.copyFrom(Hex.decode(ACCOUNT_STATE_HEX.getBytes())))
-                        .build())
-                .build());
+        List<AccountState> accountStates = LibraHelper
+                .readAccountStates(GetAccountStateResponse.newBuilder().setAccountStateWithProof(AccountStateWithProof
+                        .newBuilder().setBlob(
+                                AccountStateBlob.newBuilder()
+                                        .setBlob(ByteString.copyFrom(Hex.decode(ACCOUNT_STATE_HEX.getBytes())))
+                                        .build())
+                        .build()).build());
 
         assertThat(accountStates, is(iterableWithSize(1)));
         assertThat(new String(encode(accountStates.get(0).getAddress())),
