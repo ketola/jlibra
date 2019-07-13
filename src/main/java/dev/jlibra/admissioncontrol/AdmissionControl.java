@@ -16,11 +16,20 @@ import admission_control.AdmissionControlGrpc;
 import admission_control.AdmissionControlGrpc.AdmissionControlBlockingStub;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
+import dev.jlibra.AccountState;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
-import dev.jlibra.admissioncontrol.TransactionArgument.Type;
+import dev.jlibra.admissioncontrol.query.GetAccountState;
+import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgetResult;
+import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
+import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.TransactionArgument.Type;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import types.GetWithProof.GetAccountStateRequest;
+import types.GetWithProof.RequestItem;
+import types.GetWithProof.UpdateToLatestLedgerRequest;
+import types.GetWithProof.UpdateToLatestLedgerResponse;
 import types.Transaction.Program;
 import types.Transaction.RawTransaction;
 import types.Transaction.SignedTransaction;
@@ -46,7 +55,8 @@ public class AdmissionControl {
         jlibraArgumentTypeToGrpcArgumentType.put(Type.U64, ArgType.U64);
     }
 
-    public Result sendTransaction(PublicKey publicKey, PrivateKey privateKey, Transaction transaction) {
+    public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey,
+            Transaction transaction) {
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
@@ -90,7 +100,7 @@ public class AdmissionControl {
 
         channel.shutdown();
 
-        return new Result(response.getAcStatus(), response.getMempoolStatus(), response.getVmStatus());
+        return new SubmitTransactionResult(response.getAcStatus(), response.getMempoolStatus(), response.getVmStatus());
     }
 
     private ByteString readCodeFromStream(Transaction transaction) {
@@ -99,6 +109,41 @@ public class AdmissionControl {
         } catch (IOException e) {
             throw new RuntimeException("Could not read move code from input stream", e);
         }
+    }
+
+    public UpdateToLatestLedgetResult updateToLatestLedger(List<GetAccountState> arguments) {
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
+                .usePlaintext()
+                .build();
+
+        AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
+
+        List<RequestItem> requestItems = arguments.stream().map(argument -> {
+            GetAccountStateRequest getAccountStateRequest = GetAccountStateRequest.newBuilder()
+                    .setAddress(ByteString.copyFrom(argument.getAddress()))
+                    .build();
+
+            RequestItem requestItem = RequestItem.newBuilder()
+                    .setGetAccountStateRequest(getAccountStateRequest)
+                    .build();
+            return requestItem;
+        }).collect(toList());
+
+        UpdateToLatestLedgerResponse response = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
+                .addAllRequestedItems(requestItems)
+                .build());
+
+        List<AccountState> accountStates = new ArrayList<>();
+
+        response.getResponseItemsList().forEach(responseItem -> {
+            accountStates.addAll(LibraHelper.readAccountStates(responseItem.getGetAccountStateResponse()
+                    .getAccountStateWithProof()));
+        });
+
+        UpdateToLatestLedgetResult result = UpdateToLatestLedgetResult.create()
+                .withAccountStates(accountStates);
+
+        return result;
     }
 
 }

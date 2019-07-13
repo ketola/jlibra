@@ -10,12 +10,12 @@ import java.security.Security;
 import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.AddressArgument;
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.Program;
-import dev.jlibra.admissioncontrol.Result;
-import dev.jlibra.admissioncontrol.Transaction;
-import dev.jlibra.admissioncontrol.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.AddressArgument;
+import dev.jlibra.admissioncontrol.transaction.Program;
+import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
+import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.move.Move;
 
 public class TransferExample {
@@ -49,7 +49,7 @@ public class TransferExample {
                 .withExpirationTime(10000)
                 .withProgram(
                         new Program(Move.peerToPeerTransfer(), asList(addressArgument, amountArgument)));
-        Result result = admissionControl.sendTransaction(publicKey, privateKey,
+        SubmitTransactionResult result = admissionControl.submitTransaction(publicKey, privateKey,
                 transaction);
 
         System.out.println("Admission control status: " + result.getAdmissionControlStatus());
