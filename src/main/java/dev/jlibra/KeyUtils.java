@@ -14,8 +14,7 @@ import org.bouncycastle.util.encoders.Hex;
 public class KeyUtils {
 
     public static String toHexStringLibraAddress(byte[] publicKeyBytes) {
-        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
-        return new String(Hex.encode(digestSHA3.digest(stripPublicKeyPrefix(publicKeyBytes))));
+        return new String(Hex.encode(toByteArrayLibraAddress(publicKeyBytes)));
     }
 
     public static byte[] toByteArrayLibraAddress(byte[] publicKeyBytes) {
