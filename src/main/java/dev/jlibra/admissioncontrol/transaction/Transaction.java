@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol;
+package dev.jlibra.admissioncontrol.transaction;
 
 public class Transaction {
 

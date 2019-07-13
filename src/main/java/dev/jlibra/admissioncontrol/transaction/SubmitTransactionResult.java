@@ -1,10 +1,10 @@
-package dev.jlibra.admissioncontrol;
+package dev.jlibra.admissioncontrol.transaction;
 
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatus;
 import mempool.MempoolStatus;
 import types.VmErrors.VMStatus;
 
-public class Result {
+public class SubmitTransactionResult {
 
     // TODO: Create own enum types instead of putting grpc enums directly here
     // Could also add the description texts for clearer errors
@@ -15,7 +15,7 @@ public class Result {
 
     private VMStatus vmStatus;
 
-    public Result(AdmissionControlStatus admissionControlStatus,
+    public SubmitTransactionResult(AdmissionControlStatus admissionControlStatus,
             MempoolStatus.MempoolAddTransactionStatus mempoolStatus,
             VMStatus vmStatus) {
         this.admissionControlStatus = admissionControlStatus;
