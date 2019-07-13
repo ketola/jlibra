@@ -14,8 +14,8 @@ import java.net.URLConnection;
  * amount should be available for the address.
  * 
  * This works only for the libra testnet, to mint in another (t. ex. local)
- * environment, you would need create a mint transaction which requires special
- * permissions.
+ * environment, you would need to create a mint transaction which requires
+ * special permissions.
  * 
  */
 public class MintExample {
