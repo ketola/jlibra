@@ -31,7 +31,7 @@ public class KeyUtilsTest {
         PublicKey publicKey = getKeyFactory().generatePublic(new X509EncodedKeySpec(Hex
                 .decode(PUBLIC_KEY_HEX)));
 
-        assertThat(KeyUtils.toLibraAddress(publicKey.getEncoded()),
+        assertThat(KeyUtils.toHexStringLibraAddress(publicKey.getEncoded()),
                 is("eb99fc3808a8e439c58f87935cbe6774e4cc83459b463ea0813b34ef96f0ba87"));
     }
 

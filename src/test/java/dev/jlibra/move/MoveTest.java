@@ -10,7 +10,7 @@ public class MoveTest {
 
     @Test
     public void testPeerToPeerTransfer() throws Exception {
-        assertThat(Move.peerToPeerTransfer(),
+        assertThat(toByteArray(Move.peerToPeerTransfer()),
                 equalTo(toByteArray(MoveTest.this.getClass().getResourceAsStream("/move/peer_to_peer_transfer.bin"))));
     }
 
