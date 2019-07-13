@@ -13,6 +13,10 @@ import java.net.URLConnection;
  * If the request is successful, the service returns an id number and the minted
  * amount should be available for the address.
  * 
+ * This works only for the libra testnet, to mint in another (t. ex. local)
+ * environment, you would need create a mint transaction which requires special
+ * permissions.
+ * 
  */
 public class MintExample {
 
