@@ -21,6 +21,7 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
 import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.query.Query;
 import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
@@ -114,17 +115,18 @@ public class AdmissionControl {
         }
     }
 
-    public UpdateToLatestLedgerResult updateToLatestLedger(List<GetAccountState> accountStateQueries,
-            List<GetAccountTransactionBySequenceNumber> accountTransactionBySequenceNumberQueries) {
+    public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
 
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
-        List<RequestItem> requestItems = accountStateQueriesToRequestItems(accountStateQueries);
+        List<RequestItem> requestItems = accountStateQueriesToRequestItems(query.getAccountStateQueries());
+
         requestItems.addAll(
-                accountTransactionBySequenceNumberQueriesToRequestItems(accountTransactionBySequenceNumberQueries));
+                accountTransactionBySequenceNumberQueriesToRequestItems(
+                        query.getAccountTransactionBySequenceNumberQueries()));
 
         UpdateToLatestLedgerResponse response = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
                 .addAllRequestedItems(requestItems)
