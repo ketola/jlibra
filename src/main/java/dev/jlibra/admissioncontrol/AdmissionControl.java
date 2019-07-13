@@ -20,6 +20,8 @@ import dev.jlibra.AccountState;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
+import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
@@ -27,6 +29,7 @@ import dev.jlibra.admissioncontrol.transaction.TransactionArgument.Type;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import types.GetWithProof.GetAccountStateRequest;
+import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
@@ -111,14 +114,44 @@ public class AdmissionControl {
         }
     }
 
-    public UpdateToLatestLedgerResult updateToLatestLedger(List<GetAccountState> arguments) {
+    public UpdateToLatestLedgerResult updateToLatestLedger(List<GetAccountState> accountStateQueries,
+            List<GetAccountTransactionBySequenceNumber> accountTransactionBySequenceNumberQueries) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
 
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
-        List<RequestItem> requestItems = arguments.stream().map(argument -> {
+        List<RequestItem> requestItems = accountStateQueriesToRequestItems(accountStateQueries);
+        requestItems.addAll(
+                accountTransactionBySequenceNumberQueriesToRequestItems(accountTransactionBySequenceNumberQueries));
+
+        UpdateToLatestLedgerResponse response = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
+                .addAllRequestedItems(requestItems)
+                .build());
+
+        List<AccountState> accountStates = new ArrayList<>();
+        List<SignedTransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
+
+        response.getResponseItemsList().forEach(responseItem -> {
+            accountStates.addAll(LibraHelper.readAccountStates(responseItem.getGetAccountStateResponse()));
+
+            accountTransactionsBySequenceNumber.add(LibraHelper
+                    .readSignedTransactionWithProof(responseItem.getGetAccountTransactionBySequenceNumberResponse()));
+        });
+
+        UpdateToLatestLedgerResult result = UpdateToLatestLedgerResult.create()
+                .withAccountStates(accountStates)
+                .withAccountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber);
+
+        return result;
+    }
+
+    private List<RequestItem> accountStateQueriesToRequestItems(List<GetAccountState> accountStateQueries) {
+        if (accountStateQueries == null)
+            return new ArrayList<>();
+
+        return accountStateQueries.stream().map(argument -> {
             GetAccountStateRequest getAccountStateRequest = GetAccountStateRequest.newBuilder()
                     .setAddress(ByteString.copyFrom(argument.getAddress()))
                     .build();
@@ -128,22 +161,25 @@ public class AdmissionControl {
                     .build();
             return requestItem;
         }).collect(toList());
-
-        UpdateToLatestLedgerResponse response = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
-                .addAllRequestedItems(requestItems)
-                .build());
-
-        List<AccountState> accountStates = new ArrayList<>();
-
-        response.getResponseItemsList().forEach(responseItem -> {
-            accountStates.addAll(LibraHelper.readAccountStates(responseItem.getGetAccountStateResponse()
-                    .getAccountStateWithProof()));
-        });
-
-        UpdateToLatestLedgerResult result = UpdateToLatestLedgerResult.create()
-                .withAccountStates(accountStates);
-
-        return result;
     }
 
+    private List<RequestItem> accountTransactionBySequenceNumberQueriesToRequestItems(
+            List<GetAccountTransactionBySequenceNumber> accountTransactionBySequenceNumberQueries) {
+        if (accountTransactionBySequenceNumberQueries == null)
+            return new ArrayList<>();
+
+        return accountTransactionBySequenceNumberQueries.stream().map(argument -> {
+            GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
+                    .newBuilder()
+                    .setAccount(ByteString.copyFrom(argument.getAccountAddress()))
+                    .setSequenceNumber(argument.getSequenceNumber())
+                    .setFetchEvents(true)
+                    .build();
+
+            RequestItem requestItem = RequestItem.newBuilder()
+                    .setGetAccountTransactionBySequenceNumberRequest(getAccountTransactionBySequenceNumberRequest)
+                    .build();
+            return requestItem;
+        }).collect(toList());
+    }
 }

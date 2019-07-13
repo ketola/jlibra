@@ -19,7 +19,7 @@ public class GetAccountStateExample {
         AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
 
         UpdateToLatestLedgerResult result = admissionControl
-                .updateToLatestLedger(asList(new GetAccountState(Hex.decode(address))));
+                .updateToLatestLedger(asList(new GetAccountState(Hex.decode(address))), null);
 
         result.getAccountStates().forEach(accountState -> {
             System.out.println("Address:" + new String(Hex.encode(accountState.getAddress())));

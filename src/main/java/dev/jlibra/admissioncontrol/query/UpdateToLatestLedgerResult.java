@@ -8,6 +8,8 @@ public class UpdateToLatestLedgerResult {
 
     private List<AccountState> accountStates;
 
+    private List<SignedTransactionWithProof> accountTransactionsBySequenceNumber;
+
     private UpdateToLatestLedgerResult() {
     }
 
@@ -20,8 +22,18 @@ public class UpdateToLatestLedgerResult {
         return this;
     }
 
+    public UpdateToLatestLedgerResult withAccountTransactionsBySequenceNumber(
+            List<SignedTransactionWithProof> accountTransactionsBySequenceNumber) {
+        this.accountTransactionsBySequenceNumber = accountTransactionsBySequenceNumber;
+        return this;
+    }
+
     public List<AccountState> getAccountStates() {
         return accountStates;
+    }
+
+    public List<SignedTransactionWithProof> getAccountTransactionsBySequenceNumber() {
+        return accountTransactionsBySequenceNumber;
     }
 
 }
