@@ -20,7 +20,7 @@ import dev.jlibra.AccountState;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
-import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgetResult;
+import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.TransactionArgument.Type;
@@ -111,7 +111,7 @@ public class AdmissionControl {
         }
     }
 
-    public UpdateToLatestLedgetResult updateToLatestLedger(List<GetAccountState> arguments) {
+    public UpdateToLatestLedgerResult updateToLatestLedger(List<GetAccountState> arguments) {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
@@ -140,7 +140,7 @@ public class AdmissionControl {
                     .getAccountStateWithProof()));
         });
 
-        UpdateToLatestLedgetResult result = UpdateToLatestLedgetResult.create()
+        UpdateToLatestLedgerResult result = UpdateToLatestLedgerResult.create()
                 .withAccountStates(accountStates);
 
         return result;

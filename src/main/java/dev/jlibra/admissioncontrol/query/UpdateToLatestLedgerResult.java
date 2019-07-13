@@ -4,18 +4,18 @@ import java.util.List;
 
 import dev.jlibra.AccountState;
 
-public class UpdateToLatestLedgetResult {
+public class UpdateToLatestLedgerResult {
 
     private List<AccountState> accountStates;
 
-    private UpdateToLatestLedgetResult() {
+    private UpdateToLatestLedgerResult() {
     }
 
-    public static UpdateToLatestLedgetResult create() {
-        return new UpdateToLatestLedgetResult();
+    public static UpdateToLatestLedgerResult create() {
+        return new UpdateToLatestLedgerResult();
     }
 
-    public UpdateToLatestLedgetResult withAccountStates(List<AccountState> accountStates) {
+    public UpdateToLatestLedgerResult withAccountStates(List<AccountState> accountStates) {
         this.accountStates = accountStates;
         return this;
     }
