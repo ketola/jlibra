@@ -65,7 +65,6 @@ public class AdmissionControl {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
-
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
         List<TransactionArgument> transactionArguments = transaction.getProgram().getArguments().stream()
@@ -116,10 +115,10 @@ public class AdmissionControl {
     }
 
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
+
         ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
-
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
         List<RequestItem> requestItems = accountStateQueriesToRequestItems(query.getAccountStateQueries());
@@ -132,6 +131,10 @@ public class AdmissionControl {
                 .addAllRequestedItems(requestItems)
                 .build());
 
+        return updateToLatestLedgerResponseToResult(response);
+    }
+
+    private UpdateToLatestLedgerResult updateToLatestLedgerResponseToResult(UpdateToLatestLedgerResponse response) {
         List<AccountState> accountStates = new ArrayList<>();
         List<SignedTransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
 
@@ -145,7 +148,6 @@ public class AdmissionControl {
         UpdateToLatestLedgerResult result = UpdateToLatestLedgerResult.create()
                 .withAccountStates(accountStates)
                 .withAccountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber);
-
         return result;
     }
 
