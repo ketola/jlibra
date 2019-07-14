@@ -1,7 +1,5 @@
 package dev.jlibra.mnemonic;
 
-import org.bouncycastle.util.encoders.Hex;
-
 import javax.annotation.concurrent.Immutable;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -29,14 +27,6 @@ public class Seed {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    private Seed(String hexString) {
-        data = Hex.decode(hexString);
-    }
-
-    static Seed fromHex(String hexString) {
-        return new Seed(hexString);
     }
 
     public byte[] getData() {

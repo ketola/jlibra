@@ -52,11 +52,13 @@ public class LibraKeyFactoryTest {
 
     @Test
     public void privateChild() {
-        LibraKeyFactory libraKeyFactory = new LibraKeyFactory(Seed.fromHex(
-                "16274c9618ed59177ca948529c1884ba65c57984d562ec2b4e5aa1ee3e3903be"));
+        Mnemonic mnemonic = Mnemonic.fromString(TEST_MNEMONIC);
+        Seed seed = new Seed(mnemonic, "LIBRA");
+        LibraKeyFactory libraKeyFactory = new LibraKeyFactory(seed);
 
         // Check child_0 key derivation.
         ExtendedPrivKey childPrivate0 = libraKeyFactory.privateChild(new ChildNumber(0));
+
         assertEquals(
                 "358a375f36d74c30b7f3299b62d712b307725938f8cc931100fbd10a434fc8b9",
                 Hex.toHexString(childPrivate0.privateKey.getData())
@@ -77,7 +79,7 @@ public class LibraKeyFactoryTest {
         );
 
         ChildNumber child1Again = new ChildNumber(0).increment();
-        assertEquals(new ChildNumber(1), child1Again);
+        assertEquals(new ChildNumber(1).data, child1Again.data);
 
         // Check determinism, regenerate child_1, but by incrementing ChildNumber(0).
         ExtendedPrivKey childPrivate1FromIncrement = libraKeyFactory.privateChild(child1Again);

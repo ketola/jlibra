@@ -20,7 +20,7 @@ public class ExtendedPrivKey {
     private static byte[] createPublic(SecretKey secretKey) {
         // TODO
 
-        return new byte[0];
+        return new byte[32];
     }
 
     public String getAddress() {
