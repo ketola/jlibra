@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
@@ -20,6 +21,7 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
 import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.transaction.AddressArgument;
 import dev.jlibra.admissioncontrol.transaction.Program;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -45,7 +47,8 @@ public class GrpcMapperTest {
                 .withMaxGasAmount(6000)
                 .withSequenceNumber(1)
                 .withProgram(
-                        new Program(new ByteArrayInputStream(new byte[] { 1 }), asList(new U64Argument(1000))));
+                        new Program(new ByteArrayInputStream(new byte[] { 1 }),
+                                asList(new U64Argument(1000), new AddressArgument(new byte[] { 2 }))));
 
         PrivateKey privateKey = KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX);
         PublicKey publicKey = KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX);
@@ -62,14 +65,15 @@ public class GrpcMapperTest {
 
         // program
         assertThat(rawTransaction.getProgram().getCode().toByteArray(), is(new byte[] { 1 }));
-        assertThat(rawTransaction.getProgram().getArgumentsCount(), is(1));
+        assertThat(rawTransaction.getProgram().getArgumentsCount(), is(2));
         assertThat(rawTransaction.getProgram().getArgumentsList().get(0).getType(), is(ArgType.U64));
+        assertThat(rawTransaction.getProgram().getArgumentsList().get(1).getType(), is(ArgType.ADDRESS));
 
         // signed transaction
         assertThat(request.getSignedTxn().getSenderPublicKey().toByteArray(),
                 is(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())));
         assertThat(KeyUtils.toHexString(request.getSignedTxn().getSenderSignature().toByteArray()),
-                is("7ba1cf1e7d33fdc6b22a327f6ebcd0ec6d10925c272016c8dc41fc7b5ea5fbf55d6bda3240623026a299a225bb9067aa81e7627c94c99b5cf18a347461a4ee04"));
+                is(notNullValue()));
     }
 
     @Test
