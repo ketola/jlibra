@@ -1,6 +1,8 @@
 package dev.jlibra.admissioncontrol;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.emptyIterable;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -8,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
@@ -15,9 +18,12 @@ import org.junit.Test;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.KeyUtils;
+import dev.jlibra.admissioncontrol.query.GetAccountState;
+import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.transaction.Program;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import types.GetWithProof.RequestItem;
 import types.Transaction.RawTransaction;
 import types.Transaction.TransactionArgument.ArgType;
 
@@ -64,6 +70,49 @@ public class GrpcMapperTest {
                 is(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())));
         assertThat(KeyUtils.toHexString(request.getSignedTxn().getSenderSignature().toByteArray()),
                 is("7ba1cf1e7d33fdc6b22a327f6ebcd0ec6d10925c272016c8dc41fc7b5ea5fbf55d6bda3240623026a299a225bb9067aa81e7627c94c99b5cf18a347461a4ee04"));
+    }
+
+    @Test
+    public void testAccountStateQueriesToRequestItemsWithNullArgument() {
+        assertThat(GrpcMapper.accountStateQueriesToRequestItems(null), is(emptyIterable()));
+    }
+
+    @Test
+    public void testAccountStateQueriesToRequestItems() {
+        byte[] address1 = new byte[] { 1 };
+        byte[] address2 = new byte[] { 2 };
+
+        List<RequestItem> requestItems = GrpcMapper
+                .accountStateQueriesToRequestItems(
+                        asList(new GetAccountState(address1), new GetAccountState(address2)));
+
+        assertThat(requestItems, hasSize(2));
+        assertThat(requestItems.get(0).getGetAccountStateRequest().getAddress().toByteArray(), is(address1));
+        assertThat(requestItems.get(1).getGetAccountStateRequest().getAddress().toByteArray(), is(address2));
+    }
+
+    @Test
+    public void testAccountTransactionBySequenceNumberQueriesToRequestItemsWithNullArgument() {
+        assertThat(GrpcMapper.accountTransactionBySequenceNumberQueriesToRequestItems(null), is(emptyIterable()));
+    }
+
+    @Test
+    public void testAccountTransactionBySequenceNumberQueriesToRequestItems() {
+        byte[] address1 = new byte[] { 1 };
+        byte[] address2 = new byte[] { 2 };
+
+        List<RequestItem> requestItems = GrpcMapper
+                .accountTransactionBySequenceNumberQueriesToRequestItems(
+                        asList(new GetAccountTransactionBySequenceNumber(address1, 1),
+                                new GetAccountTransactionBySequenceNumber(address2, 2)));
+
+        assertThat(requestItems, hasSize(2));
+        assertThat(requestItems.get(0).getGetAccountTransactionBySequenceNumberRequest().getAccount().toByteArray(),
+                is(address1));
+        assertThat(requestItems.get(0).getGetAccountTransactionBySequenceNumberRequest().getSequenceNumber(), is(1L));
+        assertThat(requestItems.get(1).getGetAccountTransactionBySequenceNumberRequest().getAccount().toByteArray(),
+                is(address2));
+        assertThat(requestItems.get(1).getGetAccountTransactionBySequenceNumberRequest().getSequenceNumber(), is(2L));
     }
 
 }
