@@ -1,5 +1,7 @@
 package dev.jlibra;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -11,7 +13,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
@@ -93,7 +94,7 @@ public class LibraHelper {
                 .toByteArray();
         List<PaymentEvent> events = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
                 .getEvents().getEventsList().stream()
-                .map(LibraHelper::readPaymentEvent).collect(Collectors.toList());
+                .map(LibraHelper::readPaymentEvent).collect(toList());
         return new SignedTransactionWithProof(senderPublicKey, senderSignature, events);
     }
 
