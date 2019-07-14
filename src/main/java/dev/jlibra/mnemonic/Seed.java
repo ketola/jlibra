@@ -1,6 +1,5 @@
 package dev.jlibra.mnemonic;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 
 import javax.annotation.concurrent.Immutable;
@@ -8,7 +7,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
@@ -16,10 +14,6 @@ import java.security.spec.KeySpec;
 public class Seed {
 
     private static final String MNEMONIC_SALT_PREFIX = "LIBRA WALLET: mnemonic salt prefix$";
-
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
 
     private final byte[] data;
 
@@ -41,7 +35,7 @@ public class Seed {
         data = Hex.decode(hexString);
     }
 
-    public static Seed fromHex(String hexString) {
+    static Seed fromHex(String hexString) {
         return new Seed(hexString);
     }
 

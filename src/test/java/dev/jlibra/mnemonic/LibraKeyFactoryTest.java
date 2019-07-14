@@ -1,8 +1,12 @@
 package dev.jlibra.mnemonic;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.security.Security;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,6 +16,11 @@ import static org.junit.Assert.assertEquals;
 public class LibraKeyFactoryTest {
 
     private static final String TEST_MNEMONIC = "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal will";
+
+    @BeforeClass
+    public static void setUpClass() {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     @Test
     public void hasherTest() {
@@ -44,8 +53,7 @@ public class LibraKeyFactoryTest {
     @Test
     public void privateChild() {
         LibraKeyFactory libraKeyFactory = new LibraKeyFactory(Seed.fromHex(
-                "16274c9618ed59177ca948529c1884ba65c57984d562ec2b4e5aa1ee3e3903be"
-        ));
+                "16274c9618ed59177ca948529c1884ba65c57984d562ec2b4e5aa1ee3e3903be"));
 
         // Check child_0 key derivation.
         ExtendedPrivKey childPrivate0 = libraKeyFactory.privateChild(new ChildNumber(0));
@@ -68,8 +76,7 @@ public class LibraKeyFactoryTest {
                 Hex.toHexString(childPrivate1.privateKey.getData())
         );
 
-        ChildNumber child1Again = new ChildNumber(0);
-        child1Again.increment();
+        ChildNumber child1Again = new ChildNumber(0).increment();
         assertEquals(new ChildNumber(1), child1Again);
 
         // Check determinism, regenerate child_1, but by incrementing ChildNumber(0).

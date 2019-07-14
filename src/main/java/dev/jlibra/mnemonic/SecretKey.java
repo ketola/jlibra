@@ -1,5 +1,7 @@
 package dev.jlibra.mnemonic;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
@@ -17,5 +19,10 @@ public class SecretKey {
 
     public byte[] getData() {
         return data.clone();
+    }
+
+    @Override
+    public String toString() {
+        return Hex.toHexString(data);
     }
 }

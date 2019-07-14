@@ -3,10 +3,7 @@ package dev.jlibra.mnemonic;
 import javax.annotation.concurrent.Immutable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -225,7 +222,7 @@ public class Mnemonic {
             "wood", "wool", "word", "work", "world", "worry", "worth", "wrap", "wreck", "wrestle", "wrist",
             "write", "wrong", "yard", "year", "yellow", "you", "young", "youth", "zebra", "zero", "zone",
             "zoo"));
-    private final Set<String> value = new LinkedHashSet<>();
+    private final List<String> value = new LinkedList<>();
 
     private Mnemonic(String[] mnemonicWords) {
         value.addAll(asList(mnemonicWords));
