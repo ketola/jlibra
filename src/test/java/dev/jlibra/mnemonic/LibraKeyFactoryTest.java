@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class LibraKeyFactoryTest {
 
-    private static final String TEST_MNEMONIC = "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal will";
+    static final String TEST_MNEMONIC = "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal will";
 
     @BeforeClass
     public static void setUpClass() {

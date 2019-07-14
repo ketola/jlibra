@@ -1,10 +1,13 @@
 package dev.jlibra.mnemonic;
 
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.signers.Ed25519Signer;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
 import types.Transaction.RawTransaction;
 
 import javax.annotation.concurrent.Immutable;
+import java.nio.ByteBuffer;
 
 @Immutable
 public class ExtendedPrivKey {
@@ -18,9 +21,9 @@ public class ExtendedPrivKey {
     }
 
     private static byte[] createPublic(SecretKey secretKey) {
-        // TODO
-
-        return new byte[32];
+        return new Ed25519PrivateKeyParameters(secretKey.getData(), 0)
+                .generatePublicKey()
+                .getEncoded();
     }
 
     public String getAddress() {
@@ -30,8 +33,21 @@ public class ExtendedPrivKey {
     }
 
     public byte[] sign(RawTransaction rawTransaction) {
-        // TODO
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
+        byte[] saltDigest = digestSHA3.digest("RawTransaction@@$$LIBRA$$@@".getBytes());
+        byte[] transactionBytes = rawTransaction.toByteArray();
+        byte[] message = ByteBuffer.allocate(saltDigest.length + transactionBytes.length)
+                .put(saltDigest)
+                .put(transactionBytes)
+                .array();
 
-        return new byte[0];
+        try {
+            Ed25519Signer signer = new Ed25519Signer();
+            signer.init(true, new Ed25519PrivateKeyParameters(privateKey.getData(), 0));
+            signer.update(digestSHA3.digest(message), 0, message.length);
+            return signer.generateSignature();
+        } catch (Exception e) {
+            throw new RuntimeException("Signing the transaction failed", e);
+        }
     }
 }
