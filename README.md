@@ -1,5 +1,7 @@
 # jlibra
-A Java library for interacting with the Libra blockchain 
+[![CircleCI](https://circleci.com/gh/ketola/jlibra.svg?style=svg)](https://circleci.com/gh/ketola/jlibra)
+ 
+A Java library for interacting with the Libra blockchain
 
 ![Overview](docs/img/jlibra.png)
 
