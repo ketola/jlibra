@@ -1,5 +1,7 @@
 package dev.jlibra;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,7 +16,12 @@ import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
-import types.AccountStateBlobOuterClass.AccountStateWithProof;
+import dev.jlibra.admissioncontrol.query.PaymentEvent;
+import dev.jlibra.admissioncontrol.query.PaymentEvent.EventPath;
+import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
+import types.Events.Event;
+import types.GetWithProof.GetAccountStateResponse;
+import types.GetWithProof.GetAccountTransactionBySequenceNumberResponse;
 import types.Transaction.RawTransaction;
 
 public class LibraHelper {
@@ -42,10 +49,10 @@ public class LibraHelper {
         return signature;
     }
 
-    public static List<AccountState> readAccountStates(AccountStateWithProof accountStateWithProof) {
+    public static List<AccountState> readAccountStates(GetAccountStateResponse getAccountStateResponse) {
         List<AccountState> accountStates = new ArrayList<>();
 
-        byte[] blobBytes = accountStateWithProof.getBlob().getBlob().toByteArray();
+        byte[] blobBytes = getAccountStateResponse.getAccountStateWithProof().getBlob().getBlob().toByteArray();
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(blobBytes));
         int dataSize = readInt(in, 4);
@@ -74,6 +81,37 @@ public class LibraHelper {
         });
 
         return accountStates;
+    }
+
+    public static SignedTransactionWithProof readSignedTransactionWithProof(
+            GetAccountTransactionBySequenceNumberResponse getAccountTransactionBySequenceNumberResponse) {
+
+        byte[] senderPublicKey = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
+                .getSignedTransaction().getSenderPublicKey()
+                .toByteArray();
+        byte[] senderSignature = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
+                .getSignedTransaction().getSenderSignature()
+                .toByteArray();
+        List<PaymentEvent> events = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
+                .getEvents().getEventsList().stream()
+                .map(LibraHelper::readPaymentEvent).collect(toList());
+        return new SignedTransactionWithProof(senderPublicKey, senderSignature, events);
+    }
+
+    public static PaymentEvent readPaymentEvent(Event event) {
+        byte[] pathBytes = event.getAccessPath().getPath().toByteArray();
+        DataInputStream pathStream = new DataInputStream(new ByteArrayInputStream(pathBytes));
+        byte[] tag = readBytes(pathStream, 1);
+        byte[] path = readBytes(pathStream, 32);
+        byte[] suffixBytes = readBytes(pathStream, pathBytes.length - 33);
+        EventPath eventPath = new EventPath(tag[0], path, new String(suffixBytes));
+
+        byte[] eventBytes = event.getEventData().toByteArray();
+        DataInputStream eventStream = new DataInputStream(new ByteArrayInputStream(eventBytes));
+        long balance = readInt(eventStream, 8);
+        int addressLength = readInt(eventStream, 4);
+        byte[] address = readBytes(eventStream, addressLength);
+        return new PaymentEvent(address, balance, eventPath);
     }
 
     private static int readInt(DataInputStream in, int len) {

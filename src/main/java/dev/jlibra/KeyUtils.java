@@ -38,6 +38,10 @@ public class KeyUtils {
         }
     }
 
+    public static String toHexString(byte[] bytes) {
+        return new String(Hex.encode(bytes));
+    }
+
     public static PublicKey publicKeyFromHexString(String publicKeyHexString) {
         byte[] publicKeyBytes = Hex.decode(publicKeyHexString);
 
