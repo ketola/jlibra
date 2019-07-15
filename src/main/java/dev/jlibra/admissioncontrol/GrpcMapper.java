@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.google.protobuf.ByteString;
 
@@ -49,7 +48,7 @@ public class GrpcMapper {
                         .setType(jlibraArgumentTypeToGrpcArgumentType.get(txArgument.type()))
                         .setData(ByteString.copyFrom(txArgument.toByteArray()))
                         .build())
-                .collect(Collectors.toList());
+                .collect(toList());
 
         Program program = Program.newBuilder()
                 .addAllArguments(transactionArguments)
