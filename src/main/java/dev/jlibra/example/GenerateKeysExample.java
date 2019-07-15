@@ -27,8 +27,8 @@ public class GenerateKeysExample {
         System.out.println(
                 "Libra address: "
                         + KeyUtils.toHexStringLibraAddress(publicKey.getEncoded()));
-        System.out.println("Public key: " + new String(Hex.encode(publicKey.getEncoded())));
-        System.out.println("Private key: " + new String(Hex.encode(privateKey.getEncoded())));
+        System.out.println("Public key: " + Hex.toHexString(publicKey.getEncoded()));
+        System.out.println("Private key: " + Hex.toHexString(privateKey.getEncoded()));
     }
 
 }
