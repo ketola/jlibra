@@ -14,6 +14,7 @@ import java.security.Security;
 import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -72,7 +73,7 @@ public class GrpcMapperTest {
         // signed transaction
         assertThat(request.getSignedTxn().getSenderPublicKey().toByteArray(),
                 is(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())));
-        assertThat(KeyUtils.toHexString(request.getSignedTxn().getSenderSignature().toByteArray()),
+        assertThat(Hex.toHexString(request.getSignedTxn().getSenderSignature().toByteArray()),
                 is(notNullValue()));
     }
 

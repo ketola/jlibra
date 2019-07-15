@@ -1,11 +1,12 @@
 package dev.jlibra.example;
 
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.Security;
 
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.KeyUtils;
@@ -13,11 +14,9 @@ import dev.jlibra.KeyUtils;
 public class GenerateKeysExample {
 
     public static void main(String[] args) throws Exception {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        Security.addProvider(new BouncyCastleProvider());
 
-        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
-
-        java.security.KeyPairGenerator kpGen = java.security.KeyPairGenerator.getInstance("Ed25519", "BC");
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("Ed25519", "BC");
 
         KeyPair keyPair = kpGen.generateKeyPair();
 
@@ -27,8 +26,7 @@ public class GenerateKeysExample {
 
         System.out.println(
                 "Libra address: "
-                        + new String(
-                                Hex.encode(digestSHA3.digest(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())))));
+                        + KeyUtils.toHexStringLibraAddress(publicKey.getEncoded()));
         System.out.println("Public key: " + new String(Hex.encode(publicKey.getEncoded())));
         System.out.println("Private key: " + new String(Hex.encode(privateKey.getEncoded())));
     }
