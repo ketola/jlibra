@@ -1,8 +1,8 @@
 package dev.jlibra.mnemonic;
 
-import javax.annotation.concurrent.Immutable;
+import java.nio.ByteBuffer;
 
-import static dev.jlibra.mnemonic.ByteUtils.longToBytes;
+import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public class ChildNumber {
@@ -18,6 +18,6 @@ public class ChildNumber {
     }
 
     public byte[] getData() {
-        return longToBytes(data);
+        return ByteBuffer.allocate(Long.BYTES).putLong(data).array();
     }
 }

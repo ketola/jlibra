@@ -22,7 +22,7 @@ public class GetAccountStateExample {
                         .forAccountState(new GetAccountState(Hex.decode(address))));
 
         result.getAccountStates().forEach(accountState -> {
-            System.out.println("Address:" + new String(Hex.encode(accountState.getAddress())));
+            System.out.println("Address:" + Hex.toHexString(accountState.getAddress()));
             System.out.println("Received events: " + accountState.getReceivedEvents());
             System.out.println("Sent events: " + accountState.getSentEvents());
             System.out.println("Balance (microLibras): " + accountState.getBalanceInMicroLibras());

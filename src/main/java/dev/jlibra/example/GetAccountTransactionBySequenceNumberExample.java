@@ -22,12 +22,12 @@ public class GetAccountTransactionBySequenceNumberExample {
                         new GetAccountTransactionBySequenceNumber(Hex.decode(address), sequenceNumber)));
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
-            System.out.println("Sender public key: " + new String(Hex.encode(tx.getSenderPublicKey())));
-            System.out.println("Sender signature: " + new String(Hex.encode(tx.getSenderSignature())));
+            System.out.println("Sender public key: " + Hex.toHexString(tx.getSenderPublicKey()));
+            System.out.println("Sender signature: " + Hex.toHexString(tx.getSenderSignature()));
 
             tx.getEvents().forEach(e -> {
                 System.out
-                        .println(new String(Hex.encode(e.getAddress())) + " " + e.getEventPath().getEventType()
+                        .println(Hex.toHexString(e.getAddress()) + " " + e.getEventPath().getEventType()
                                 + " Amount: " + e.getAmount());
             });
 

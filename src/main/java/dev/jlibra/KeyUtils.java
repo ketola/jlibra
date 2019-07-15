@@ -1,8 +1,5 @@
 package dev.jlibra;
 
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -11,10 +8,13 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Hex;
+
 public class KeyUtils {
 
     public static String toHexStringLibraAddress(byte[] publicKeyBytes) {
-        return new String(Hex.encode(toByteArrayLibraAddress(publicKeyBytes)));
+        return Hex.toHexString(toByteArrayLibraAddress(publicKeyBytes));
     }
 
     public static byte[] toByteArrayLibraAddress(byte[] publicKeyBytes) {
@@ -36,10 +36,6 @@ public class KeyUtils {
         } catch (InvalidKeySpecException e) {
             throw new RuntimeException("PrivateKey generation failed", e);
         }
-    }
-
-    public static String toHexString(byte[] bytes) {
-        return new String(Hex.encode(bytes));
     }
 
     public static PublicKey publicKeyFromHexString(String publicKeyHexString) {
