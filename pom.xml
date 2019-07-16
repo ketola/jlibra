@@ -26,6 +26,7 @@
   
   <modules>
     <module>jlibra-core</module>
+    <module>jlibra-examples</module>
   </modules>
 
   <build>
