@@ -5,7 +5,7 @@
 
   <artifactId>jlibra-core</artifactId>
   <packaging>jar</packaging>
-  
+
   <parent>
     <groupId>dev.jlibra</groupId>
     <artifactId>jlibra-parent</artifactId>
@@ -37,6 +37,12 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
       <version>1.62</version>
+    </dependency>
+    <dependency>
+      <groupId>org.immutables</groupId>
+      <artifactId>value</artifactId>
+      <version>2.7.4</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -98,7 +104,8 @@
             </goals>
             <configuration>
               <sources>
-                <source>${project.build.directory}/generated-sources/java/</source>
+                <source>${project.build.directory}/generated-sources/protobuf/java/</source>
+                <source>${project.build.directory}/generated-sources/protobuf/grpc-java/</source>
               </sources>
             </configuration>
           </execution>

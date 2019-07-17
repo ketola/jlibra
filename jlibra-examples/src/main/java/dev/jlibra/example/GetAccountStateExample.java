@@ -7,7 +7,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
-import dev.jlibra.admissioncontrol.query.Query;
+import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 
 public class GetAccountStateExample {
@@ -18,8 +18,8 @@ public class GetAccountStateExample {
         AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
 
         UpdateToLatestLedgerResult result = admissionControl
-                .updateToLatestLedger(Query.create()
-                        .forAccountState(new GetAccountState(Hex.decode(address))));
+                .updateToLatestLedger(ImmutableQuery.builder()
+                        .addAccountStateQueries(new GetAccountState(Hex.decode(address))).build());
 
         result.getAccountStates().forEach(accountState -> {
             System.out.println("Address:" + Hex.toHexString(accountState.getAddress()));

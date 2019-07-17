@@ -6,7 +6,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
-import dev.jlibra.admissioncontrol.query.Query;
+import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 
 public class GetAccountTransactionBySequenceNumberExample {
@@ -17,9 +17,10 @@ public class GetAccountTransactionBySequenceNumberExample {
 
         AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
 
-        UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(Query.create()
-                .forAccountTransactionBySequenceNumber(
-                        new GetAccountTransactionBySequenceNumber(Hex.decode(address), sequenceNumber)));
+        UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
+                .addAccountTransactionBySequenceNumberQueries(
+                        new GetAccountTransactionBySequenceNumber(Hex.decode(address), sequenceNumber))
+                .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
             System.out.println("Sender public key: " + Hex.toHexString(tx.getSenderPublicKey()));
