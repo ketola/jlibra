@@ -20,10 +20,11 @@ import org.junit.Test;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.query.GetAccountState;
-import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.transaction.AddressArgument;
-import dev.jlibra.admissioncontrol.transaction.Program;
+import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import types.GetWithProof.RequestItem;
@@ -42,14 +43,16 @@ public class GrpcMapperTest {
 
     @Test
     public void testToSubmitTransactionRequest() throws Exception {
-        Transaction transaction = Transaction.create()
-                .withExpirationTime(10)
-                .withGasUnitPrice(1)
-                .withMaxGasAmount(6000)
-                .withSequenceNumber(1)
-                .withProgram(
-                        new Program(new ByteArrayInputStream(new byte[] { 1 }),
-                                asList(new U64Argument(1000), new AddressArgument(new byte[] { 2 }))));
+        Transaction transaction = ImmutableTransaction.builder()
+                .expirationTime(10)
+                .maxGasAmount(6000)
+                .gasUnitPrice(1)
+                .sequenceNumber(1)
+                .program(ImmutableProgram.builder()
+                        .addArguments(new U64Argument(1000), new AddressArgument(new byte[] { 2 }))
+                        .code(new ByteArrayInputStream(new byte[] { 1 }))
+                        .build())
+                .build();
 
         PrivateKey privateKey = KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX);
         PublicKey publicKey = KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX);
@@ -89,7 +92,8 @@ public class GrpcMapperTest {
 
         List<RequestItem> requestItems = GrpcMapper
                 .accountStateQueriesToRequestItems(
-                        asList(new GetAccountState(address1), new GetAccountState(address2)));
+                        asList(ImmutableGetAccountState.builder().address(address1).build(),
+                                ImmutableGetAccountState.builder().address(address2).build()));
 
         assertThat(requestItems, hasSize(2));
         assertThat(requestItems.get(0).getGetAccountStateRequest().getAddress().toByteArray(), is(address1));
@@ -108,8 +112,14 @@ public class GrpcMapperTest {
 
         List<RequestItem> requestItems = GrpcMapper
                 .accountTransactionBySequenceNumberQueriesToRequestItems(
-                        asList(new GetAccountTransactionBySequenceNumber(address1, 1),
-                                new GetAccountTransactionBySequenceNumber(address2, 2)));
+                        asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
+                                .accountAddress(address1)
+                                .sequenceNumber(1)
+                                .build(),
+                                ImmutableGetAccountTransactionBySequenceNumber.builder()
+                                        .accountAddress(address2)
+                                        .sequenceNumber(2)
+                                        .build()));
 
         assertThat(requestItems, hasSize(2));
         assertThat(requestItems.get(0).getGetAccountTransactionBySequenceNumberRequest().getAccount().toByteArray(),

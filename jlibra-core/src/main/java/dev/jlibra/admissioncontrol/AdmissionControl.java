@@ -10,6 +10,7 @@ import admission_control.AdmissionControlGrpc.AdmissionControlBlockingStub;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.admissioncontrol.query.Query;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import io.grpc.ManagedChannel;
@@ -42,7 +43,11 @@ public class AdmissionControl {
 
         channel.shutdown();
 
-        return new SubmitTransactionResult(response.getAcStatus(), response.getMempoolStatus(), response.getVmStatus());
+        return ImmutableSubmitTransactionResult.builder()
+                .admissionControlStatus(response.getAcStatus())
+                .mempoolStatus(response.getMempoolStatus())
+                .vmStatus(response.getVmStatus())
+                .build();
     }
 
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {

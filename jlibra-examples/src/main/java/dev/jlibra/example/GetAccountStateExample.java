@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.query.GetAccountState;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 
@@ -19,7 +19,10 @@ public class GetAccountStateExample {
 
         UpdateToLatestLedgerResult result = admissionControl
                 .updateToLatestLedger(ImmutableQuery.builder()
-                        .addAccountStateQueries(new GetAccountState(Hex.decode(address))).build());
+                        .addAccountStateQueries(ImmutableGetAccountState.builder()
+                                .address(Hex.decode(address))
+                                .build())
+                        .build());
 
         result.getAccountStates().forEach(accountState -> {
             System.out.println("Address:" + Hex.toHexString(accountState.getAddress()));

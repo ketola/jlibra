@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 
@@ -19,7 +19,10 @@ public class GetAccountTransactionBySequenceNumberExample {
 
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
                 .addAccountTransactionBySequenceNumberQueries(
-                        new GetAccountTransactionBySequenceNumber(Hex.decode(address), sequenceNumber))
+                        ImmutableGetAccountTransactionBySequenceNumber.builder()
+                                .accountAddress(Hex.decode(address))
+                                .sequenceNumber(sequenceNumber)
+                                .build())
                 .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> {

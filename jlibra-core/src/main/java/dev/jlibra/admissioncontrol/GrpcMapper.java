@@ -18,6 +18,7 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
 import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.query.ImmutableUpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
@@ -134,10 +135,10 @@ public class GrpcMapper {
                     .readSignedTransactionWithProof(responseItem.getGetAccountTransactionBySequenceNumberResponse()));
         });
 
-        UpdateToLatestLedgerResult result = UpdateToLatestLedgerResult.create()
-                .withAccountStates(accountStates)
-                .withAccountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber);
-        return result;
+        return ImmutableUpdateToLatestLedgerResult.builder()
+                .accountStates(accountStates)
+                .accountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber)
+                .build();
     }
 
 }

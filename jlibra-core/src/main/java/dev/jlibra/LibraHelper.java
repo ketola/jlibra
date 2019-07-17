@@ -16,8 +16,11 @@ import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
+import dev.jlibra.admissioncontrol.query.EventPath;
+import dev.jlibra.admissioncontrol.query.ImmutableEventPath;
+import dev.jlibra.admissioncontrol.query.ImmutablePaymentEvent;
+import dev.jlibra.admissioncontrol.query.ImmutableSignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.PaymentEvent;
-import dev.jlibra.admissioncontrol.query.PaymentEvent.EventPath;
 import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
 import types.Events.Event;
 import types.GetWithProof.GetAccountStateResponse;
@@ -77,7 +80,12 @@ public class LibraHelper {
             long sentEvents = readLong(stateStream, 8);
             long sequenceNumber = readLong(stateStream, 8);
 
-            accountStates.add(new AccountState(address, balance, receivedEvents, sentEvents, sequenceNumber));
+            accountStates.add(ImmutableAccountState.builder()
+                    .address(address)
+                    .sequenceNumber(sequenceNumber)
+                    .balanceInMicroLibras(balance)
+                    .receivedEvents(receivedEvents)
+                    .sentEvents(sentEvents).build());
         });
 
         return accountStates;
@@ -95,7 +103,12 @@ public class LibraHelper {
         List<PaymentEvent> events = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
                 .getEvents().getEventsList().stream()
                 .map(LibraHelper::readPaymentEvent).collect(toList());
-        return new SignedTransactionWithProof(senderPublicKey, senderSignature, events);
+
+        return ImmutableSignedTransactionWithProof.builder()
+                .addAllEvents(events)
+                .senderPublicKey(senderPublicKey)
+                .senderSignature(senderSignature)
+                .build();
     }
 
     public static PaymentEvent readPaymentEvent(Event event) {
@@ -104,14 +117,22 @@ public class LibraHelper {
         byte[] tag = readBytes(pathStream, 1);
         byte[] path = readBytes(pathStream, 32);
         byte[] suffixBytes = readBytes(pathStream, pathBytes.length - 33);
-        EventPath eventPath = new EventPath(tag[0], path, new String(suffixBytes));
+        EventPath eventPath = ImmutableEventPath.builder()
+                .tag(tag[0])
+                .accountResourcePath(path)
+                .suffix(new String(suffixBytes))
+                .build();
 
         byte[] eventBytes = event.getEventData().toByteArray();
         DataInputStream eventStream = new DataInputStream(new ByteArrayInputStream(eventBytes));
         long balance = readInt(eventStream, 8);
         int addressLength = readInt(eventStream, 4);
         byte[] address = readBytes(eventStream, addressLength);
-        return new PaymentEvent(address, balance, eventPath);
+        return ImmutablePaymentEvent.builder()
+                .address(address)
+                .amount(balance)
+                .eventPath(eventPath)
+                .build();
     }
 
     private static int readInt(DataInputStream in, int len) {

@@ -1,21 +1,12 @@
 package dev.jlibra.admissioncontrol.query;
 
-public class GetAccountTransactionBySequenceNumber {
+import org.immutables.value.Value;
 
-    private byte[] accountAddress;
-    private long sequenceNumber;
+@Value.Immutable
+public interface GetAccountTransactionBySequenceNumber {
 
-    public GetAccountTransactionBySequenceNumber(byte[] accountAddress, long sequenceNumber) {
-        this.accountAddress = accountAddress;
-        this.sequenceNumber = sequenceNumber;
-    }
+    public byte[] getAccountAddress();
 
-    public byte[] getAccountAddress() {
-        return accountAddress;
-    }
-
-    public long getSequenceNumber() {
-        return sequenceNumber;
-    }
+    public long getSequenceNumber();
 
 }
