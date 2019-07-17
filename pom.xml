@@ -27,6 +27,7 @@
   <modules>
     <module>jlibra-core</module>
     <module>jlibra-examples</module>
+    <module>jlibra-grpc</module>
   </modules>
 
   <build>
