@@ -3,23 +3,13 @@ package dev.jlibra.admissioncontrol.transaction;
 import java.io.InputStream;
 import java.util.List;
 
-public class Program {
+import org.immutables.value.Value;
 
-    private InputStream code;
+@Value.Immutable
+public interface Program {
 
-    private List<TransactionArgument> arguments;
+    InputStream getCode();
 
-    public Program(InputStream code, List<TransactionArgument> arguments) {
-        this.code = code;
-        this.arguments = arguments;
-    }
-
-    public InputStream getCode() {
-        return code;
-    }
-
-    public List<TransactionArgument> getArguments() {
-        return arguments;
-    }
+    List<TransactionArgument> getArguments();
 
 }

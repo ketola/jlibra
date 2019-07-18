@@ -1,7 +1,6 @@
 package dev.jlibra.example;
 
 import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
-import static java.util.Arrays.asList;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -12,7 +11,8 @@ import org.bouncycastle.util.encoders.Hex;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.transaction.AddressArgument;
-import dev.jlibra.admissioncontrol.transaction.Program;
+import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -42,13 +42,18 @@ public class TransferExample {
         U64Argument amountArgument = new U64Argument(amount * 1000000);
         AddressArgument addressArgument = new AddressArgument(Hex.decode(toAddress));
 
-        Transaction transaction = Transaction.create()
-                .withSequenceNumber(sequenceNumber)
-                .withMaxGasAmount(6000)
-                .withGasUnitPrice(1)
-                .withExpirationTime(10000)
-                .withProgram(
-                        new Program(Move.peerToPeerTransfer(), asList(addressArgument, amountArgument)));
+        Transaction transaction = ImmutableTransaction.builder()
+                .sequenceNumber(sequenceNumber)
+                .maxGasAmount(6000)
+                .gasUnitPrice(1)
+                .expirationTime(10000)
+                .program(
+                        ImmutableProgram.builder()
+                                .code(Move.peerToPeerTransfer())
+                                .addArguments(addressArgument, amountArgument)
+                                .build())
+                .build();
+
         SubmitTransactionResult result = admissionControl.submitTransaction(publicKey, privateKey,
                 transaction);
 

@@ -1,13 +1,9 @@
 package dev.jlibra.admissioncontrol.query;
 
-public class GetAccountState {
-    private byte[] address;
+import org.immutables.value.Value;
 
-    public GetAccountState(byte[] address) {
-        this.address = address;
-    }
+@Value.Immutable
+public interface GetAccountState {
 
-    public byte[] getAddress() {
-        return address;
-    }
+    byte[] getAddress();
 }

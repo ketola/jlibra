@@ -1,67 +1,18 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-public class Transaction {
+import org.immutables.value.Value;
 
-    private long sequenceNumber;
+@Value.Immutable
+public interface Transaction {
 
-    private Program program;
+    public long getSequenceNumber();
 
-    private long expirationTime;
+    public Program getProgram();
 
-    private long gasUnitPrice;
+    public long getExpirationTime();
 
-    private long maxGasAmount;
+    public long getGasUnitPrice();
 
-    private Transaction() {
-    }
-
-    public static Transaction create() {
-        return new Transaction();
-    }
-
-    public Transaction withProgram(Program program) {
-        this.program = program;
-        return this;
-    }
-
-    public Transaction withSequenceNumber(long sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-        return this;
-    }
-
-    public Transaction withExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
-        return this;
-    }
-
-    public Transaction withGasUnitPrice(long gasUnitPrice) {
-        this.gasUnitPrice = gasUnitPrice;
-        return this;
-    }
-
-    public Transaction withMaxGasAmount(long maxGasAmount) {
-        this.maxGasAmount = maxGasAmount;
-        return this;
-    }
-
-    public long getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public long getExpirationTime() {
-        return expirationTime;
-    }
-
-    public long getGasUnitPrice() {
-        return gasUnitPrice;
-    }
-
-    public long getMaxGasAmount() {
-        return maxGasAmount;
-    }
+    public long getMaxGasAmount();
 
 }

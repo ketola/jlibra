@@ -2,38 +2,15 @@ package dev.jlibra.admissioncontrol.query;
 
 import java.util.List;
 
+import org.immutables.value.Value;
+
 import dev.jlibra.AccountState;
 
-public class UpdateToLatestLedgerResult {
+@Value.Immutable
+public interface UpdateToLatestLedgerResult {
 
-    private List<AccountState> accountStates;
+    List<AccountState> getAccountStates();
 
-    private List<SignedTransactionWithProof> accountTransactionsBySequenceNumber;
-
-    private UpdateToLatestLedgerResult() {
-    }
-
-    public static UpdateToLatestLedgerResult create() {
-        return new UpdateToLatestLedgerResult();
-    }
-
-    public UpdateToLatestLedgerResult withAccountStates(List<AccountState> accountStates) {
-        this.accountStates = accountStates;
-        return this;
-    }
-
-    public UpdateToLatestLedgerResult withAccountTransactionsBySequenceNumber(
-            List<SignedTransactionWithProof> accountTransactionsBySequenceNumber) {
-        this.accountTransactionsBySequenceNumber = accountTransactionsBySequenceNumber;
-        return this;
-    }
-
-    public List<AccountState> getAccountStates() {
-        return accountStates;
-    }
-
-    public List<SignedTransactionWithProof> getAccountTransactionsBySequenceNumber() {
-        return accountTransactionsBySequenceNumber;
-    }
+    List<SignedTransactionWithProof> getAccountTransactionsBySequenceNumber();
 
 }

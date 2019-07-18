@@ -1,39 +1,18 @@
 package dev.jlibra;
 
-public class AccountState {
-    private byte[] address;
-    private long balanceInMicroLibras;
-    private long receivedEvents;
-    private long sentEvents;
-    private long sequenceNumber;
+import org.immutables.value.Value;
 
-    public AccountState(byte[] address, long balanceInMicroLibras, long receivedEvents, long sentEvents,
-            long sequenceNumber) {
-        this.address = address;
-        this.balanceInMicroLibras = balanceInMicroLibras;
-        this.receivedEvents = receivedEvents;
-        this.sentEvents = sentEvents;
-        this.sequenceNumber = sequenceNumber;
-    }
+@Value.Immutable
+public interface AccountState {
 
-    public byte[] getAddress() {
-        return address;
-    }
+    byte[] getAddress();
 
-    public long getBalanceInMicroLibras() {
-        return balanceInMicroLibras;
-    }
+    long getBalanceInMicroLibras();
 
-    public long getReceivedEvents() {
-        return receivedEvents;
-    }
+    long getReceivedEvents();
 
-    public long getSentEvents() {
-        return sentEvents;
-    }
+    long getSentEvents();
 
-    public long getSequenceNumber() {
-        return sequenceNumber;
-    }
+    long getSequenceNumber();
 
 }

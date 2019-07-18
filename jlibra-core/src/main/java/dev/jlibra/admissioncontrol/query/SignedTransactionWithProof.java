@@ -2,27 +2,14 @@ package dev.jlibra.admissioncontrol.query;
 
 import java.util.List;
 
-public class SignedTransactionWithProof {
-    private byte[] senderPublicKey;
-    private byte[] senderSignature;
-    private List<PaymentEvent> events;
+import org.immutables.value.Value;
 
-    public SignedTransactionWithProof(byte[] senderPublicKey, byte[] senderSignature, List<PaymentEvent> events) {
-        this.senderPublicKey = senderPublicKey;
-        this.senderSignature = senderSignature;
-        this.events = events;
-    }
+@Value.Immutable
+public interface SignedTransactionWithProof {
 
-    public byte[] getSenderPublicKey() {
-        return senderPublicKey;
-    }
+    byte[] getSenderPublicKey();
 
-    public byte[] getSenderSignature() {
-        return senderSignature;
-    }
+    byte[] getSenderSignature();
 
-    public List<PaymentEvent> getEvents() {
-        return events;
-    }
-
+    List<PaymentEvent> getEvents();
 }
