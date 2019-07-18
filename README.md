@@ -17,7 +17,19 @@ A Java library for interacting with the Libra blockchain
 
 # Usage
 
-Start sample Main classes in `dev.jlibra.example` package for `Transfer`, `GetAccountState` and `KeyGeneration` examples.
+Start sample Main classes in `dev.jlibra.example` package for examples
+
+[`GenerateKeysExample`](jlibra-examples/src/main/java/dev/jlibra/example/GenerateKeysExample.java)
+
+[`GetAccountStateExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java)
+
+[`GetAccountTransactionBySequenceNumberExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionBySequenceNumberExample.java)
+
+[`ImportAccountMnemonicExample`](jlibra-examples/src/main/java/dev/jlibra/example/ImportAccountMnemonicExample.java)
+
+[`MintExample`](jlibra-examples/src/main/java/dev/jlibra/example/MintExample.java)
+
+[`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
 # How-Tos & Step-by-Step Guides
 
