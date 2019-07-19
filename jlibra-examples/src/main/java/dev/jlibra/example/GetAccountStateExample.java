@@ -9,13 +9,19 @@ import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class GetAccountStateExample {
 
     public static void main(String[] args) throws IOException {
         String address = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
 
-        AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
+                .usePlaintext()
+                .build();
+
+        AdmissionControl admissionControl = new AdmissionControl(channel);
 
         UpdateToLatestLedgerResult result = admissionControl
                 .updateToLatestLedger(ImmutableQuery.builder()
@@ -35,6 +41,7 @@ public class GetAccountStateExample {
             System.out.println();
         });
 
+        channel.shutdown();
     }
 
 }

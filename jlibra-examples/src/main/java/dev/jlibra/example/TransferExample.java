@@ -17,6 +17,8 @@ import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.move.Move;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class TransferExample {
 
@@ -36,7 +38,11 @@ public class TransferExample {
         System.out.println(
                 String.format("Sending from %s to %s", toHexStringLibraAddress(publicKey.getEncoded()), toAddress));
 
-        AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
+                .usePlaintext()
+                .build();
+
+        AdmissionControl admissionControl = new AdmissionControl(channel);
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
@@ -61,6 +67,7 @@ public class TransferExample {
         System.out.println("Mempool status: " + result.getMempoolStatus());
         System.out.println("VM status: " + result.getVmStatus());
 
+        channel.shutdown();
         Thread.sleep(2000); // add sleep to prevent premature closing of channel
     }
 
