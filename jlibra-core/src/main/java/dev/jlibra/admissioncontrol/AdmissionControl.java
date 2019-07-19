@@ -13,35 +13,26 @@ import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import io.grpc.Channel;
 import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
 
 public class AdmissionControl {
 
-    private String host;
+    private Channel channel;
 
-    private int port;
-
-    public AdmissionControl(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public AdmissionControl(Channel channel) {
+        this.channel = channel;
     }
 
     public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey,
             Transaction transaction) {
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
-                .usePlaintext()
-                .build();
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
         SubmitTransactionResponse response = stub
                 .submitTransaction(GrpcMapper.toSubmitTransactionRequest(publicKey, privateKey, transaction));
-
-        channel.shutdown();
 
         return ImmutableSubmitTransactionResult.builder()
                 .admissionControlStatus(response.getAcStatus())
@@ -52,9 +43,6 @@ public class AdmissionControl {
 
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port)
-                .usePlaintext()
-                .build();
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
         List<RequestItem> requestItems = new ArrayList<>();

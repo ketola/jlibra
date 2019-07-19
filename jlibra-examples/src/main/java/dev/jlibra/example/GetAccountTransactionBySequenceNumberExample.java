@@ -8,6 +8,8 @@ import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class GetAccountTransactionBySequenceNumberExample {
 
@@ -15,7 +17,11 @@ public class GetAccountTransactionBySequenceNumberExample {
         String address = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
         int sequenceNumber = 3;
 
-        AdmissionControl admissionControl = new AdmissionControl("ac.testnet.libra.org", 8000);
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
+                .usePlaintext()
+                .build();
+
+        AdmissionControl admissionControl = new AdmissionControl(channel);
 
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
                 .addAccountTransactionBySequenceNumberQueries(
@@ -36,6 +42,8 @@ public class GetAccountTransactionBySequenceNumberExample {
             });
 
         });
+
+        channel.shutdown();
 
     }
 
