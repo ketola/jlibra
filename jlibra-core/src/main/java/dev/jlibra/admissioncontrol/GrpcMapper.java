@@ -1,28 +1,12 @@
 package dev.jlibra.admissioncontrol;
 
-import static java.util.stream.Collectors.toList;
-
-import java.io.IOException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.protobuf.ByteString;
-
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
+import com.google.protobuf.ByteString;
 import dev.jlibra.AccountState;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
-import dev.jlibra.admissioncontrol.query.GetAccountState;
-import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
-import dev.jlibra.admissioncontrol.query.ImmutableUpdateToLatestLedgerResult;
-import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
-import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import dev.jlibra.admissioncontrol.query.*;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.TransactionArgument.Type;
 import types.GetWithProof.GetAccountStateRequest;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
@@ -31,30 +15,27 @@ import types.Transaction.Program;
 import types.Transaction.RawTransaction;
 import types.Transaction.SignedTransaction;
 import types.Transaction.TransactionArgument;
-import types.Transaction.TransactionArgument.ArgType;
+
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 public class GrpcMapper {
-    private static Map<Type, ArgType> jlibraArgumentTypeToGrpcArgumentType;
-
-    static {
-        jlibraArgumentTypeToGrpcArgumentType = new HashMap<>();
-        jlibraArgumentTypeToGrpcArgumentType.put(Type.ADDRESS, ArgType.ADDRESS);
-        jlibraArgumentTypeToGrpcArgumentType.put(Type.U64, ArgType.U64);
-    }
 
     public static SubmitTransactionRequest toSubmitTransactionRequest(PublicKey publicKey, PrivateKey privateKey,
             Transaction transaction) {
+
         List<TransactionArgument> transactionArguments = transaction.getProgram().getArguments().stream()
-                .map(txArgument -> TransactionArgument.newBuilder()
-                        .setType(jlibraArgumentTypeToGrpcArgumentType.get(txArgument.type()))
-                        .setData(ByteString.copyFrom(txArgument.toByteArray()))
-                        .build())
+                .map(dev.jlibra.admissioncontrol.transaction.TransactionArgument::toGrpcTransactionArgument)
                 .collect(toList());
 
         Program program = Program.newBuilder()
                 .addAllArguments(transactionArguments)
-                .setCode(readCodeFromStream(transaction))
-                .addAllModules(new ArrayList<ByteString>())
+                .setCode(transaction.getProgram().getCode())
+                .addAllModules(new ArrayList<>())
                 .build();
 
         RawTransaction rawTransaction = RawTransaction.newBuilder()
@@ -77,14 +58,6 @@ public class GrpcMapper {
                 .build();
 
         return submitTransactionRequest;
-    }
-
-    private static ByteString readCodeFromStream(Transaction transaction) {
-        try {
-            return ByteString.readFrom(transaction.getProgram().getCode());
-        } catch (IOException e) {
-            throw new RuntimeException("Could not read move code from input stream", e);
-        }
     }
 
     public static List<RequestItem> accountStateQueriesToRequestItems(List<GetAccountState> accountStateQueries) {

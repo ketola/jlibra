@@ -1,24 +1,20 @@
 package dev.jlibra.example;
 
-import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
+import dev.jlibra.KeyUtils;
+import dev.jlibra.admissioncontrol.AdmissionControl;
+import dev.jlibra.admissioncontrol.transaction.*;
+import dev.jlibra.move.Move;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
-import org.bouncycastle.util.encoders.Hex;
-
-import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.transaction.AddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
-import dev.jlibra.move.Move;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
 public class TransferExample {
 
@@ -52,10 +48,10 @@ public class TransferExample {
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(6000)
                 .gasUnitPrice(1)
-                .expirationTime(10000)
+                .expirationTime(Instant.now().plus(1, ChronoUnit.HOURS).getEpochSecond())
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer())
+                                .code(Move.peerToPeerTransfer)
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();

@@ -1,9 +1,9 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import org.immutables.value.Value;
-
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatus;
-import mempool.MempoolStatus;
+import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse.StatusCase;
+import mempool.MempoolStatus.MempoolAddTransactionStatus;
+import org.immutables.value.Value;
 import types.VmErrors.VMStatus;
 
 @Value.Immutable
@@ -14,8 +14,9 @@ public interface SubmitTransactionResult {
 
     AdmissionControlStatus getAdmissionControlStatus();
 
-    MempoolStatus.MempoolAddTransactionStatus getMempoolStatus();
+    MempoolAddTransactionStatus getMempoolStatus();
 
     VMStatus getVmStatus();
 
+    StatusCase getStatusCase();
 }

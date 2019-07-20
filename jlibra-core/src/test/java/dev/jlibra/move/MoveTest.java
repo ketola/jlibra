@@ -1,17 +1,17 @@
 package dev.jlibra.move;
 
-import static org.apache.commons.io.IOUtils.toByteArray;
+import com.google.protobuf.ByteString;
+import org.junit.Test;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
 
 public class MoveTest {
 
     @Test
     public void testPeerToPeerTransfer() throws Exception {
-        assertThat(toByteArray(Move.peerToPeerTransfer()),
-                equalTo(toByteArray(MoveTest.this.getClass().getResourceAsStream("/move/peer_to_peer_transfer.bin"))));
+        assertThat(Move.peerToPeerTransfer,
+                equalTo(ByteString.readFrom(MoveTest.this.getClass().getResourceAsStream("/move/peer_to_peer_transfer.bin"))));
     }
 
 }

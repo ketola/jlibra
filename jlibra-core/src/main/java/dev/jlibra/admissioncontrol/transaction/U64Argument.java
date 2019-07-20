@@ -1,8 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import com.google.protobuf.ByteString;
+import types.Transaction;
 
 import java.nio.ByteBuffer;
+
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import static types.Transaction.TransactionArgument.ArgType.U64;
 
 public class U64Argument implements TransactionArgument {
 
@@ -23,4 +27,11 @@ public class U64Argument implements TransactionArgument {
         return Type.U64;
     }
 
+    @Override
+    public types.Transaction.TransactionArgument toGrpcTransactionArgument() {
+        return Transaction.TransactionArgument.newBuilder()
+                .setType(U64)
+                .setData(ByteString.copyFrom(toByteArray()))
+                .build();
+    }
 }
