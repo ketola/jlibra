@@ -1,35 +1,27 @@
 package dev.jlibra.admissioncontrol;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.emptyIterable;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
+import com.google.protobuf.ByteString;
+import dev.jlibra.KeyUtils;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.transaction.*;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import types.GetWithProof.RequestItem;
+import types.Transaction.RawTransaction;
+import types.Transaction.TransactionArgument.ArgType;
 
-import java.io.ByteArrayInputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.util.List;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
-import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
-import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
-import dev.jlibra.admissioncontrol.transaction.AddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
-import types.GetWithProof.RequestItem;
-import types.Transaction.RawTransaction;
-import types.Transaction.TransactionArgument.ArgType;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class GrpcMapperTest {
 
@@ -50,7 +42,7 @@ public class GrpcMapperTest {
                 .sequenceNumber(1)
                 .program(ImmutableProgram.builder()
                         .addArguments(new U64Argument(1000), new AddressArgument(new byte[] { 2 }))
-                        .code(new ByteArrayInputStream(new byte[] { 1 }))
+                        .code(ByteString.copyFrom(new byte[] { 1 }))
                         .build())
                 .build();
 

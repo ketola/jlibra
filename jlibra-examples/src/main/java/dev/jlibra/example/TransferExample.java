@@ -1,24 +1,18 @@
 package dev.jlibra.example;
 
-import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
+import dev.jlibra.KeyUtils;
+import dev.jlibra.admissioncontrol.AdmissionControl;
+import dev.jlibra.admissioncontrol.transaction.*;
+import dev.jlibra.move.Move;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 
-import org.bouncycastle.util.encoders.Hex;
-
-import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.transaction.AddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
-import dev.jlibra.move.Move;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
 public class TransferExample {
 
@@ -55,7 +49,7 @@ public class TransferExample {
                 .expirationTime(10000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer())
+                                .code(Move.peerToPeerTransfer)
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();
@@ -63,6 +57,7 @@ public class TransferExample {
         SubmitTransactionResult result = admissionControl.submitTransaction(publicKey, privateKey,
                 transaction);
 
+        System.out.println("Status type: " + result.getStatusCase());
         System.out.println("Admission control status: " + result.getAdmissionControlStatus());
         System.out.println("Mempool status: " + result.getMempoolStatus());
         System.out.println("VM status: " + result.getVmStatus());

@@ -1,5 +1,6 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import admission_control.AdmissionControlOuterClass;
 import org.immutables.value.Value;
 
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatus;
@@ -17,5 +18,7 @@ public interface SubmitTransactionResult {
     MempoolStatus.MempoolAddTransactionStatus getMempoolStatus();
 
     VMStatus getVmStatus();
+
+    AdmissionControlOuterClass.SubmitTransactionResponse.StatusCase getStatusCase();
 
 }

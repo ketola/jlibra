@@ -1,22 +1,26 @@
 package dev.jlibra.admissioncontrol;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
-
 import admission_control.AdmissionControlGrpc;
 import admission_control.AdmissionControlGrpc.AdmissionControlBlockingStub;
+import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.admissioncontrol.query.Query;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.mnemonic.ExtendedPrivKey;
 import io.grpc.Channel;
 import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
+
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
+
+import static dev.jlibra.admissioncontrol.GrpcMapper.toSubmitTransactionRequest;
 
 public class AdmissionControl {
 
@@ -26,18 +30,27 @@ public class AdmissionControl {
         this.channel = channel;
     }
 
-    public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey,
-            Transaction transaction) {
+    public SubmitTransactionResult submitTransaction(ExtendedPrivKey fromAccount, Transaction transaction) {
+        SubmitTransactionRequest request = toSubmitTransactionRequest(fromAccount, transaction, fromAccount::sign);
 
+        return submitTransaction(request);
+    }
+
+    public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey, Transaction transaction) {
+        SubmitTransactionRequest request = toSubmitTransactionRequest(publicKey, privateKey, transaction);
+
+        return submitTransaction(request);
+    }
+
+    private SubmitTransactionResult submitTransaction(SubmitTransactionRequest request) {
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
-
-        SubmitTransactionResponse response = stub
-                .submitTransaction(GrpcMapper.toSubmitTransactionRequest(publicKey, privateKey, transaction));
+        SubmitTransactionResponse response = stub.submitTransaction(request);
 
         return ImmutableSubmitTransactionResult.builder()
                 .admissionControlStatus(response.getAcStatus())
                 .mempoolStatus(response.getMempoolStatus())
                 .vmStatus(response.getVmStatus())
+                .statusCase(response.getStatusCase())
                 .build();
     }
 
