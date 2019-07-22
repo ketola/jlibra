@@ -1,5 +1,15 @@
 package dev.jlibra;
 
+import static admission_control.AdmissionControlOuterClass.AdmissionControlStatus.Accepted;
+import static dev.jlibra.mnemonic.Mnemonic.WORDS;
+import static java.lang.String.format;
+import static java.time.Instant.now;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.with;
+import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static org.junit.Assert.assertEquals;
+
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
@@ -9,6 +19,9 @@ import dev.jlibra.mnemonic.*;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+
+import com.google.protobuf.ByteString;
+
 import org.apache.commons.lang3.RandomUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -25,22 +38,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static admission_control.AdmissionControlOuterClass.AdmissionControlStatus.Accepted;
-import static dev.jlibra.mnemonic.Mnemonic.WORDS;
-import static java.lang.String.format;
-import static java.time.Instant.now;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
-import static org.junit.Assert.assertEquals;
-
 /**
  * 1. Create two key pairs A and B.
  * 2. Mint X libras for account represented by key pair A.
  * 3. Transfer amount Y from A to B and verify the transaction.
  */
-public class MoneyTransferIT {
+public class SimpleTransactionIT {
 
     private static final String TEST_SALT = "Salt, pepper and a dash of sugar.";
     private static final String TESTNET_ADDRESS = "ac.testnet.libra.org";
@@ -120,7 +123,7 @@ public class MoneyTransferIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) {
+    private void transfer(String toAddress, long amount) throws IOException {
 
         long sequenceNumber = maybeFindSequenceNumber(admissionControl, sourceAccount.getAddress());
 
@@ -135,7 +138,7 @@ public class MoneyTransferIT {
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer)
+                                .code(ByteString.readFrom(Move.peerToPeerTransfer()))
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();

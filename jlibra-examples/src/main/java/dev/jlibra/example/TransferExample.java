@@ -1,18 +1,21 @@
 package dev.jlibra.example;
 
-import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.transaction.*;
-import dev.jlibra.move.Move;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
+
+import com.google.protobuf.ByteString;
+
 import org.bouncycastle.util.encoders.Hex;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 
-import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
+import dev.jlibra.KeyUtils;
+import dev.jlibra.admissioncontrol.AdmissionControl;
+import dev.jlibra.admissioncontrol.transaction.*;
+import dev.jlibra.move.Move;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 public class TransferExample {
 
@@ -49,7 +52,7 @@ public class TransferExample {
                 .expirationTime(10000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer)
+                                .code(ByteString.readFrom(Move.peerToPeerTransfer()))
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();
