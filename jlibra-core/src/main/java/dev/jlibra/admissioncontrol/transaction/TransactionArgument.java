@@ -1,13 +1,17 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import types.Transaction;
+
 public interface TransactionArgument {
 
-    public enum Type {
+    enum Type {
         U64, ADDRESS
     }
 
     byte[] toByteArray();
 
     Type type();
+
+    Transaction.TransactionArgument toGrpcTransactionArgument();
 
 }
