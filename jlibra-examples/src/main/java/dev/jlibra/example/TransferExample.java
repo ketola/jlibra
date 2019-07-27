@@ -2,8 +2,6 @@ package dev.jlibra.example;
 
 import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
-import com.google.protobuf.ByteString;
-
 import org.bouncycastle.util.encoders.Hex;
 
 import java.security.PrivateKey;
@@ -52,7 +50,7 @@ public class TransferExample {
                 .expirationTime(10000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(ByteString.readFrom(Move.peerToPeerTransfer()))
+                                .code(Move.peerToPeerTransfer)
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();

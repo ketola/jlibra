@@ -10,15 +10,12 @@ import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.move.Move;
 import types.Transaction;
 
-import com.google.protobuf.ByteString;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.security.Security;
 import java.util.List;
 
@@ -65,7 +62,7 @@ public class ExtendedPrivKeyTest {
      *        bytes of the sha3 hash of the raw bytes of a transaction."
      */
     @Test
-    public void sign() throws IOException {
+    public void sign() {
         U64Argument amountArgument = new U64Argument(1_000_000);
         AddressArgument addressArgument = new AddressArgument(Hex.decode(childPrivate0.getAddress()));
         List<Transaction.TransactionArgument> transactionArguments = asList(
@@ -75,7 +72,7 @@ public class ExtendedPrivKeyTest {
 
         Transaction.Program program = Transaction.Program.newBuilder()
                 .addAllArguments(transactionArguments)
-                .setCode(ByteString.readFrom(Move.peerToPeerTransfer()))
+                .setCode(Move.peerToPeerTransfer)
                 .addAllModules(emptyList())
                 .build();
 

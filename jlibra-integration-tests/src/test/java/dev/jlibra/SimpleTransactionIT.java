@@ -20,8 +20,6 @@ import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-import com.google.protobuf.ByteString;
-
 import org.apache.commons.lang3.RandomUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -123,7 +121,7 @@ public class SimpleTransactionIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) throws IOException {
+    private void transfer(String toAddress, long amount) {
 
         long sequenceNumber = maybeFindSequenceNumber(admissionControl, sourceAccount.getAddress());
 
@@ -133,17 +131,19 @@ public class SimpleTransactionIT {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(6_000)
-                .gasUnitPrice(1_000)
+                .maxGasAmount(600)
+                .gasUnitPrice(1)
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(ByteString.readFrom(Move.peerToPeerTransfer()))
+                                .code(Move.peerToPeerTransfer)
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(sourceAccount, transaction);
+
+        System.out.println("Transaction submitted with result: " + result.toString());
 
         assertEquals(Accepted, result.getAdmissionControlStatus());
     }

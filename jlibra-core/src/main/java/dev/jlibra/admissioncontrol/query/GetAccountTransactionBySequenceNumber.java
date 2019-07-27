@@ -5,8 +5,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface GetAccountTransactionBySequenceNumber {
 
-    public byte[] getAccountAddress();
+    byte[] getAccountAddress();
 
-    public long getSequenceNumber();
+    long getSequenceNumber();
 
 }
