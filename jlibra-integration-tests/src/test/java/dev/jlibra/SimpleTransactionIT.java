@@ -23,6 +23,8 @@ import io.grpc.ManagedChannelBuilder;
 import com.google.protobuf.ByteString;
 
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
@@ -44,6 +46,8 @@ import java.util.stream.IntStream;
  * 3. Transfer amount Y from A to B and verify the transaction.
  */
 public class SimpleTransactionIT {
+
+    private static final Logger logger = LogManager.getLogger(SimpleTransactionIT.class);
 
     private static final String TEST_SALT = "Salt, pepper and a dash of sugar.";
     private static final String TESTNET_ADDRESS = "ac.testnet.libra.org";
@@ -118,7 +122,7 @@ public class SimpleTransactionIT {
                 .findFirst()
                 .orElse(0L);
 
-        System.out.println(format("Balance for %s is %d", forAddress, balance));
+        logger.info("Balance for {} is {}", forAddress, balance);
 
         return balance;
     }
@@ -193,7 +197,7 @@ public class SimpleTransactionIT {
                 .mapToObj(WORDS::get)
                 .collect(Collectors.joining(" "));
 
-        System.out.println("Generated seed: " + words);
+        logger.info("Generated seed: {}", words);
 
         Seed seed = new Seed(Mnemonic.fromString(words), TEST_SALT);
 

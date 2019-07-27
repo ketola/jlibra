@@ -1,5 +1,8 @@
 package dev.jlibra.example;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,6 +23,8 @@ import java.net.URLConnection;
  */
 public class MintExample {
 
+    private static final Logger logger = LogManager.getLogger(MintExample.class);
+
     public static void main(String[] args) throws IOException {
         String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
         long amountInMicroLibras = 10L * 1_000_000L;
@@ -32,12 +37,9 @@ public class MintExample {
                 new InputStreamReader(
                         uc.getInputStream()));
 
-        String inputLine;
-        while ((inputLine = in.readLine()) != null)
-            System.out.println(inputLine);
-        in.close();
+        in.lines().forEach(logger::info);
 
-        System.out.println("Done.");
+        logger.info("Done.");
     }
 
 }

@@ -4,6 +4,8 @@ import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
 import com.google.protobuf.ByteString;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.security.PrivateKey;
@@ -19,6 +21,8 @@ import io.grpc.ManagedChannelBuilder;
 
 public class TransferExample {
 
+    private static final Logger logger = LogManager.getLogger(TransferExample.class);
+
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
@@ -32,8 +36,7 @@ public class TransferExample {
         long amount = 8;
         int sequenceNumber = 5;
 
-        System.out.println(
-                String.format("Sending from %s to %s", toHexStringLibraAddress(publicKey.getEncoded()), toAddress));
+        logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -60,10 +63,10 @@ public class TransferExample {
         SubmitTransactionResult result = admissionControl.submitTransaction(publicKey, privateKey,
                 transaction);
 
-        System.out.println("Status type: " + result.getStatusCase());
-        System.out.println("Admission control status: " + result.getAdmissionControlStatus());
-        System.out.println("Mempool status: " + result.getMempoolStatus());
-        System.out.println("VM status: " + result.getVmStatus());
+        logger.info("Status type: {}", result.getStatusCase());
+        logger.info("Admission control status: {}", result.getAdmissionControlStatus());
+        logger.info("Mempool status: {}", result.getMempoolStatus());
+        logger.info("VM status: {}", result.getVmStatus());
 
         channel.shutdown();
         Thread.sleep(2000); // add sleep to prevent premature closing of channel

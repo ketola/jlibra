@@ -1,9 +1,5 @@
 package dev.jlibra.example;
 
-import java.io.IOException;
-
-import org.bouncycastle.util.encoders.Hex;
-
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
@@ -11,9 +7,15 @@ import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.util.encoders.Hex;
+
 public class GetAccountTransactionBySequenceNumberExample {
 
-    public static void main(String[] args) throws IOException {
+    private static final Logger logger = LogManager.getLogger(GetAccountTransactionBySequenceNumberExample.class);
+
+    public static void main(String[] args) {
         String address = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
         int sequenceNumber = 3;
 
@@ -32,14 +34,11 @@ public class GetAccountTransactionBySequenceNumberExample {
                 .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
-            System.out.println("Sender public key: " + Hex.toHexString(tx.getSenderPublicKey()));
-            System.out.println("Sender signature: " + Hex.toHexString(tx.getSenderSignature()));
+            logger.info("Sender public key: " + Hex.toHexString(tx.getSenderPublicKey()));
+            logger.info("Sender signature: " + Hex.toHexString(tx.getSenderSignature()));
 
-            tx.getEvents().forEach(e -> {
-                System.out
-                        .println(Hex.toHexString(e.getAddress()) + " " + e.getEventPath().getEventType()
-                                + " Amount: " + e.getAmount());
-            });
+            tx.getEvents().forEach(e ->
+                    logger.info("{} {} Amount: {}", Hex.toHexString(e.getAddress()), e.getEventPath().getEventType(), e.getAmount()));
 
         });
 
