@@ -87,7 +87,7 @@ public class ExtendedPrivKeyTest {
         byte[] signature = childPrivate0.sign(rawTransaction);
 
         assertEquals(
-                "0a026288ec43a0b44dc73bb386f69b1b0ef1374ec86577c30d5d3e64b57f4020ab219bb7b904c7c34f6f391e7f52568478569f8e11d7284f318bb2c00ddd1b0b",
+                "3eaf7b596d8231bea5e51695a5ceba98949624fb0da2f46b5274f57416823c48fc73bfaceaecda0797a994889d84f442c12e87ab73554a4cceae3e2ddf149f03",
                 Hex.toHexString(signature)
         );
     }
