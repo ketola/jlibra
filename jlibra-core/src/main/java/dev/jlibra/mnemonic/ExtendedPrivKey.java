@@ -1,72 +1,43 @@
 package dev.jlibra.mnemonic;
 
-import com.google.common.annotations.VisibleForTesting;
-import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
-import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
-import org.bouncycastle.crypto.signers.Ed25519Signer;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.encoders.Hex;
-import types.Transaction.RawTransaction;
+import java.io.IOException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 import javax.annotation.concurrent.Immutable;
-import java.nio.ByteBuffer;
+
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import dev.jlibra.KeyUtils;
 
 @Immutable
 public class ExtendedPrivKey {
 
-    public final SecretKey privateKey;
-    public final SecretKey publicKey;
+    public final PrivateKey privateKey;
+    public final PublicKey publicKey;
 
     public ExtendedPrivKey(SecretKey secretKey) {
-        this.privateKey = secretKey;
-        this.publicKey = new SecretKey(createPublic(secretKey));
-    }
+        Ed25519PrivateKeyParameters pKeyParams = new Ed25519PrivateKeyParameters(secretKey.getData(), 0);
 
-    private static byte[] createPublic(SecretKey secretKey) {
-        return new Ed25519PrivateKeyParameters(secretKey.getData(), 0)
-                .generatePublicKey()
-                .getEncoded();
+        try {
+            PrivateKeyInfo keyInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(pKeyParams);
+            this.privateKey = KeyUtils.getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(keyInfo.getEncoded()));
+            this.publicKey = BouncyCastleProvider.getPublicKey(new SubjectPublicKeyInfo(
+                    new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), keyInfo.getPublicKeyData().getBytes()));
+        } catch (IOException | InvalidKeySpecException e) {
+            throw new RuntimeException("Key creation failed", e);
+        }
     }
 
     public String getAddress() {
-        SHA3.Digest256 digest256 = new SHA3.Digest256();
-        digest256.update(publicKey.getData());
-        return Hex.toHexString(digest256.digest());
-    }
-
-    public byte[] sign(RawTransaction rawTransaction) {
-        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
-        byte[] saltDigest = digestSHA3.digest("RawTransaction@@$$LIBRA$$@@".getBytes());
-        byte[] transactionBytes = rawTransaction.toByteArray();
-        byte[] messageBytes = ByteBuffer.allocate(saltDigest.length + transactionBytes.length)
-                .put(saltDigest)
-                .put(transactionBytes)
-                .array();
-        byte[] message = digestSHA3.digest(messageBytes);
-
-        return sign(message);
-    }
-
-    @VisibleForTesting
-    byte[] sign(byte[] message) {
-        try {
-            Ed25519Signer signer = new Ed25519Signer();
-            signer.init(true, new Ed25519PrivateKeyParameters(privateKey.getData(), 0));
-            signer.update(message, 0, message.length);
-            return signer.generateSignature();
-        } catch (Exception e) {
-            throw new RuntimeException("Signing the transaction failed", e);
-        }
-    }
-
-    public boolean verify(byte[] signature, byte[] message) {
-        try {
-            Ed25519Signer signer = new Ed25519Signer();
-            signer.init(false, new Ed25519PublicKeyParameters(publicKey.getData(), 0));
-            signer.update(message, 0, message.length);
-            return signer.verifySignature(signature);
-        } catch (Exception e) {
-            return false;
-        }
+        return KeyUtils.toHexStringLibraAddress(publicKey.getEncoded());
     }
 }

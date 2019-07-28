@@ -16,7 +16,6 @@ import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.mnemonic.ExtendedPrivKey;
 import io.grpc.Channel;
 import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
@@ -30,19 +29,10 @@ public class AdmissionControl {
         this.channel = channel;
     }
 
-    public SubmitTransactionResult submitTransaction(ExtendedPrivKey fromAccount, Transaction transaction) {
-        SubmitTransactionRequest request = toSubmitTransactionRequest(fromAccount, transaction, fromAccount::sign);
-
-        return submitTransaction(request);
-    }
-
-    public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey, Transaction transaction) {
+    public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey,
+            Transaction transaction) {
         SubmitTransactionRequest request = toSubmitTransactionRequest(publicKey, privateKey, transaction);
 
-        return submitTransaction(request);
-    }
-
-    private SubmitTransactionResult submitTransaction(SubmitTransactionRequest request) {
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
         SubmitTransactionResponse response = stub.submitTransaction(request);
 
@@ -55,7 +45,6 @@ public class AdmissionControl {
     }
 
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
-
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
 
         List<RequestItem> requestItems = new ArrayList<>();
