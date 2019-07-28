@@ -2,13 +2,13 @@ package dev.jlibra.mnemonic;
 
 import static org.junit.Assert.assertEquals;
 
-import java.security.Security;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.security.Security;
 
 import dev.jlibra.KeyUtils;
 

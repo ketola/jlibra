@@ -2,8 +2,6 @@ package dev.jlibra.example;
 
 import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
-import com.google.protobuf.ByteString;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
@@ -14,7 +12,12 @@ import java.security.Security;
 
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.transaction.*;
+import dev.jlibra.admissioncontrol.transaction.AddressArgument;
+import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
+import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -55,7 +58,7 @@ public class TransferExample {
                 .expirationTime(10000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(ByteString.readFrom(Move.peerToPeerTransfer()))
+                                .code(Move.peerToPeerTransfer)
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();

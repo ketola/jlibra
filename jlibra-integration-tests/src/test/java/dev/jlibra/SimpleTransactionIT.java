@@ -10,14 +10,6 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.Security;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +20,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.protobuf.ByteString;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.Security;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
@@ -50,8 +48,9 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 /**
- * 1. Create two key pairs A and B. 2. Mint X libras for account represented by
- * key pair A. 3. Transfer amount Y from A to B and verify the transaction.
+ * 1. Create two key pairs A and B.
+ * 2. Mint X libras for account represented by key pair A.
+ * 3. Transfer amount Y from A to B and verify the transaction.
  */
 public class SimpleTransactionIT {
 
@@ -135,7 +134,7 @@ public class SimpleTransactionIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) throws IOException {
+    private void transfer(String toAddress, long amount) {
 
         long sequenceNumber = maybeFindSequenceNumber(admissionControl, sourceAccount.getAddress());
 
@@ -145,18 +144,20 @@ public class SimpleTransactionIT {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(6_000)
-                .gasUnitPrice(1_000)
+                .maxGasAmount(600)
+                .gasUnitPrice(1)
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(ByteString.readFrom(Move.peerToPeerTransfer()))
+                                .code(Move.peerToPeerTransfer)
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(sourceAccount.publicKey,
                 sourceAccount.privateKey, transaction);
+
+        System.out.println("Transaction submitted with result: " + result.toString());
 
         assertEquals(Accepted, result.getAdmissionControlStatus());
     }
