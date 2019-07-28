@@ -48,7 +48,7 @@ public class KeyUtils {
         }
     }
 
-    private static KeyFactory getKeyFactory() {
+    public static KeyFactory getKeyFactory() {
         try {
             return KeyFactory.getInstance("Ed25519");
         } catch (NoSuchAlgorithmException e) {

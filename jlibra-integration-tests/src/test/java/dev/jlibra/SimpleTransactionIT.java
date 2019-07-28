@@ -10,17 +10,9 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
-import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
-import dev.jlibra.admissioncontrol.query.ImmutableQuery;
-import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.admissioncontrol.transaction.*;
-import dev.jlibra.mnemonic.*;
-import dev.jlibra.move.Move;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
@@ -36,12 +28,24 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import dev.jlibra.admissioncontrol.AdmissionControl;
+import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
+import dev.jlibra.admissioncontrol.query.ImmutableQuery;
+import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import dev.jlibra.admissioncontrol.transaction.*;
+import dev.jlibra.mnemonic.*;
+import dev.jlibra.move.Move;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+
 /**
  * 1. Create two key pairs A and B.
  * 2. Mint X libras for account represented by key pair A.
  * 3. Transfer amount Y from A to B and verify the transaction.
  */
 public class SimpleTransactionIT {
+
+    private static final Logger logger = LogManager.getLogger(SimpleTransactionIT.class);
 
     private static final String TEST_SALT = "Salt, pepper and a dash of sugar.";
     private static final String TESTNET_ADDRESS = "ac.testnet.libra.org";
@@ -59,7 +63,8 @@ public class SimpleTransactionIT {
     @Before
     public void setUp() {
         // source account is fixed
-        Mnemonic sourceMnemonic = Mnemonic.fromString("hurry seven priority awful wear jeans antique add fetch sure negative finish suit draft myself chimney spend marine clock furnace draft public erase evidence");
+        Mnemonic sourceMnemonic = Mnemonic.fromString(
+                "hurry seven priority awful wear jeans antique add fetch sure negative finish suit draft myself chimney spend marine clock furnace draft public erase evidence");
         Seed seed = new Seed(sourceMnemonic, "LIBRA");
         LibraKeyFactory libraKeyFactory = new LibraKeyFactory(seed);
         sourceAccount = libraKeyFactory.privateChild(new ChildNumber(0));
@@ -95,7 +100,8 @@ public class SimpleTransactionIT {
                 .atMost(20, SECONDS)
                 .untilAsserted(() -> {
                     long actual = findBalance(destinationAddress);
-                    String errorMessage = format("Account address: %s, expected balance: %d, actual balance: %d", destinationAddress, transactionAmount, actual);
+                    String errorMessage = format("Account address: %s, expected balance: %d, actual balance: %d",
+                            destinationAddress, transactionAmount, actual);
                     assertEquals(errorMessage, actual, transactionAmount);
                 });
     }
@@ -103,20 +109,18 @@ public class SimpleTransactionIT {
     private long findBalance(String forAddress) {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(
                 ImmutableQuery.builder().addAccountStateQueries(
-                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()
-                ).build());
+                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
 
         long balance = result.getAccountStates()
                 .stream()
                 .filter(accountState -> Arrays.equals(
                         accountState.getAddress(),
-                        Hex.decode(forAddress)
-                ))
+                        Hex.decode(forAddress)))
                 .map(AccountState::getBalanceInMicroLibras)
                 .findFirst()
                 .orElse(0L);
 
-        System.out.println(format("Balance for %s is %d", forAddress, balance));
+        logger.info("Balance for {} is {}", forAddress, balance);
 
         return balance;
     }
@@ -141,7 +145,8 @@ public class SimpleTransactionIT {
                                 .build())
                 .build();
 
-        SubmitTransactionResult result = admissionControl.submitTransaction(sourceAccount, transaction);
+        SubmitTransactionResult result = admissionControl.submitTransaction(sourceAccount.publicKey,
+                sourceAccount.privateKey, transaction);
 
         System.out.println("Transaction submitted with result: " + result.toString());
 
@@ -151,15 +156,13 @@ public class SimpleTransactionIT {
     private long maybeFindSequenceNumber(AdmissionControl admissionControl, String forAddress) {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(
                 ImmutableQuery.builder().addAccountStateQueries(
-                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()
-                ).build());
+                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
 
         return result.getAccountStates()
                 .stream()
                 .filter(accountState -> Arrays.equals(
                         accountState.getAddress(),
-                        Hex.decode(forAddress)
-                ))
+                        Hex.decode(forAddress)))
                 .map(AccountState::getSequenceNumber)
                 .findFirst()
                 .orElse(0L);
@@ -169,7 +172,8 @@ public class SimpleTransactionIT {
         long amountInMicroLibras = 1_000_000;
 
         URL faucet = new URL(
-                format("http://faucet.testnet.libra.org?amount=%d&address=%s", amountInMicroLibras, sourceAccount.getAddress()));
+                format("http://faucet.testnet.libra.org?amount=%d&address=%s", amountInMicroLibras,
+                        sourceAccount.getAddress()));
 
         HttpURLConnection con = (HttpURLConnection) faucet.openConnection();
         con.setRequestMethod("GET");
@@ -193,7 +197,7 @@ public class SimpleTransactionIT {
                 .mapToObj(WORDS::get)
                 .collect(Collectors.joining(" "));
 
-        System.out.println("Generated seed: " + words);
+        logger.info("Generated seed: {}", words);
 
         Seed seed = new Seed(Mnemonic.fromString(words), TEST_SALT);
 

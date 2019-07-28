@@ -2,23 +2,23 @@ package dev.jlibra.admissioncontrol;
 
 import static java.util.stream.Collectors.toList;
 
-import com.google.protobuf.ByteString;
-
-import org.bouncycastle.util.encoders.Hex;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.protobuf.ByteString;
+
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.AccountState;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
-import dev.jlibra.admissioncontrol.query.*;
-import dev.jlibra.admissioncontrol.transaction.RawTransactionSigner;
+import dev.jlibra.admissioncontrol.query.GetAccountState;
+import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
+import dev.jlibra.admissioncontrol.query.ImmutableUpdateToLatestLedgerResult;
+import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
+import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.mnemonic.ExtendedPrivKey;
 import types.GetWithProof.GetAccountStateRequest;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
@@ -30,22 +30,11 @@ import types.Transaction.TransactionArgument;
 
 public class GrpcMapper {
 
-    public static SubmitTransactionRequest toSubmitTransactionRequest(ExtendedPrivKey fromAccount, Transaction transaction, RawTransactionSigner signer) {
-        ByteString senderAccount = ByteString.copyFrom(Hex.decode(fromAccount.getAddress()));
-        ByteString senderPublicKey = ByteString.copyFrom(fromAccount.publicKey.getData());
-
-        return toSubmitTransactionRequest(senderAccount, senderPublicKey, transaction, signer);
-    }
-
-    public static SubmitTransactionRequest toSubmitTransactionRequest(PublicKey publicKey, PrivateKey privateKey, Transaction transaction) {
+    public static SubmitTransactionRequest toSubmitTransactionRequest(PublicKey publicKey, PrivateKey privateKey,
+            Transaction transaction) {
         ByteString senderAccount = ByteString.copyFrom(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()));
         ByteString senderPublicKey = ByteString.copyFrom(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded()));
-        RawTransactionSigner signer = rtx -> LibraHelper.signTransaction(rtx, privateKey);
 
-        return toSubmitTransactionRequest(senderAccount, senderPublicKey, transaction, signer);
-    }
-
-    public static SubmitTransactionRequest toSubmitTransactionRequest(ByteString senderAccount, ByteString senderPublicKey, Transaction transaction, RawTransactionSigner signer) {
         List<TransactionArgument> transactionArguments = transaction.getProgram().getArguments().stream()
                 .map(txa -> txa.toGrpcTransactionArgument())
                 .collect(toList());
@@ -65,7 +54,7 @@ public class GrpcMapper {
                 .setSequenceNumber(transaction.getSequenceNumber())
                 .build();
 
-        ByteString signature = ByteString.copyFrom(signer.apply(rawTransaction));
+        ByteString signature = ByteString.copyFrom(LibraHelper.signTransaction(rawTransaction, privateKey));
 
         SignedTransaction signedTransaction = SignedTransaction.newBuilder()
                 .setRawTxnBytes(rawTransaction.toByteString())
@@ -79,7 +68,6 @@ public class GrpcMapper {
 
         return submitTransactionRequest;
     }
-
 
     public static List<RequestItem> accountStateQueriesToRequestItems(List<GetAccountState> accountStateQueries) {
         if (accountStateQueries == null)
