@@ -10,6 +10,7 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
+import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -149,7 +150,7 @@ public class SimpleTransactionIT {
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer)
+                                .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();

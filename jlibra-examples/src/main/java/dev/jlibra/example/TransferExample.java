@@ -2,6 +2,7 @@ package dev.jlibra.example;
 
 import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
+import com.google.protobuf.ByteString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
@@ -58,7 +59,7 @@ public class TransferExample {
                 .expirationTime(10000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer)
+                                .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();
