@@ -2,13 +2,14 @@ package dev.jlibra.example;
 
 import static dev.jlibra.KeyUtils.toHexStringLibraAddress;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
-
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.time.Instant;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
@@ -34,10 +35,10 @@ public class TransferExample {
         PublicKey publicKey = KeyUtils.publicKeyFromHexString(
                 "302a300506032b65700321008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
 
-        String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
+        String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
-        long amount = 8;
-        int sequenceNumber = 5;
+        long amount = 1;
+        int sequenceNumber = 2;
 
         logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
@@ -53,9 +54,9 @@ public class TransferExample {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(6000)
+                .maxGasAmount(600000)
                 .gasUnitPrice(1)
-                .expirationTime(10000)
+                .expirationTime(Instant.now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
                                 .code(Move.peerToPeerTransfer)
