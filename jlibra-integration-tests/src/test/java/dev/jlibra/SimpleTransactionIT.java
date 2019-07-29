@@ -10,6 +10,14 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.Security;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,14 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.Security;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
@@ -48,9 +48,8 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 /**
- * 1. Create two key pairs A and B.
- * 2. Mint X libras for account represented by key pair A.
- * 3. Transfer amount Y from A to B and verify the transaction.
+ * 1. Create two key pairs A and B. 2. Mint X libras for account represented by
+ * key pair A. 3. Transfer amount Y from A to B and verify the transaction.
  */
 public class SimpleTransactionIT {
 
@@ -144,7 +143,7 @@ public class SimpleTransactionIT {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(600)
+                .maxGasAmount(600000)
                 .gasUnitPrice(1)
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
@@ -178,7 +177,7 @@ public class SimpleTransactionIT {
     }
 
     private void mint() throws IOException {
-        long amountInMicroLibras = 1_000_000;
+        long amountInMicroLibras = 1_000_000_000;
 
         URL faucet = new URL(
                 format("http://faucet.testnet.libra.org?amount=%d&address=%s", amountInMicroLibras,
