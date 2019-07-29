@@ -61,4 +61,9 @@ public class AdmissionControl {
 
         return GrpcMapper.updateToLatestLedgerResponseToResult(response);
     }
+
+    @Override
+    public String toString() {
+        return "AdmissionControl " + this.channel.toString();
+    }
 }
