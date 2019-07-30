@@ -1,16 +1,17 @@
 package dev.jlibra.move;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 public class Move {
 
     public static byte[] peerToPeerTransferAsBytes() {
         try {
-            String json = readJson();
+            InputStream jsonBinary = Move.class.getResourceAsStream("/move/peer_to_peer_transfer.bin.json");
+            String json = readJson(jsonBinary, "UTF-8");
             String[] bytesAsString = json.substring(json.indexOf('[') + 1, json.indexOf(']')).split(",");
             byte[] bytes = new byte[bytesAsString.length];
             for (int idx = 0; idx < bytesAsString.length; idx++) {
@@ -22,9 +23,10 @@ public class Move {
         }
     }
 
-    private static String readJson() throws IOException {
-        ClassLoader classLoader = Move.class.getClassLoader();
-        File jsonFile = new File(classLoader.getResource("move/peer_to_peer_transfer.bin.json").getFile());
-        return new String(Files.readAllBytes(Paths.get(jsonFile.getPath())), Charset.forName("UTF-8"));
+    private static String readJson(InputStream inputStream, String encoding) throws IOException {
+        return new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))
+                .lines()
+                .collect(Collectors.joining());
     }
+
 }
