@@ -18,7 +18,7 @@ public class Move {
                 bytes[idx] = (byte)Integer.parseInt(bytesAsString[idx]);
             }
             return bytes;
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             throw new RuntimeException("Error reading p2p transaction script.", ex);
         }
     }
