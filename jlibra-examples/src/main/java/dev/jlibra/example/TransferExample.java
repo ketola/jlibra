@@ -7,6 +7,7 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.time.Instant;
 
+import com.google.protobuf.ByteString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
@@ -59,7 +60,7 @@ public class TransferExample {
                 .expirationTime(Instant.now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer)
+                                .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();

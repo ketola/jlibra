@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,7 +149,7 @@ public class SimpleTransactionIT {
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
-                                .code(Move.peerToPeerTransfer)
+                                .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
                                 .addArguments(addressArgument, amountArgument)
                                 .build())
                 .build();
