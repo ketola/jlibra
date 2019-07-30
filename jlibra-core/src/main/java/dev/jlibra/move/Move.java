@@ -1,9 +1,9 @@
 package dev.jlibra.move;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
 public class Move {
@@ -19,7 +19,7 @@ public class Move {
             }
             return bytes;
         } catch (IOException ex) {
-            throw new RuntimeException("Error reading p2p transaction script.", ex);
+            throw new IllegalStateException("Error reading p2p transaction script.", ex);
         }
     }
 
