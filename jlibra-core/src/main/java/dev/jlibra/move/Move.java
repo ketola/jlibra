@@ -24,7 +24,7 @@ public class Move {
     }
 
     private static String readJson(InputStream inputStream, String encoding) throws IOException {
-        return new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))
+        return new BufferedReader(new InputStreamReader(inputStream, encoding))
                 .lines()
                 .collect(Collectors.joining());
     }
