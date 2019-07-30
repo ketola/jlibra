@@ -1,20 +1,21 @@
 package dev.jlibra.move;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Move {
 
     public static byte[] peerToPeerTransferAsBytes() {
         try {
-            InputStream jsonCode = Move.class.getResourceAsStream("/move/peer_to_peer_transfer.bin.json");
-            String json = readFullyAsString(jsonCode, "UTF-8");
-            String[] bytesAsString = json.substring(json.indexOf("[")+1, json.indexOf("]")).split(",");
+            String json = readJson();
+            String[] bytesAsString = json.substring(json.indexOf('[') + 1, json.indexOf(']')).split(",");
             byte[] bytes = new byte[bytesAsString.length];
-            int idx = 0;
-            for (String byteAsString : bytesAsString) {
-                bytes[idx++] = (byte)(Integer.valueOf(byteAsString).byteValue() & 0xFF);
+            for (int idx = 0; idx < bytesAsString.length; idx++) {
+                bytes[idx] = (byte)Integer.parseInt(bytesAsString[idx]);
             }
             return bytes;
         } catch (Exception ex) {
@@ -22,17 +23,9 @@ public class Move {
         }
     }
 
-    private static String readFullyAsString(InputStream inputStream, String encoding) throws IOException {
-        return readFully(inputStream).toString(encoding);
-    }
-
-    private static ByteArrayOutputStream readFully(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length = 0;
-        while ((length = inputStream.read(buffer)) != -1) {
-            baos.write(buffer, 0, length);
-        }
-        return baos;
+    private static String readJson() throws IOException {
+        ClassLoader classLoader = Move.class.getClassLoader();
+        File jsonFile = new File(classLoader.getResource("move/peer_to_peer_transfer.bin.json").getFile());
+        return new String(Files.readAllBytes(Paths.get(jsonFile.getPath())), Charset.forName("UTF-8"));
     }
 }
