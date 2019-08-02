@@ -10,9 +10,9 @@ import java.util.List;
 import com.google.protobuf.ByteString;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
-import dev.jlibra.AccountState;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
+import dev.jlibra.admissioncontrol.query.AccountState;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
 import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableUpdateToLatestLedgerResult;

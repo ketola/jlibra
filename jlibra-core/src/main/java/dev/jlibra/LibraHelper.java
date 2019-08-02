@@ -16,7 +16,9 @@ import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
+import dev.jlibra.admissioncontrol.query.AccountState;
 import dev.jlibra.admissioncontrol.query.EventPath;
+import dev.jlibra.admissioncontrol.query.ImmutableAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableEventPath;
 import dev.jlibra.admissioncontrol.query.ImmutablePaymentEvent;
 import dev.jlibra.admissioncontrol.query.ImmutableSignedTransactionWithProof;
@@ -76,6 +78,7 @@ public class LibraHelper {
             int addressLength = readInt(stateStream, 4);
             byte[] address = readBytes(stateStream, addressLength);
             long balance = readLong(stateStream, 8);
+            boolean delegatedWithdrawalCapability = readBoolean(stateStream);
             long receivedEvents = readLong(stateStream, 8);
             long sentEvents = readLong(stateStream, 8);
             long sequenceNumber = readLong(stateStream, 8);
@@ -84,6 +87,7 @@ public class LibraHelper {
                     .address(address)
                     .sequenceNumber(sequenceNumber)
                     .balanceInMicroLibras(balance)
+                    .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
                     .receivedEvents(receivedEvents)
                     .sentEvents(sentEvents).build());
         });
@@ -143,6 +147,11 @@ public class LibraHelper {
     private static long readLong(DataInputStream in, int len) {
         byte[] data = readBytes(in, len);
         return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getLong();
+    }
+
+    private static boolean readBoolean(DataInputStream in) {
+        byte[] data = readBytes(in, 1);
+        return data[0] == 1;
     }
 
     private static byte[] readBytes(DataInputStream in, int len) {
