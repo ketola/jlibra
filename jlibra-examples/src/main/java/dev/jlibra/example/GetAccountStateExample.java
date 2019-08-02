@@ -18,7 +18,7 @@ public class GetAccountStateExample {
     private static final Logger logger = LogManager.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) {
-        String address = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
+        String address = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -38,8 +38,10 @@ public class GetAccountStateExample {
             logger.info("Received events: {}", accountState.getReceivedEvents());
             logger.info("Sent events: {}", accountState.getSentEvents());
             logger.info("Balance (microLibras): {}", accountState.getBalanceInMicroLibras());
-            logger.info("Balance (Libras): {}", new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));
+            logger.info("Balance (Libras): {}",
+                    new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));
             logger.info("Sequence number: {}", accountState.getSequenceNumber());
+            logger.info("Delegated withdrawal capability: {}", accountState.getDelegatedWithdrawalCapability());
         });
 
         channel.shutdown();

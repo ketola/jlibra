@@ -1,4 +1,4 @@
-package dev.jlibra;
+package dev.jlibra.admissioncontrol.query;
 
 import org.immutables.value.Value;
 
@@ -14,5 +14,7 @@ public interface AccountState {
     long getSentEvents();
 
     long getSequenceNumber();
+
+    boolean getDelegatedWithdrawalCapability();
 
 }
