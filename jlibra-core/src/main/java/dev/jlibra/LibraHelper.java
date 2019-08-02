@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.admissioncontrol.query.AccountState;
 import dev.jlibra.admissioncontrol.query.EventPath;
@@ -59,8 +58,6 @@ public class LibraHelper {
         List<AccountState> accountStates = new ArrayList<>();
 
         byte[] blobBytes = getAccountStateResponse.getAccountStateWithProof().getBlob().getBlob().toByteArray();
-
-        System.out.println(Hex.toHexString(blobBytes));
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(blobBytes));
         int dataSize = readInt(in, 4);
