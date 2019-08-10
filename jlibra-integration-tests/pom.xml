@@ -6,7 +6,7 @@
     <parent>
         <artifactId>jlibra-parent</artifactId>
         <groupId>dev.jlibra</groupId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
