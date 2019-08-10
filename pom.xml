@@ -5,11 +5,12 @@
 
   <groupId>dev.jlibra</groupId>
   <artifactId>jlibra-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>jlibra</name>
   <url>https://github.com/ketola/jlibra</url>
+  <description>A Java library for interacting with the Libra blockchain</description>
 
   <licenses>
     <license>
@@ -17,6 +18,18 @@
       <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
+
+  <developers>
+    <developer>
+      <name>Sauli Ketola</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/ketola/jlibra.git</connection>
+    <developerConnection>scm:git:ssh://github.com/ketola/jlibra.git</developerConnection>
+    <url>http://github.com/ketola/jlibra/tree/master</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
