@@ -181,7 +181,7 @@ public class SimpleTransactionIT {
     private void mint() {
         long amountInMicroLibras = 1_000_000_000;
 
-        HttpResponse<String> response = Unirest.post(String.format("http://faucet.testnet.libra.org"))
+        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
                 .queryString("address", sourceAccount.getAddress())
                 .asString();

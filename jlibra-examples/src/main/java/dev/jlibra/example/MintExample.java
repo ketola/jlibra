@@ -27,7 +27,7 @@ public class MintExample {
         String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
         long amountInMicroLibras = 10L * 1_000_000L;
 
-        HttpResponse<String> response = Unirest.post(String.format("http://faucet.testnet.libra.org"))
+        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
                 .queryString("address", toAddress)
                 .asString();
