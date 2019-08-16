@@ -11,14 +11,14 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.google.protobuf.ByteString;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -178,27 +178,19 @@ public class SimpleTransactionIT {
                 .orElse(0L);
     }
 
-    private void mint() throws IOException {
+    private void mint() {
         long amountInMicroLibras = 1_000_000_000;
 
-        URL faucet = new URL(
-                format("http://faucet.testnet.libra.org?amount=%d&address=%s", amountInMicroLibras,
-                        sourceAccount.getAddress()));
-
-        HttpURLConnection con = (HttpURLConnection) faucet.openConnection();
-        con.setRequestMethod("GET");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
-
-        int status = con.getResponseCode();
+        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
+                .queryString("amount", amountInMicroLibras)
+                .queryString("address", sourceAccount.getAddress())
+                .asString();
 
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
                 .atMost(1, MINUTES)
                 .until(() -> findBalance(sourceAccount.getAddress()) > 0);
 
-        con.disconnect();
-
-        assertEquals(200, status);
+        assertEquals(200, response.getStatus());
     }
 
     private ExtendedPrivKey generateKey() {
