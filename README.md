@@ -56,9 +56,13 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 **Transaction is not executed, but without errors (no events, no transaction in librabrowser.io)**
 
 *   The execution of the example main classes might terminate before the actual action is performed. 
-  *   To prevent this, add `Thread.sleep(2000)` after the last statement of the example.
+   
+  *    To prevent this, add `Thread.sleep(2000)` after the last statement of the example.
+   
 *   You might have specified too few gas. 
+   
   *   Try increasing `maxGasAmount`.
+   
 
 ### Contributors
 *   [ketola](https://github.com/ketola) (Sauli Ketola) 
@@ -70,4 +74,4 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 *   [java-libra-client](https://github.com/ice09/java-libra-client) 
 *   [jlibra-spring-boot-starter](https://github.com/ice09/jlibra-spring-boot-starter) 
 *   [libra-payment-processor](https://github.com/ice09/libra-payment-processor) 
-  
+
