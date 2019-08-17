@@ -6,17 +6,17 @@ A Java library for interacting with the Libra blockchain
 
 ![Overview](docs/img/jlibra.png)
 
-# Prerequisites
+## Prerequisites
 
-* JDK 8+
-* Maven 3+
+  * JDK 8+ 
+  * Maven 3+ 
 
-# Setup
+## Setup
 
-* Clone this repo
-* Build project with `mvn install`
+  * Clone this repo 
+  * Build project with `mvn install` 
 
-# Usage
+## Try the examples
 
 Start sample Main classes in `dev.jlibra.example` package for examples
 
@@ -32,15 +32,30 @@ Start sample Main classes in `dev.jlibra.example` package for examples
 
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
-# How-Tos & Step-by-Step Guides
+## Use JLibra in your project
+
+Maven:
+```
+<dependency>
+  <groupId>dev.jlibra</groupId>
+  <artifactId>jlibra-core</artifactId>
+  <version>0.0.2</version>
+</dependency>
+```
+
+Gradle:
+
+`compile("dev.jlibra:jlibra-core:0.0.2")`
+
+## How-Tos & Step-by-Step Guides
 
 How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO.md).
 
-# Known Issues
+## Known Issues
 
 **Transaction is not executed, but without errors (no events, no transaction in librabrowser.io)**
 
-* The execution of the example main classes might terminate before the actual action is performed. 
-  * To prevent this, add `Thread.sleep(2000)` after the last statement of the example.
-* You might have specified too few gas. 
-  * Try increasing `maxGasAmount`.
+  * The execution of the example main classes might terminate before the actual action is performed. 
+    * To prevent this, add `Thread.sleep(2000)` after the last statement of the example.
+  * You might have specified too few gas. 
+    * Try increasing `maxGasAmount`.
