@@ -55,10 +55,10 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 
 **Transaction is not executed, but without errors (no events, no transaction in librabrowser.io)**
 
-*   The execution of the example main classes might terminate before the actual action is performed. 
-  *    To prevent this, add `Thread.sleep(2000)` after the last statement of the example.   
-*   You might have specified too few gas. 
-  *   Try increasing `maxGasAmount`.
+1.   The execution of the example main classes might terminate before the actual action is performed. 
+ *   To prevent this, add `Thread.sleep(2000)` after the last statement of the example.   
+2.   You might have specified too few gas.  
+ *   Try increasing `maxGasAmount`. 
    
 ### Contributors
 *   [ketola](https://github.com/ketola) (Sauli Ketola) 
