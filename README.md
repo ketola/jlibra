@@ -8,13 +8,13 @@ A Java library for interacting with the Libra blockchain
 
 ## Prerequisites
 
-* JDK 8+ 
-* Maven 3+ 
+*   JDK 8+ 
+*   Maven 3+ 
 
 ## Setup
 
-* Clone this repo 
-* Build project with `mvn install` 
+*   Clone this repo 
+*   Build project with `mvn install` 
 
 ## Try the examples
 
@@ -55,19 +55,19 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 
 **Transaction is not executed, but without errors (no events, no transaction in librabrowser.io)**
 
-* The execution of the example main classes might terminate before the actual action is performed. 
-  * To prevent this, add `Thread.sleep(2000)` after the last statement of the example.
-* You might have specified too few gas. 
-  * Try increasing `maxGasAmount`.
+*   The execution of the example main classes might terminate before the actual action is performed. 
+  *   To prevent this, add `Thread.sleep(2000)` after the last statement of the example.
+*   You might have specified too few gas. 
+  *   Try increasing `maxGasAmount`.
 
 ### Contributors
- * [ketola](https://github.com/ketola) (Sauli Ketola) 
- * [ice09](https://github.com/ice09)
- * [hczerpak](https://github.com/hczerpak) (Hubert Czerpak)
+*   [ketola](https://github.com/ketola) (Sauli Ketola) 
+*   [ice09](https://github.com/ice09)
+*   [hczerpak](https://github.com/hczerpak) (Hubert Czerpak)
    
 ### Projects using JLibra
-  * [libra-message-signing](https://github.com/ice09/libra-message-signing) 
-  * [java-libra-client](https://github.com/ice09/java-libra-client) 
-  * [jlibra-spring-boot-starter](https://github.com/ice09/jlibra-spring-boot-starter) 
-  * [libra-payment-processor](https://github.com/ice09/libra-payment-processor) 
+*   [libra-message-signing](https://github.com/ice09/libra-message-signing) 
+*   [java-libra-client](https://github.com/ice09/java-libra-client) 
+*   [jlibra-spring-boot-starter](https://github.com/ice09/jlibra-spring-boot-starter) 
+*   [libra-payment-processor](https://github.com/ice09/libra-payment-processor) 
   
