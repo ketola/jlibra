@@ -41,6 +41,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples
 
 ## Use JLibra in your project
 
+Versions of JLibra are deployed to the [Central Maven repository](https://search.maven.org/), you can add JLibra as a dependency to your project:
+
 Maven:
 ```xml
 <dependency>
