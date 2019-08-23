@@ -1,28 +1,37 @@
-# Mint and Transfer Coins
+# Create an account, mint and transfer coins
 
-jlibra currently only supports public/private key "accounts", ie. a key pair is generated and can be used to sign transactions and prove ownage of an address.
-This guide shows how to use jlibra with the Libra CLI to transfer coins.
+This guide shows how to use Jlibra to create accounts, mint coins and tranfer the coins between accounts.
 
-* Create public/private key pair with jlibra `GenerateKeys`. An address is printed, this is your "account" (from now on ACCOUNT_ADDRESS).
+## Create the keypair / account
+Create public/private key pair with [`GenerateKeysExample`](https://github.com/ketola/jlibra/blob/master/jlibra-examples/src/main/java/dev/jlibra/example/GenerateKeysExample.java). The address, public key and the private key is printed, this is your "account" (from now on ACCOUNT_ADDRESS).
 
-**For local or Testnet**
-* Start Libra CLI (local or against Libra Testnet).
-* Call `account mint <ACCOUNT_ADDRESS> 100`, this will ask the faucet to transfer 100 coins to your ACCOUNT_ADDRESS
+Example output:
 
-Or, **for Testnet** only
-* Call http://faucet.testnet.libra.org/?address=<ACCOUNT_ADDRESS>&amount=1000000000 in a browser, you will receive a txid.
+```text
+Libra address: cf97548205a125bf4184256480721e73e1d7fcd0d8126da719549d705812872b
+Public key: 302a300506032b6570032100328f6805...
+Private key: 3051020101300506032b657004220420950c732062792d7c8b344e029afe...
+```
 
-* Check with `query balance <ACCOUNT_ADDRESS>` if you got coins
+## Mint some coins to your account
+Use the [`MintExample`](https://github.com/ketola/jlibra/blob/master/jlibra-examples/src/main/java/dev/jlibra/example/MintExample.java) (change the account address to the one you received in the first step)
 
-Now you have money at your "account" ACCOUNT_ADDRESS and you can spend it with the corresponding private key.
+## Check your balance
+Use the [`GetAccountStateExample`](https://github.com/ketola/jlibra/blob/master/jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java) to check your account balance. It will print out your balance with some other information.
 
-_Note: You cannot transfer the coins in the CLI for now as the CLI lets you transfer with real accounts only. You have to use the 
-`TransferExample` in jlibra to transfer coins._
+Example output:
 
-# Interact with Libra CLI
+```text
+Address: 6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c
+Received events: 2
+Sent events: 0
+Balance (microLibras): 20000000
+Balance (Libras): 20
+Sequence number: 0
+Delegated withdrawal capability: false
+```
 
-* Create new account in CLI with account create.
-* Transfer coins from your ACCOUNT_ADDRESS to the CLI-created address with jlibra (`TransferExample`)
-* After this step, you can now transfer the coins in the CLI
-
-_Note: Be aware that if your don't store your accounts in the CLI, they are lost after shutdown. You'ld have to write and recover using the CLI._
+## Transfer coins to another account
+* Create a new account with the [`GenerateKeysExample`](https://github.com/ketola/jlibra/blob/master/jlibra-examples/src/main/java/dev/jlibra/example/GenerateKeysExample.java).
+* Transfer coins with the [`TransferExample`](https://github.com/ketola/jlibra/blob/master/jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
+* Check the balances with the [`GetAccountStateExample`](https://github.com/ketola/jlibra/blob/master/jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java)
