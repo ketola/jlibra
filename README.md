@@ -1,10 +1,17 @@
-# jlibra
+# JLibra
 [![CircleCI](https://circleci.com/gh/ketola/jlibra.svg?style=svg)](https://circleci.com/gh/ketola/jlibra)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dd682f23555c48aca137eb4c657d9497)](https://www.codacy.com/app/ketola/jlibra?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ketola/jlibra&amp;utm_campaign=Badge_Grade)
  
-A Java library for interacting with the Libra blockchain
+A Java library for building applications on [Libra](https://libra.org/)
 
 ![Overview](docs/img/jlibra.png)
+
+## Motivation
+The API for creating transactions and querying the database of Libra uses [gRPC](https://grpc.io/) - a high performance remote procedure call system utilizing [HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/) for transport and [Protocol Buffers](https://developers.google.com/protocol-buffers/) for data serialization. 
+
+gRPC is designed to be usable from several platforms, but using the gRPC api directly from an application would not be optimal and would result in lots of boiler plate code - and that's where JLibra shows it's power for Java application developers.
+
+JLibra simplifies integration to Libra but does not hide any features of the Libra api, this makes it possible to implement anything supported by Libra with Java. 
 
 ## Prerequisites
 
@@ -33,6 +40,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
 ## Use JLibra in your project
+
+Versions of JLibra are deployed to the [Central Maven repository](https://search.maven.org/), you can add JLibra as a dependency to your project:
 
 Maven:
 ```xml
