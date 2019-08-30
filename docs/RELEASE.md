@@ -8,3 +8,5 @@
 3. Give a new snapshot version number for the project 
   * `mvn versions:set -DnewVersion=<version number>-SNAPSHOT`
 4. Commit and push the changes to git
+
+For more information read: https://central.sonatype.org/pages/apache-maven.html
