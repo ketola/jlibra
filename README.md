@@ -1,3 +1,8 @@
+## ATTENTION!
+The serialization of transaction data has changed in Libra. You can read more about it here: https://github.com/libra/libra/tree/master/common/canonical_serialization
+
+The serialization needs to be implemented in JLibra also, until this is fixed, the transactions sent with JLibra will fail.
+
 # JLibra
 [![CircleCI](https://circleci.com/gh/ketola/jlibra.svg?style=svg)](https://circleci.com/gh/ketola/jlibra)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dd682f23555c48aca137eb4c657d9497)](https://www.codacy.com/app/ketola/jlibra?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ketola/jlibra&amp;utm_campaign=Badge_Grade)
