@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import org.bouncycastle.util.encoders.Hex;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -28,7 +27,6 @@ public interface AccountData {
     boolean getDelegatedWithdrawalCapability();
 
     static AccountData deserialize(byte[] bytes) {
-        System.out.println(Hex.toHexString(bytes));
         try (DataInputStream accountDataStream = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int addressLength = readInt(accountDataStream, 4);
             byte[] address = readBytes(accountDataStream, addressLength);
