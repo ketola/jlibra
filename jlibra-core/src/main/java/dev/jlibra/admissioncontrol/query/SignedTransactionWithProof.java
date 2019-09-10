@@ -11,5 +11,5 @@ public interface SignedTransactionWithProof {
 
     byte[] getSenderSignature();
 
-    List<PaymentEvent> getEvents();
+    List<Event> getEvents();
 }

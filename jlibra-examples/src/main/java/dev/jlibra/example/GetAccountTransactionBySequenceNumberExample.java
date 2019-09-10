@@ -1,15 +1,15 @@
 package dev.jlibra.example;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.util.encoders.Hex;
+
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
 
 public class GetAccountTransactionBySequenceNumberExample {
 
@@ -36,10 +36,9 @@ public class GetAccountTransactionBySequenceNumberExample {
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
             logger.info("Sender public key: " + Hex.toHexString(tx.getSenderPublicKey()));
             logger.info("Sender signature: " + Hex.toHexString(tx.getSenderSignature()));
-
-            tx.getEvents().forEach(e ->
-                    logger.info("{} {} Amount: {}", Hex.toHexString(e.getAddress()), e.getEventPath().getEventType(), e.getAmount()));
-
+            tx.getEvents()
+                    .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
+                            Hex.toHexString(e.getAccountAddress()), e.getSequenceNumber(), e.getAmount()));
         });
 
         channel.shutdown();

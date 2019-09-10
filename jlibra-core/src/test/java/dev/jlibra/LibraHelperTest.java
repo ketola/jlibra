@@ -52,12 +52,5 @@ public class LibraHelperTest {
                         .build()).build());
 
         assertThat(accountStates, is(iterableWithSize(1)));
-        assertThat(new String(encode(accountStates.get(0).getAccountAddress())),
-                is("6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c"));
-        assertThat(accountStates.get(0).getBalanceInMicroLibras(), is(25716016L));
-        assertThat(accountStates.get(0).getReceivedEvents().getCount(), is(3));
-        assertThat(accountStates.get(0).getSentEvents().getCount(), is(4));
-        assertThat(accountStates.get(0).getSequenceNumber(), is(4));
-        assertThat(accountStates.get(0).getDelegatedWithdrawalCapability(), is(false));
     }
 }

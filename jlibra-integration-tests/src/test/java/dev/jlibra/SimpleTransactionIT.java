@@ -1,6 +1,6 @@
 package dev.jlibra;
 
-import static admission_control.AdmissionControlOuterClass.AdmissionControlStatus.Accepted;
+import static admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode.Accepted;
 import static dev.jlibra.mnemonic.Mnemonic.WORDS;
 import static java.lang.String.format;
 import static java.time.Instant.now;
@@ -161,7 +161,7 @@ public class SimpleTransactionIT {
 
         System.out.println("Transaction submitted with result: " + result.toString());
 
-        assertEquals(Accepted, result.getAdmissionControlStatus());
+        assertEquals(Accepted, result.getAdmissionControlStatus().getCode());
     }
 
     private long maybeFindSequenceNumber(AdmissionControl admissionControl, String forAddress) {
