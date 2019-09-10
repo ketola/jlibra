@@ -7,10 +7,11 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.time.Instant;
 
-import com.google.protobuf.ByteString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
+
+import com.google.protobuf.ByteString;
 
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
@@ -39,7 +40,7 @@ public class TransferExample {
         String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
         long amount = 1;
-        int sequenceNumber = 2;
+        int sequenceNumber = 0;
 
         logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
@@ -55,9 +56,9 @@ public class TransferExample {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(600000)
+                .maxGasAmount(240000)
                 .gasUnitPrice(1)
-                .expirationTime(Instant.now().getEpochSecond() + 1000)
+                .expirationTime(Instant.now().getEpochSecond() + 60)
                 .program(
                         ImmutableProgram.builder()
                                 .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
