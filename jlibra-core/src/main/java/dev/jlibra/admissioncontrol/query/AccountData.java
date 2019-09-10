@@ -3,17 +3,17 @@ package dev.jlibra.admissioncontrol.query;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface AccountState {
+public interface AccountData {
 
-    byte[] getAddress();
+    byte[] getAccountAddress();
 
     long getBalanceInMicroLibras();
 
-    long getReceivedEvents();
+    EventHandle getReceivedEvents();
 
-    long getSentEvents();
+    EventHandle getSentEvents();
 
-    long getSequenceNumber();
+    int getSequenceNumber();
 
     boolean getDelegatedWithdrawalCapability();
 

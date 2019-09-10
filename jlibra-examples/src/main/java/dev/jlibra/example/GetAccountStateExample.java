@@ -34,9 +34,9 @@ public class GetAccountStateExample {
                         .build());
 
         result.getAccountStates().forEach(accountState -> {
-            logger.info("Address: {}", Hex.toHexString(accountState.getAddress()));
-            logger.info("Received events: {}", accountState.getReceivedEvents());
-            logger.info("Sent events: {}", accountState.getSentEvents());
+            logger.info("Address: {}", Hex.toHexString(accountState.getAccountAddress()));
+            logger.info("Received events: {}", accountState.getReceivedEvents().getCount());
+            logger.info("Sent events: {}", accountState.getSentEvents().getCount());
             logger.info("Balance (microLibras): {}", accountState.getBalanceInMicroLibras());
             logger.info("Balance (Libras): {}",
                     new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));

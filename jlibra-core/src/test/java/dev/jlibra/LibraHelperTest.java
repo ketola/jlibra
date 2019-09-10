@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 
-import dev.jlibra.admissioncontrol.query.AccountState;
+import dev.jlibra.admissioncontrol.query.AccountData;
 import types.AccountStateBlobOuterClass.AccountStateBlob;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
 import types.GetWithProof.GetAccountStateResponse;
@@ -24,7 +24,7 @@ import types.Transaction.RawTransaction;
 public class LibraHelperTest {
 
     private static final String PRIVATE_KEY_HEX = "3051020101300506032b6570042204202b1115484c64c297179d4ec8aa660f09eeae900a1ba6f16423f82869a101c8e98121002e00f50d1ba024895c72a92cee1310dfafefcc826629c266a4c80b914772f82d";
-    private static final String ACCOUNT_STATE_HEX = "010000002100000001217da6c6b3e19f1825cfb2676daecce3bf3de03cf26647c78df00b371b25cc9745000000200000006674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1ca8056b3b0000000000010000000000000003000000000000000300000000000000";
+    private static final String ACCOUNT_STATE_HEX = "010000002100000001217da6c6b3e19f1825cfb2676daecce3bf3de03cf26647c78df00b371b25cc978d000000200000006674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c306588010000000000030000000000000020000000713683f27b7941f8178a11aa63e84df91f145778e4643916e444412eb6d6b0e5040000000000000020000000071f1ea79b401b3dc196a5814e11b0f52072c7a7d56fcdaa8f9d68f0022905550400000000000000";
 
     @BeforeClass
     public static void setUpClass() {
@@ -43,7 +43,7 @@ public class LibraHelperTest {
 
     @Test
     public void testReadAccountStates() {
-        List<AccountState> accountStates = LibraHelper
+        List<AccountData> accountStates = LibraHelper
                 .readAccountStates(GetAccountStateResponse.newBuilder().setAccountStateWithProof(AccountStateWithProof
                         .newBuilder().setBlob(
                                 AccountStateBlob.newBuilder()
@@ -52,12 +52,12 @@ public class LibraHelperTest {
                         .build()).build());
 
         assertThat(accountStates, is(iterableWithSize(1)));
-        assertThat(new String(encode(accountStates.get(0).getAddress())),
+        assertThat(new String(encode(accountStates.get(0).getAccountAddress())),
                 is("6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c"));
-        assertThat(accountStates.get(0).getBalanceInMicroLibras(), is(996869544L));
-        assertThat(accountStates.get(0).getReceivedEvents(), is(1L));
-        assertThat(accountStates.get(0).getSentEvents(), is(3L));
-        assertThat(accountStates.get(0).getSequenceNumber(), is(3L));
+        assertThat(accountStates.get(0).getBalanceInMicroLibras(), is(25716016L));
+        assertThat(accountStates.get(0).getReceivedEvents().getCount(), is(3));
+        assertThat(accountStates.get(0).getSentEvents().getCount(), is(4));
+        assertThat(accountStates.get(0).getSequenceNumber(), is(4));
         assertThat(accountStates.get(0).getDelegatedWithdrawalCapability(), is(false));
     }
 }

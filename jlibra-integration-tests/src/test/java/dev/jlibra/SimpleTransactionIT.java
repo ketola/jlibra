@@ -16,9 +16,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.google.protobuf.ByteString;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +26,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.protobuf.ByteString;
+
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.query.AccountState;
+import dev.jlibra.admissioncontrol.query.AccountData;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
@@ -48,6 +47,8 @@ import dev.jlibra.mnemonic.Seed;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 
 /**
  * 1. Create two key pairs A and B. 2. Mint X libras for account represented by
@@ -124,9 +125,9 @@ public class SimpleTransactionIT {
         long balance = result.getAccountStates()
                 .stream()
                 .filter(accountState -> Arrays.equals(
-                        accountState.getAddress(),
+                        accountState.getAccountAddress(),
                         Hex.decode(forAddress)))
-                .map(AccountState::getBalanceInMicroLibras)
+                .map(AccountData::getBalanceInMicroLibras)
                 .findFirst()
                 .orElse(0L);
 
@@ -171,11 +172,11 @@ public class SimpleTransactionIT {
         return result.getAccountStates()
                 .stream()
                 .filter(accountState -> Arrays.equals(
-                        accountState.getAddress(),
+                        accountState.getAccountAddress(),
                         Hex.decode(forAddress)))
-                .map(AccountState::getSequenceNumber)
+                .map(AccountData::getSequenceNumber)
                 .findFirst()
-                .orElse(0L);
+                .orElse(0);
     }
 
     private void mint() {

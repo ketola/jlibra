@@ -16,9 +16,11 @@ import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
-import dev.jlibra.admissioncontrol.query.AccountState;
+import dev.jlibra.admissioncontrol.query.AccountData;
+import dev.jlibra.admissioncontrol.query.EventHandle;
 import dev.jlibra.admissioncontrol.query.EventPath;
-import dev.jlibra.admissioncontrol.query.ImmutableAccountState;
+import dev.jlibra.admissioncontrol.query.ImmutableAccountData;
+import dev.jlibra.admissioncontrol.query.ImmutableEventHandle;
 import dev.jlibra.admissioncontrol.query.ImmutableEventPath;
 import dev.jlibra.admissioncontrol.query.ImmutablePaymentEvent;
 import dev.jlibra.admissioncontrol.query.ImmutableSignedTransactionWithProof;
@@ -54,8 +56,8 @@ public class LibraHelper {
         return signature;
     }
 
-    public static List<AccountState> readAccountStates(GetAccountStateResponse getAccountStateResponse) {
-        List<AccountState> accountStates = new ArrayList<>();
+    public static List<AccountData> readAccountStates(GetAccountStateResponse getAccountStateResponse) {
+        List<AccountData> accountStates = new ArrayList<>();
 
         byte[] blobBytes = getAccountStateResponse.getAccountStateWithProof().getBlob().getBlob().toByteArray();
 
@@ -79,12 +81,31 @@ public class LibraHelper {
             byte[] address = readBytes(stateStream, addressLength);
             long balance = readLong(stateStream, 8);
             boolean delegatedWithdrawalCapability = readBoolean(stateStream);
-            long receivedEvents = readLong(stateStream, 8);
-            long sentEvents = readLong(stateStream, 8);
-            long sequenceNumber = readLong(stateStream, 8);
 
-            accountStates.add(ImmutableAccountState.builder()
-                    .address(address)
+            int receivedEventsCount = readInt(stateStream, 4);
+            // skip struct attribute sequence number
+            readInt(stateStream, 4);
+            int receivedKeyLength = readInt(stateStream, 4);
+            byte[] eventKey = readBytes(stateStream, addressLength);
+            EventHandle receivedEvents = ImmutableEventHandle.builder()
+                    .key(eventKey)
+                    .count(receivedEventsCount)
+                    .build();
+
+            int sentEventsCount = readInt(stateStream, 4);
+            // skip struct attribute sequence number
+            readInt(stateStream, 4);
+            int sentKeyLength = readInt(stateStream, 4);
+            byte[] eventKey2 = readBytes(stateStream, addressLength);
+            EventHandle sentEvents = ImmutableEventHandle.builder()
+                    .key(eventKey2)
+                    .count(sentEventsCount)
+                    .build();
+
+            int sequenceNumber = readInt(stateStream, 4);
+
+            accountStates.add(ImmutableAccountData.builder()
+                    .accountAddress(address)
                     .sequenceNumber(sequenceNumber)
                     .balanceInMicroLibras(balance)
                     .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
