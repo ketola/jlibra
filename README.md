@@ -21,7 +21,7 @@ JLibra simplifies integration to Libra but does not hide any features of the Lib
 ## Setup
 
 *   Clone this repo 
-*   Build project with `mvn install` 
+*   Build project with `mvn install` (this is important because the project contains classes that will be created during the Maven build and simply checking the project out is not enough)
 
 ## Try the examples
 
