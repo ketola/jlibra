@@ -19,6 +19,7 @@ import dev.jlibra.admissioncontrol.query.ImmutableUpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
+import types.GetWithProof;
 import types.GetWithProof.GetAccountStateRequest;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
@@ -113,14 +114,23 @@ public class GrpcMapper {
         response.getResponseItemsList().forEach(responseItem -> {
             accountStates.addAll(LibraHelper.readAccountStates(responseItem.getGetAccountStateResponse()));
 
-            accountTransactionsBySequenceNumber.add(LibraHelper
-                    .readSignedTransactionWithProof(responseItem.getGetAccountTransactionBySequenceNumberResponse()));
+            addSignedTransactionWithProof(responseItem, accountTransactionsBySequenceNumber);
         });
 
         return ImmutableUpdateToLatestLedgerResult.builder()
                 .accountStates(accountStates)
                 .accountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber)
                 .build();
+    }
+
+    private static void addSignedTransactionWithProof(GetWithProof.ResponseItem responseItem,
+            List<SignedTransactionWithProof> accumulator) {
+        GetWithProof.GetAccountTransactionBySequenceNumberResponse transactionResponse = responseItem
+                .getGetAccountTransactionBySequenceNumberResponse();
+        if (transactionResponse.hasSignedTransactionWithProof()) {
+            accumulator.add(LibraHelper
+                    .readSignedTransactionWithProof(responseItem.getGetAccountTransactionBySequenceNumberResponse()));
+        }
     }
 
 }

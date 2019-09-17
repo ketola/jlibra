@@ -2,10 +2,12 @@ package dev.jlibra.admissioncontrol;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.google.protobuf.ByteString;
 
+import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.BeforeClass;
@@ -21,6 +23,7 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.transaction.*;
+import types.GetWithProof;
 import types.GetWithProof.RequestItem;
 import types.Transaction.RawTransaction;
 import types.Transaction.TransactionArgument.ArgType;
@@ -124,4 +127,15 @@ public class GrpcMapperTest {
         assertThat(requestItems.get(1).getGetAccountTransactionBySequenceNumberRequest().getSequenceNumber(), is(2L));
     }
 
+    @Test
+    public void updateToLatestLedgerResponseToResult() {
+        GetWithProof.UpdateToLatestLedgerResponse response = GetWithProof.UpdateToLatestLedgerResponse.newBuilder()
+                .addResponseItems(GetWithProof.ResponseItem.newBuilder().build())
+                .build();
+
+        UpdateToLatestLedgerResult result = GrpcMapper
+                .updateToLatestLedgerResponseToResult(response);
+
+        assertEquals(0, result.getAccountTransactionsBySequenceNumber().size());
+    }
 }
