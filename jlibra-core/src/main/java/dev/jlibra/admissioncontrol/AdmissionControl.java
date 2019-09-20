@@ -2,8 +2,6 @@ package dev.jlibra.admissioncontrol;
 
 import static dev.jlibra.admissioncontrol.GrpcMapper.toSubmitTransactionRequest;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +12,8 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.admissioncontrol.query.Query;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
+import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
 import io.grpc.Channel;
 import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
@@ -29,9 +27,8 @@ public class AdmissionControl {
         this.channel = channel;
     }
 
-    public SubmitTransactionResult submitTransaction(PublicKey publicKey, PrivateKey privateKey,
-            Transaction transaction) {
-        SubmitTransactionRequest request = toSubmitTransactionRequest(publicKey, privateKey, transaction);
+    public SubmitTransactionResult submitTransaction(SignedTransaction transaction) {
+        SubmitTransactionRequest request = toSubmitTransactionRequest(transaction);
 
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
         SubmitTransactionResponse response = stub.submitTransaction(request);

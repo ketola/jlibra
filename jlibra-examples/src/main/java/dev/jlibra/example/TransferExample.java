@@ -14,10 +14,13 @@ import org.bouncycastle.util.encoders.Hex;
 import com.google.protobuf.ByteString;
 
 import dev.jlibra.KeyUtils;
+import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.transaction.AddressArgument;
+import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -52,12 +55,13 @@ public class TransferExample {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
-        AddressArgument addressArgument = new AddressArgument(Hex.decode(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(Hex.decode(toAddress));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(240000)
                 .gasUnitPrice(1)
+                .senderAccount(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .program(
                         ImmutableProgram.builder()
@@ -66,8 +70,13 @@ public class TransferExample {
                                 .build())
                 .build();
 
-        SubmitTransactionResult result = admissionControl.submitTransaction(publicKey, privateKey,
-                transaction);
+        SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
+                .publicKey(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()))
+                .transaction(transaction)
+                .signature(LibraHelper.signTransaction(transaction, privateKey))
+                .build();
+
+        SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
 
         logger.info("Status type: {}", result.getStatusCase());
         logger.info("Admission control status: {}", result.getAdmissionControlStatus());
