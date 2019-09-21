@@ -6,8 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.bouncycastle.util.encoders.Hex;
-
 import dev.jlibra.admissioncontrol.transaction.TransactionArgument;
 
 public class CanonicalSerialization {
@@ -53,7 +51,6 @@ public class CanonicalSerialization {
     }
 
     public static byte[] join(byte[] a, byte[] b) {
-        System.out.println(Hex.toHexString(b));
         byte[] ab = new byte[a.length + b.length];
         System.arraycopy(a, 0, ab, 0, a.length);
         System.arraycopy(b, 0, ab, a.length, b.length);

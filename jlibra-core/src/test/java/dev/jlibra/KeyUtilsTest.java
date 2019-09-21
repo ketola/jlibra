@@ -27,7 +27,7 @@ public class KeyUtilsTest {
     }
 
     @Test
-    public void testToLibraAddress() throws Exception {
+    public void testHexStringToLibraAddress() throws Exception {
         PublicKey publicKey = getKeyFactory().generatePublic(new X509EncodedKeySpec(Hex
                 .decode(PUBLIC_KEY_HEX)));
 

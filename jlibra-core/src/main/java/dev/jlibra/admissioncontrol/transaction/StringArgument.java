@@ -1,10 +1,9 @@
 package dev.jlibra.admissioncontrol.transaction;
 
 import static dev.jlibra.serialization.CanonicalSerialization.join;
+import static dev.jlibra.serialization.CanonicalSerialization.serializeString;
 
 import org.bouncycastle.util.encoders.Hex;
-
-import dev.jlibra.serialization.CanonicalSerialization;
 
 public class StringArgument implements TransactionArgument {
 
@@ -18,7 +17,7 @@ public class StringArgument implements TransactionArgument {
 
     @Override
     public byte[] serialize() {
-        return join(PREFIX, CanonicalSerialization.serializeString(value));
+        return join(PREFIX, serializeString(value));
     }
 
     @Override

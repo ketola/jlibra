@@ -11,6 +11,7 @@ import java.security.Security;
 import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,18 +21,17 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import types.GetWithProof;
 import types.GetWithProof.RequestItem;
 
 public class GrpcMapperTest {
-
-    private static final String PRIVATE_KEY_HEX = "3051020101300506032b6570042204206dadf7a252c0e74add2e545a1e3c811f1f4bdd88f8c5e0080e068f4df6d909128121000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021";
-    private static final String PUBLIC_KEY_HEX = "302a300506032b65700321000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021";
-
     @BeforeClass
     public static void setUpClass() {
         Security.addProvider(new BouncyCastleProvider());
@@ -44,41 +44,24 @@ public class GrpcMapperTest {
                 .maxGasAmount(6000)
                 .gasUnitPrice(1)
                 .sequenceNumber(1)
+                .expirationTime(1L)
+                .senderAccount(new byte[] { 1 })
                 .program(ImmutableProgram.builder()
-                        .addArguments(new U64Argument(1000), null)
+                        .addArguments(new U64Argument(1000), new AccountAddressArgument(new byte[] { 1 }))
                         .code(ByteString.copyFrom(new byte[] { 1 }))
                         .build())
                 .build();
 
-        // PrivateKey privateKey = KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX);
-        // PublicKey publicKey = KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX);
+        SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
+                .publicKey(new byte[] { 1 })
+                .signature(new byte[] { 1 })
+                .transaction(transaction)
+                .build();
 
-        SubmitTransactionRequest request = GrpcMapper.toSubmitTransactionRequest(null);
+        SubmitTransactionRequest request = GrpcMapper.toSubmitTransactionRequest(signedTransaction);
 
-        // Transaction rawTransaction =
-        // Transaction.parseFrom(request.getSignedTxn().getSignedTxn());
-
-        // raw transaction
-        /*
-         * assertThat(rawTransaction.getExpirationTime(), is(10L));
-         * assertThat(rawTransaction.getGasUnitPrice(), is(1L));
-         * assertThat(rawTransaction.getMaxGasAmount(), is(6000L));
-         * assertThat(rawTransaction.getSequenceNumber(), is(1L));
-         * 
-         * // program assertThat(rawTransaction.getProgram().getCode().toByteArray(),
-         * is(new byte[] { 1 }));
-         * assertThat(rawTransaction.getProgram().getArgumentsCount(), is(2));
-         * assertThat(rawTransaction.getProgram().getArgumentsList().get(0).getType(),
-         * is(ArgType.U64));
-         * assertThat(rawTransaction.getProgram().getArgumentsList().get(1).getType(),
-         * is(ArgType.ADDRESS));
-         * 
-         * // signed transaction
-         * assertThat(request.getSignedTxn().getSenderPublicKey().toByteArray(),
-         * is(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded())));
-         * assertThat(Hex.toHexString(request.getSignedTxn().getSenderSignature().
-         * toByteArray()), is(notNullValue()));
-         */
+        assertThat(Hex.toHexString(request.getSignedTxn().getSignedTxn().toByteArray()), is(
+                "010000000101000000000000000000000001000000010200000000000000e8030000000000000100000001000000010000000070170000000000000100000000000000010000000000000001000000010100000001"));
     }
 
     @Test
