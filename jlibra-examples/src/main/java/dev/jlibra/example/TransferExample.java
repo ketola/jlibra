@@ -43,7 +43,7 @@ public class TransferExample {
         String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
         long amount = 1;
-        int sequenceNumber = 0;
+        int sequenceNumber = 2;
 
         logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
@@ -59,7 +59,7 @@ public class TransferExample {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(240000)
+                .maxGasAmount(160000)
                 .gasUnitPrice(1)
                 .senderAccount(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
@@ -71,20 +71,22 @@ public class TransferExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()))
+                .publicKey(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded()))
                 .transaction(transaction)
                 .signature(LibraHelper.signTransaction(transaction, privateKey))
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
 
+        logger.info(result);
         logger.info("Status type: {}", result.getStatusCase());
         logger.info("Admission control status: {}", result.getAdmissionControlStatus());
         logger.info("Mempool status: {}", result.getMempoolStatus());
         logger.info("VM status: {}", result.getVmStatus());
 
+        Thread.sleep(3000);
         channel.shutdown();
-        Thread.sleep(2000); // add sleep to prevent premature closing of channel
+        Thread.sleep(3000); // add sleep to prevent premature closing of channel
     }
 
 }

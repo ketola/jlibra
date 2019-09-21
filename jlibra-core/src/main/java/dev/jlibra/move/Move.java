@@ -10,12 +10,12 @@ public class Move {
 
     public static byte[] peerToPeerTransferAsBytes() {
         try {
-            InputStream jsonBinary = Move.class.getResourceAsStream("/move/peer_to_peer_transfer.bin.json");
+            InputStream jsonBinary = Move.class.getResourceAsStream("/move/peer_to_peer_transfer.json");
             String json = readJson(jsonBinary, "UTF-8");
             String[] bytesAsString = json.substring(json.indexOf('[') + 1, json.indexOf(']')).split(",");
             byte[] bytes = new byte[bytesAsString.length];
             for (int idx = 0; idx < bytesAsString.length; idx++) {
-                bytes[idx] = (byte)Integer.parseInt(bytesAsString[idx]);
+                bytes[idx] = (byte) Integer.parseInt(bytesAsString[idx]);
             }
             return bytes;
         } catch (IOException ex) {
