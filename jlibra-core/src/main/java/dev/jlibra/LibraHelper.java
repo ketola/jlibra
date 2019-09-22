@@ -75,17 +75,13 @@ public class LibraHelper {
 
     public static SignedTransactionWithProof readSignedTransactionWithProof(
             GetAccountTransactionBySequenceNumberResponse getAccountTransactionBySequenceNumberResponse) {
-        // TODO: get transaction data by deserializing the signed transaction
-        byte[] senderPublicKey = null;
-        byte[] senderSignature = null;
         List<Event> events = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
                 .getEvents().getEventsList().stream()
-                .map(Event::deserialize).collect(toList());
+                .map(Event::deserialize)
+                .collect(toList());
 
         return ImmutableSignedTransactionWithProof.builder()
                 .addAllEvents(events)
-                .senderPublicKey(senderPublicKey)
-                .senderSignature(senderSignature)
                 .build();
     }
 
