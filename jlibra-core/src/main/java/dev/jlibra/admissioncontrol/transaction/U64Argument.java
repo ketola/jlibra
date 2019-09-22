@@ -1,17 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import static dev.jlibra.serialization.CanonicalSerialization.join;
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
-
-import java.nio.ByteBuffer;
-
-import org.bouncycastle.util.encoders.Hex;
+import dev.jlibra.serialization.Serializer;
 
 public class U64Argument implements TransactionArgument {
 
     private long value;
 
-    private static final byte[] PREFIX = Hex.decode("00000000");
+    private static final int PREFIX = 0;
 
     public U64Argument(long value) {
         this.value = value;
@@ -19,8 +14,10 @@ public class U64Argument implements TransactionArgument {
 
     @Override
     public byte[] serialize() {
-        return join(PREFIX, ByteBuffer.allocate(Long.BYTES).order(LITTLE_ENDIAN).putLong(value)
-                .order(LITTLE_ENDIAN).array());
+        return Serializer.builder()
+                .appendInt(PREFIX)
+                .appendLong(value)
+                .toByteArray();
     }
 
     @Override

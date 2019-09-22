@@ -1,15 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import static dev.jlibra.serialization.CanonicalSerialization.join;
-import static dev.jlibra.serialization.CanonicalSerialization.serializeByteArray;
-
-import org.bouncycastle.util.encoders.Hex;
+import dev.jlibra.serialization.Serializer;
 
 public class AccountAddressArgument implements TransactionArgument {
 
-    private byte[] address;
+    private static final int PREFIX = 1;
 
-    private static final byte[] PREFIX = Hex.decode("01000000");
+    private byte[] address;
 
     public AccountAddressArgument(byte[] address) {
         this.address = address;
@@ -17,7 +14,10 @@ public class AccountAddressArgument implements TransactionArgument {
 
     @Override
     public byte[] serialize() {
-        return join(PREFIX, serializeByteArray(address));
+        return Serializer.builder()
+                .appendInt(PREFIX)
+                .appendByteArray(address)
+                .toByteArray();
     }
 
     @Override

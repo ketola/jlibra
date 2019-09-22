@@ -1,13 +1,10 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import static dev.jlibra.serialization.CanonicalSerialization.join;
-import static dev.jlibra.serialization.CanonicalSerialization.serializeString;
-
-import org.bouncycastle.util.encoders.Hex;
+import dev.jlibra.serialization.Serializer;
 
 public class StringArgument implements TransactionArgument {
 
-    private static final byte[] PREFIX = Hex.decode("02000000");
+    private static final int PREFIX = 2;
 
     private String value;
 
@@ -17,7 +14,10 @@ public class StringArgument implements TransactionArgument {
 
     @Override
     public byte[] serialize() {
-        return join(PREFIX, serializeString(value));
+        return Serializer.builder()
+                .appendInt(PREFIX)
+                .appendString(value)
+                .toByteArray();
     }
 
     @Override

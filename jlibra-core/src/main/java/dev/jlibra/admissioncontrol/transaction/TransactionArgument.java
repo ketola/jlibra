@@ -1,12 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-public interface TransactionArgument {
+import dev.jlibra.serialization.LibraSerializable;
+
+public interface TransactionArgument extends LibraSerializable {
 
     enum Type {
         U64, ADDRESS, STRING
     }
-
-    byte[] serialize();
 
     Type type();
 }

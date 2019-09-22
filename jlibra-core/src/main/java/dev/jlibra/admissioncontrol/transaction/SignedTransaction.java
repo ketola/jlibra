@@ -1,12 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import static dev.jlibra.serialization.CanonicalSerialization.join;
-import static dev.jlibra.serialization.CanonicalSerialization.serializeByteArray;
-
 import org.immutables.value.Value;
 
+import dev.jlibra.serialization.LibraSerializable;
+import dev.jlibra.serialization.Serializer;
+
 @Value.Immutable
-public interface SignedTransaction {
+public interface SignedTransaction extends LibraSerializable {
 
     Transaction getTransaction();
 
@@ -15,9 +15,10 @@ public interface SignedTransaction {
     byte[] getSignature();
 
     default byte[] serialize() {
-        byte[] result = getTransaction().serialize();
-        result = join(result, serializeByteArray(getPublicKey()));
-        result = join(result, serializeByteArray(getSignature()));
-        return result;
+        return Serializer.builder()
+                .appendSerializable(getTransaction())
+                .appendByteArray(getPublicKey())
+                .appendByteArray(getSignature())
+                .toByteArray();
     }
 }
