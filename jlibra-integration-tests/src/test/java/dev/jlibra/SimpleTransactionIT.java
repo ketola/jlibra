@@ -33,9 +33,11 @@ import dev.jlibra.admissioncontrol.query.AccountData;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.admissioncontrol.transaction.AddressArgument;
+import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -142,12 +144,13 @@ public class SimpleTransactionIT {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount);
-        AddressArgument addressArgument = new AddressArgument(Hex.decode(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(Hex.decode(toAddress));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(600000)
                 .gasUnitPrice(1)
+                .senderAccount(KeyUtils.toByteArrayLibraAddress(sourceAccount.publicKey.getEncoded()))
                 .expirationTime(now().getEpochSecond() + 1000)
                 .program(
                         ImmutableProgram.builder()
@@ -156,8 +159,13 @@ public class SimpleTransactionIT {
                                 .build())
                 .build();
 
-        SubmitTransactionResult result = admissionControl.submitTransaction(sourceAccount.publicKey,
-                sourceAccount.privateKey, transaction);
+        SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
+                .publicKey(KeyUtils.stripPublicKeyPrefix(sourceAccount.publicKey.getEncoded()))
+                .transaction(transaction)
+                .signature(LibraHelper.signTransaction(transaction, sourceAccount.privateKey))
+                .build();
+
+        SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
 
         System.out.println("Transaction submitted with result: " + result.toString());
 
