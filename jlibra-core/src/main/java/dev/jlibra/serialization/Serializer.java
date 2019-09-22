@@ -6,8 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import org.bouncycastle.util.encoders.Hex;
-
 import dev.jlibra.admissioncontrol.transaction.TransactionArgument;
 
 public class Serializer {
@@ -66,7 +64,6 @@ public class Serializer {
         byte[] ab = new byte[bytes.length + b.length];
         System.arraycopy(bytes, 0, ab, 0, bytes.length);
         System.arraycopy(b, 0, ab, bytes.length, b.length);
-        System.out.println(Hex.toHexString(ab).toUpperCase());
         this.bytes = ab;
         return this;
     }
