@@ -71,7 +71,7 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
    
 ### Contributors
 *   [ketola](https://github.com/ketola) (Sauli Ketola) 
-*   [ice09](https://github.com/ice09)
+*   [ice09](https://github.com/ice09) (Alexander Culum)
 *   [hczerpak](https://github.com/hczerpak) (Hubert Czerpak)
    
 ### Projects using JLibra
