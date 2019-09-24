@@ -3,7 +3,7 @@ package dev.jlibra.serialization;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import dev.jlibra.admissioncontrol.transaction.TransactionArgument;
@@ -26,15 +26,15 @@ public class Serializer {
     }
 
     public Serializer appendTransactionArguments(List<TransactionArgument> transactionArguments) {
-        append(intToByteArray(transactionArguments.size()));
+        Serializer serializer = append(intToByteArray(transactionArguments.size()));
         for (TransactionArgument arg : transactionArguments) {
-            append(arg.serialize());
+            serializer = serializer.append(arg.serialize());
         }
-        return this;
+        return serializer;
     }
 
     public Serializer appendString(String str) {
-        return appendByteArray(str.getBytes(Charset.forName("UTF-8")));
+        return appendByteArray(str.getBytes(StandardCharsets.UTF_8));
     }
 
     public Serializer appendLong(long l) {
@@ -50,26 +50,32 @@ public class Serializer {
     }
 
     private static byte[] intToByteArray(int i) {
-        return ByteBuffer.allocate(Integer.BYTES).order(LITTLE_ENDIAN).putInt(i)
+        return ByteBuffer.allocate(Integer.BYTES)
+                .order(LITTLE_ENDIAN).putInt(i)
                 .order(LITTLE_ENDIAN).array();
     }
 
     private static byte[] longToByteArray(long l) {
-        byte[] array = ByteBuffer.allocate(Long.BYTES).order(LITTLE_ENDIAN).putLong(l)
+        return ByteBuffer.allocate(Long.BYTES)
+                .order(LITTLE_ENDIAN).putLong(l)
                 .order(LITTLE_ENDIAN).array();
-        return array;
     }
 
     private Serializer append(byte[] b) {
-        byte[] ab = new byte[bytes.length + b.length];
-        System.arraycopy(bytes, 0, ab, 0, bytes.length);
-        System.arraycopy(b, 0, ab, bytes.length, b.length);
-        this.bytes = ab;
-        return this;
+        byte[] newBytes = new byte[bytes.length + b.length];
+        System.arraycopy(bytes, 0, newBytes, 0, bytes.length);
+        System.arraycopy(b, 0, newBytes, bytes.length, b.length);
+        return new Serializer(newBytes);
     }
 
     public byte[] toByteArray() {
-        return bytes;
+        return clone(bytes);
+    }
+
+    private byte[] clone(byte[] array) {
+        byte[] clone = new byte[array.length];
+        System.arraycopy(array, 0, clone, 0, array.length);
+        return clone;
     }
 
 }
