@@ -19,16 +19,16 @@ import dev.jlibra.admissioncontrol.query.AccountData;
 import dev.jlibra.admissioncontrol.query.Event;
 import dev.jlibra.admissioncontrol.query.ImmutableSignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
+import dev.jlibra.admissioncontrol.transaction.Transaction;
 import types.GetWithProof.GetAccountStateResponse;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberResponse;
-import types.Transaction.RawTransaction;
 
 public class LibraHelper {
 
-    public static byte[] signTransaction(RawTransaction rawTransaction, PrivateKey privateKey) {
+    public static byte[] signTransaction(Transaction rawTransaction, PrivateKey privateKey) {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
         byte[] saltDigest = digestSHA3.digest("RawTransaction@@$$LIBRA$$@@".getBytes());
-        byte[] transactionBytes = rawTransaction.toByteArray();
+        byte[] transactionBytes = rawTransaction.serialize();
         byte[] saltDigestAndTransaction = new byte[saltDigest.length + transactionBytes.length];
 
         System.arraycopy(saltDigest, 0, saltDigestAndTransaction, 0, saltDigest.length);
@@ -75,21 +75,13 @@ public class LibraHelper {
 
     public static SignedTransactionWithProof readSignedTransactionWithProof(
             GetAccountTransactionBySequenceNumberResponse getAccountTransactionBySequenceNumberResponse) {
-
-        byte[] senderPublicKey = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
-                .getSignedTransaction().getSenderPublicKey()
-                .toByteArray();
-        byte[] senderSignature = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
-                .getSignedTransaction().getSenderSignature()
-                .toByteArray();
         List<Event> events = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
                 .getEvents().getEventsList().stream()
-                .map(Event::deserialize).collect(toList());
+                .map(Event::deserialize)
+                .collect(toList());
 
         return ImmutableSignedTransactionWithProof.builder()
                 .addAllEvents(events)
-                .senderPublicKey(senderPublicKey)
-                .senderSignature(senderSignature)
                 .build();
     }
 

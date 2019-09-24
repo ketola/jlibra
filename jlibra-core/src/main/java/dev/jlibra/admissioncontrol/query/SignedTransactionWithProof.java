@@ -6,10 +6,5 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface SignedTransactionWithProof {
-
-    byte[] getSenderPublicKey();
-
-    byte[] getSenderSignature();
-
     List<Event> getEvents();
 }

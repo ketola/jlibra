@@ -59,7 +59,6 @@ public interface AccountData {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

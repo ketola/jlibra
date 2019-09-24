@@ -34,8 +34,6 @@ public class GetAccountTransactionBySequenceNumberExample {
                 .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
-            logger.info("Sender public key: " + Hex.toHexString(tx.getSenderPublicKey()));
-            logger.info("Sender signature: " + Hex.toHexString(tx.getSenderSignature()));
             tx.getEvents()
                     .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
                             Hex.toHexString(e.getAccountAddress()), e.getSequenceNumber(), e.getAmount()));

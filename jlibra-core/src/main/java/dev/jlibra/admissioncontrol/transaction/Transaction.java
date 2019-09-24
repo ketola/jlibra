@@ -2,17 +2,33 @@ package dev.jlibra.admissioncontrol.transaction;
 
 import org.immutables.value.Value;
 
+import dev.jlibra.serialization.LibraSerializable;
+import dev.jlibra.serialization.Serializer;
+
 @Value.Immutable
-public interface Transaction {
+public interface Transaction extends LibraSerializable {
 
-    public long getSequenceNumber();
+    byte[] getSenderAccount();
 
-    public Program getProgram();
+    long getSequenceNumber();
 
-    public long getExpirationTime();
+    Program getProgram();
 
-    public long getGasUnitPrice();
+    long getExpirationTime();
 
-    public long getMaxGasAmount();
+    long getGasUnitPrice();
+
+    long getMaxGasAmount();
+
+    default byte[] serialize() {
+        return Serializer.builder()
+                .appendByteArray(getSenderAccount())
+                .appendLong(getSequenceNumber())
+                .appendSerializable(getProgram())
+                .appendLong(getMaxGasAmount())
+                .appendLong(getGasUnitPrice())
+                .appendLong(getExpirationTime())
+                .toByteArray();
+    }
 
 }

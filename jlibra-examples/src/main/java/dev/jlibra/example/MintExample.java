@@ -1,11 +1,12 @@
 package dev.jlibra.example;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 
 /**
  * Calls the faucet service http endpoint with parameters address and amount (in
@@ -24,7 +25,7 @@ public class MintExample {
     private static final Logger logger = LogManager.getLogger(MintExample.class);
 
     public static void main(String[] args) throws IOException {
-        String toAddress = "045d3e63dba85f759d66f9bed4a0e4c262d17f9713f25e846fdae63891837a98";
+        String toAddress = "6674633c78e2e00c69fd6e027aa6d1db2abc2a6c80d78a3e129eaf33dd49ce1c";
         long amountInMicroLibras = 10L * 1_000_000L;
 
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
@@ -33,7 +34,8 @@ public class MintExample {
                 .asString();
 
         if (response.getStatus() != 200) {
-            throw new IllegalStateException(String.format("Error in minting %d Libra for address %s", amountInMicroLibras, toAddress));
+            throw new IllegalStateException(
+                    String.format("Error in minting %d Libra for address %s", amountInMicroLibras, toAddress));
         }
 
         logger.info(response.getBody());

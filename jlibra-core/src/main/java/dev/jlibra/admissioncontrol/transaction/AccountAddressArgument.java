@@ -2,27 +2,26 @@ package dev.jlibra.admissioncontrol.transaction;
 
 import dev.jlibra.serialization.Serializer;
 
-public class U64Argument implements TransactionArgument {
+public class AccountAddressArgument implements TransactionArgument {
 
-    private long value;
+    private static final int PREFIX = 1;
 
-    private static final int PREFIX = 0;
+    private byte[] address;
 
-    public U64Argument(long value) {
-        this.value = value;
+    public AccountAddressArgument(byte[] address) {
+        this.address = address;
     }
 
     @Override
     public byte[] serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendLong(value)
+                .appendByteArray(address)
                 .toByteArray();
     }
 
     @Override
     public Type type() {
-        return Type.U64;
+        return Type.ADDRESS;
     }
-
 }
