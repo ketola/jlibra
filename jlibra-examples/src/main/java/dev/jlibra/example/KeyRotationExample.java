@@ -34,16 +34,16 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
 /*-
- * This is bit more complicated example demonstrating the key rotation feature
+ * This is a bit more complicated example demonstrating the key rotation feature
  * of Libra.
  * 
- * With the key rotation one can change the signing keys of the Libra account to
+ * With the key rotation one can change the signing keys of a Libra account to
  * a new key pair.
  * 
  * The steps in this example are: 
  * 1. Create a key pair and mint some coins to this new account
  * 2. Create another key pair and create a transaction to change them to be the new signing keys of the account 
- * 3. Verify that the original key do not work anymore 
+ * 3. Verify that the original keys do not work anymore 
  * 4. Verify that the new signing keys work
  * 
  */
