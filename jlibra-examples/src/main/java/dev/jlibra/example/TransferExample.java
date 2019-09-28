@@ -36,14 +36,14 @@ public class TransferExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         PrivateKey privateKey = KeyUtils.privateKeyFromHexString(
-                "3051020101300506032b6570042204207422e9df27029f7b83c37035622f93cd0e9b3a2a705d0745d573252756fd8c888121008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
+                "3051020101300506032b657004220420c18abb47a0577c71e50f408214df5bfec3a0969d361170023084c6c6ae295ab88121000e17c9353c32509613b43bb66aa4242ca9277445d526c98d71add83bc2751d13");
         PublicKey publicKey = KeyUtils.publicKeyFromHexString(
-                "302a300506032b65700321008e23fbceaa5b7a038c8994ca8258c8815e6e9007e3de86598cd46357e5e60024");
+                "302a300506032b65700321000e17c9353c32509613b43bb66aa4242ca9277445d526c98d71add83bc2751d13");
 
         String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
         long amount = 1;
-        int sequenceNumber = 2;
+        int sequenceNumber = 1;
 
         logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
