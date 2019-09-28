@@ -2,22 +2,21 @@ package dev.jlibra.admissioncontrol.transaction;
 
 import dev.jlibra.serialization.Serializer;
 
-public class U64Argument implements TransactionArgument {
+public class ByteArrayArgument implements TransactionArgument {
 
-    private long value;
+    private static final int PREFIX = 3;
 
-    private static final int PREFIX = 0;
+    private byte[] bytes;
 
-    public U64Argument(long value) {
-        this.value = value;
+    public ByteArrayArgument(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     @Override
     public byte[] serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendLong(value)
+                .appendByteArray(bytes)
                 .toByteArray();
     }
-
 }

@@ -20,9 +20,4 @@ public class StringArgument implements TransactionArgument {
                 .toByteArray();
     }
 
-    @Override
-    public Type type() {
-        return Type.STRING;
-    }
-
 }

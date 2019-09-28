@@ -19,9 +19,4 @@ public class AccountAddressArgument implements TransactionArgument {
                 .appendByteArray(address)
                 .toByteArray();
     }
-
-    @Override
-    public Type type() {
-        return Type.ADDRESS;
-    }
 }

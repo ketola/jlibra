@@ -1,17 +1,27 @@
 package dev.jlibra.move;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.stream.Collectors;
+import java.nio.charset.StandardCharsets;
 
 public class Move {
 
+    public static byte[] rotateAuthenticationKeyAsBytes() {
+        return readMoveScriptBytes("/move/rotate_authentication_key.json");
+    }
+
     public static byte[] peerToPeerTransferAsBytes() {
+        return readMoveScriptBytes("/move/peer_to_peer_transfer.json");
+    }
+
+    private static byte[] readMoveScriptBytes(String fileName) {
         try {
-            InputStream jsonBinary = Move.class.getResourceAsStream("/move/peer_to_peer_transfer.json");
-            String json = readJson(jsonBinary, "UTF-8");
+            InputStream jsonBinary = Move.class.getResourceAsStream(fileName);
+            String json = readJson(jsonBinary);
             String[] bytesAsString = json.substring(json.indexOf('[') + 1, json.indexOf(']')).split(",");
             byte[] bytes = new byte[bytesAsString.length];
             for (int idx = 0; idx < bytesAsString.length; idx++) {
@@ -23,10 +33,10 @@ public class Move {
         }
     }
 
-    private static String readJson(InputStream inputStream, String encoding) throws IOException {
-        return new BufferedReader(new InputStreamReader(inputStream, encoding))
+    private static String readJson(InputStream inputStream) throws IOException {
+        return new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                 .lines()
-                .collect(Collectors.joining());
+                .collect(joining());
     }
 
 }
