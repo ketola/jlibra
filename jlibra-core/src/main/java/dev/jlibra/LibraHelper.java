@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
-import dev.jlibra.admissioncontrol.query.AccountData;
+import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.query.Event;
 import dev.jlibra.admissioncontrol.query.ImmutableSignedTransactionWithProof;
 import dev.jlibra.admissioncontrol.query.SignedTransactionWithProof;
@@ -48,8 +48,8 @@ public class LibraHelper {
         return signature;
     }
 
-    public static List<AccountData> readAccountStates(GetAccountStateResponse getAccountStateResponse) {
-        List<AccountData> accountStates = new ArrayList<>();
+    public static List<AccountResource> readAccountStates(GetAccountStateResponse getAccountStateResponse) {
+        List<AccountResource> accountStates = new ArrayList<>();
 
         byte[] blobBytes = getAccountStateResponse.getAccountStateWithProof().getBlob().getBlob().toByteArray();
 
@@ -67,7 +67,7 @@ public class LibraHelper {
         }
 
         states.forEach(state -> {
-            accountStates.add(AccountData.deserialize(state));
+            accountStates.add(AccountResource.deserialize(state));
         });
 
         return accountStates;

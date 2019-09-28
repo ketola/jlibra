@@ -9,7 +9,7 @@ import com.google.protobuf.ByteString;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.LibraHelper;
-import dev.jlibra.admissioncontrol.query.AccountData;
+import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.query.GetAccountState;
 import dev.jlibra.admissioncontrol.query.GetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableUpdateToLatestLedgerResult;
@@ -75,7 +75,7 @@ public class GrpcMapper {
 
     public static UpdateToLatestLedgerResult updateToLatestLedgerResponseToResult(
             UpdateToLatestLedgerResponse response) {
-        List<AccountData> accountStates = new ArrayList<>();
+        List<AccountResource> accountStates = new ArrayList<>();
         List<SignedTransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
 
         response.getResponseItemsList().forEach(responseItem -> {

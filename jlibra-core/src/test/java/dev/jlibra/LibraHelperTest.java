@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 
-import dev.jlibra.admissioncontrol.query.AccountData;
+import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import types.AccountStateBlobOuterClass.AccountStateBlob;
@@ -51,7 +51,7 @@ public class LibraHelperTest {
 
     @Test
     public void testReadAccountStates() {
-        List<AccountData> accountStates = LibraHelper
+        List<AccountResource> accountStates = LibraHelper
                 .readAccountStates(GetAccountStateResponse.newBuilder().setAccountStateWithProof(AccountStateWithProof
                         .newBuilder().setBlob(
                                 AccountStateBlob.newBuilder()
@@ -60,7 +60,7 @@ public class LibraHelperTest {
                         .build()).build());
 
         assertThat(accountStates, is(iterableWithSize(1)));
-        assertThat(new String(encode(accountStates.get(0).getAccountAddress())),
+        assertThat(new String(encode(accountStates.get(0).getAuthenticationKey())),
                 is("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"));
         assertThat(accountStates.get(0).getBalanceInMicroLibras(), is(3000000L));
         assertThat(accountStates.get(0).getReceivedEvents().getCount(), is(3));

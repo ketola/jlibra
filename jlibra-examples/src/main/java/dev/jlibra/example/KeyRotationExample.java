@@ -33,6 +33,20 @@ import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+/*-
+ * This is bit more complicated example demonstrating the key rotation feature
+ * of Libra.
+ * 
+ * With the key rotation one can change the signing keys of the Libra account to
+ * a new key pair.
+ * 
+ * The steps in this example are: 
+ * 1. Create a key pair and mint some coins to this new account
+ * 2. Create another key pair and create a transaction to change them to be the new signing keys of the account 
+ * 3. Verify that the original key do not work anymore 
+ * 4. Verify that the new signing keys work
+ * 
+ */
 public class KeyRotationExample {
 
     private static final Logger logger = LogManager.getLogger(KeyRotationExample.class);
@@ -41,31 +55,51 @@ public class KeyRotationExample {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
                 .build();
-
         AdmissionControl admissionControl = new AdmissionControl(channel);
-
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance("Ed25519", "BC");
 
-        // Create the account by minting some coins to it
+        logger.info("Create the account with some coins. The signing keys of this account will be later changed...\n");
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
         byte[] addressOriginal = KeyUtils.toByteArrayLibraAddress(publicKeyOriginal.getEncoded());
-        mint(addressOriginal, (10L * 1_000_000L));
-
+        mint(addressOriginal, 10L * 1_000_000L);
+        logger.info("Here are the original signing keys of the account:");
         logger.info("Original Libra address: {}", KeyUtils.toHexStringLibraAddress(publicKeyOriginal.getEncoded()));
         logger.info("Original Public key: {}",
                 Hex.toHexString(KeyUtils.stripPublicKeyPrefix(publicKeyOriginal.getEncoded())));
         logger.info("Original Private key: {}", Hex.toHexString(privateKeyOriginal.getEncoded()));
-        getAccountState(addressOriginal, admissionControl);
 
+        logger.info("-----------------------------------------------------------------------------------------------");
+        logger.info("Get the account state for the account");
+        getAccountState(addressOriginal, admissionControl);
+        logger.info(
+                "-----------------------------------------------------------------------------------------------\n");
+
+        logger.info("Create the new signing keys for the account...");
         KeyPair keyPairNew = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyNew = (BCEdDSAPrivateKey) keyPairNew.getPrivate();
         BCEdDSAPublicKey publicKeyNew = (BCEdDSAPublicKey) keyPairNew.getPublic();
         logger.info("New Public key: {}", Hex.toHexString(KeyUtils.stripPublicKeyPrefix(publicKeyNew.getEncoded())));
         logger.info("New Private key: {}", Hex.toHexString(privateKeyNew.getEncoded()));
 
+        logger.info("Update the new public key for the account..");
+        SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
+                publicKeyNew, 0, admissionControl);
+        logger.info("VM status: {}", result.getVmStatus());
+        logger.info(
+                "Mint some more coins for the account using the address created in the first step (this is done to demonstrate that the account address is not changed in this process)...");
+        mint(addressOriginal, 10L * 1_000_000L);
+
+        logger.info("-----------------------------------------------------------------------------------------------");
+        logger.info("Get the account state for the account");
+        getAccountState(addressOriginal, admissionControl);
+        logger.info(
+                "-----------------------------------------------------------------------------------------------\n");
+
+        logger.info(
+                "Create a third set of signing keys and try to update them to the account using the keys created in the beginning..");
         KeyPair keyPairNew2 = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyNew2 = (BCEdDSAPrivateKey) keyPairNew2.getPrivate();
         BCEdDSAPublicKey publicKeyNew2 = (BCEdDSAPublicKey) keyPairNew2.getPublic();
@@ -73,25 +107,23 @@ public class KeyRotationExample {
         logger.info("New Private key 2: {}",
                 Hex.toHexString(KeyUtils.stripPublicKeyPrefix(privateKeyNew2.getEncoded())));
 
-        SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
-                publicKeyNew, 0, admissionControl);
-        logger.info("VM status: {}", result.getVmStatus());
-
-        Thread.sleep(5000);
-        mint(addressOriginal, (10L * 1_000_000L));
-        getAccountState(addressOriginal, admissionControl);
-
         result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
                 publicKeyNew2, 1, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
+        logger.info("This failed because the the original keys cannot be used anymore");
+        logger.info(
+                "-----------------------------------------------------------------------------------------------\n");
 
-        Thread.sleep(5000);
-        getAccountState(addressOriginal, admissionControl);
-
+        logger.info("Try to update the signing keys using the current key");
         result = rotateAuthenticationKey(privateKeyNew, publicKeyNew, addressOriginal,
                 publicKeyNew2, 1, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
+        logger.info("This succeeded because now the updated keys were used.");
+
+        logger.info("-----------------------------------------------------------------------------------------------");
+        logger.info("Get the account state for the account");
         getAccountState(addressOriginal, admissionControl);
+        logger.info("-----------------------------------------------------------------------------------------------");
 
         channel.shutdown();
         Thread.sleep(3000); // add sleep to prevent premature closing of channel
@@ -100,8 +132,9 @@ public class KeyRotationExample {
     private static SubmitTransactionResult rotateAuthenticationKey(BCEdDSAPrivateKey privateKey,
             BCEdDSAPublicKey publicKey, byte[] address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, AdmissionControl admissionControl) {
+
         ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
-                KeyUtils.stripPublicKeyPrefix(publicKeyNew.getEncoded()));
+                KeyUtils.toByteArrayLibraAddress(publicKeyNew.getEncoded()));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -147,14 +180,9 @@ public class KeyRotationExample {
                         .build());
 
         result.getAccountStates().forEach(accountState -> {
-            logger.info("Address: {}", Hex.toHexString(accountState.getAccountAddress()));
-            logger.info("Received events: {}", accountState.getReceivedEvents().getCount());
-            logger.info("Sent events: {}", accountState.getSentEvents().getCount());
-            logger.info("Balance (microLibras): {}", accountState.getBalanceInMicroLibras());
-            logger.info("Balance (Libras): {}",
+            logger.info("Account authentication key: {}, Balance (Libras): {}",
+                    Hex.toHexString(accountState.getAuthenticationKey()),
                     new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));
-            logger.info("Sequence number: {}", accountState.getSequenceNumber());
-            logger.info("Delegated withdrawal capability: {}", accountState.getDelegatedWithdrawalCapability());
         });
     }
 

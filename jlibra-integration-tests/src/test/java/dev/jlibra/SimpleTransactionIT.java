@@ -29,7 +29,7 @@ import org.junit.Test;
 import com.google.protobuf.ByteString;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.query.AccountData;
+import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
@@ -127,9 +127,9 @@ public class SimpleTransactionIT {
         long balance = result.getAccountStates()
                 .stream()
                 .filter(accountState -> Arrays.equals(
-                        accountState.getAccountAddress(),
+                        accountState.getAuthenticationKey(),
                         Hex.decode(forAddress)))
-                .map(AccountData::getBalanceInMicroLibras)
+                .map(AccountResource::getBalanceInMicroLibras)
                 .findFirst()
                 .orElse(0L);
 
@@ -180,9 +180,9 @@ public class SimpleTransactionIT {
         return result.getAccountStates()
                 .stream()
                 .filter(accountState -> Arrays.equals(
-                        accountState.getAccountAddress(),
+                        accountState.getAuthenticationKey(),
                         Hex.decode(forAddress)))
-                .map(AccountData::getSequenceNumber)
+                .map(AccountResource::getSequenceNumber)
                 .findFirst()
                 .orElse(0);
     }
