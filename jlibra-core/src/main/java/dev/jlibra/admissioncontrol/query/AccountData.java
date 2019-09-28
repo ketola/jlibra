@@ -26,11 +26,14 @@ public interface AccountData {
 
     boolean getDelegatedWithdrawalCapability();
 
+    boolean getDelegatedKeyRotationCapability();
+
     static AccountData deserialize(byte[] bytes) {
         try (DataInputStream accountDataStream = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int addressLength = readInt(accountDataStream, 4);
             byte[] address = readBytes(accountDataStream, addressLength);
             long balance = readLong(accountDataStream, 8);
+            boolean delegatedKeyRotationCapability = readBoolean(accountDataStream);
             boolean delegatedWithdrawalCapability = readBoolean(accountDataStream);
 
             int receivedEventsCount = readInt(accountDataStream, 4);
@@ -54,6 +57,7 @@ public interface AccountData {
                     .sequenceNumber(readInt(accountDataStream, 4))
                     .balanceInMicroLibras(balance)
                     .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
+                    .delegatedKeyRotationCapability(delegatedKeyRotationCapability)
                     .receivedEvents(receivedEvents)
                     .sentEvents(sentEvents).build();
         } catch (IOException e) {
