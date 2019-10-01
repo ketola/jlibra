@@ -12,9 +12,9 @@ import java.io.IOException;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface AccountData {
+public interface AccountResource {
 
-    byte[] getAccountAddress();
+    byte[] getAuthenticationKey();
 
     long getBalanceInMicroLibras();
 
@@ -28,7 +28,7 @@ public interface AccountData {
 
     boolean getDelegatedKeyRotationCapability();
 
-    static AccountData deserialize(byte[] bytes) {
+    static AccountResource deserialize(byte[] bytes) {
         try (DataInputStream accountDataStream = new DataInputStream(new ByteArrayInputStream(bytes))) {
             int addressLength = readInt(accountDataStream, 4);
             byte[] address = readBytes(accountDataStream, addressLength);
@@ -52,8 +52,8 @@ public interface AccountData {
                     .count(sentEventsCount)
                     .build();
 
-            return ImmutableAccountData.builder()
-                    .accountAddress(address)
+            return ImmutableAccountResource.builder()
+                    .authenticationKey(address)
                     .sequenceNumber(readInt(accountDataStream, 4))
                     .balanceInMicroLibras(balance)
                     .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
