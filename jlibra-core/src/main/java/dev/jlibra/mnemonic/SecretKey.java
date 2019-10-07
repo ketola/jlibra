@@ -1,5 +1,6 @@
 package dev.jlibra.mnemonic;
 
+import dev.jlibra.LibraRuntimeException;
 import org.bouncycastle.util.encoders.Hex;
 
 import javax.annotation.concurrent.Immutable;
@@ -11,7 +12,7 @@ public class SecretKey {
 
     public SecretKey(byte[] data) {
         if (data == null || data.length != 32) {
-            throw new RuntimeException("SecretKey requires 32 bytes but found " + (data == null ? 0 : data.length));
+            throw new LibraRuntimeException("SecretKey requires 32 bytes but found " + (data == null ? 0 : data.length));
         }
 
         this.data = data.clone();

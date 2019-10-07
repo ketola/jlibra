@@ -53,8 +53,12 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
 /**
- * 1. Create two key pairs A and B. 2. Mint X libras for account represented by
- * key pair A. 3. Transfer amount Y from A to B and verify the transaction.
+ * <p>
+ *     <ol>
+ *        <li>Create two key pairs A and B. </li>
+ *        <li>Mint X libras for account represented by key pair A. </li>
+ *        <li>Transfer amount Y from A to B and verify the transaction.</li>
+ *     </ol>
  */
 public class SimpleTransactionIT {
 

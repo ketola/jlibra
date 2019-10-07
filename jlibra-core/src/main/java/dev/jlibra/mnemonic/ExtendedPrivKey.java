@@ -8,6 +8,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import javax.annotation.concurrent.Immutable;
 
+import dev.jlibra.LibraRuntimeException;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -33,7 +34,7 @@ public class ExtendedPrivKey {
             this.publicKey = BouncyCastleProvider.getPublicKey(new SubjectPublicKeyInfo(
                     new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), keyInfo.getPublicKeyData().getBytes()));
         } catch (IOException | InvalidKeySpecException e) {
-            throw new RuntimeException("Key creation failed", e);
+            throw new LibraRuntimeException("Key creation failed", e);
         }
     }
 

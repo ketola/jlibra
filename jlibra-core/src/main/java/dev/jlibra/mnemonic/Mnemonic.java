@@ -5,6 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import dev.jlibra.LibraRuntimeException;
+
 import static java.util.Arrays.asList;
 
 @Immutable
@@ -230,29 +232,29 @@ public class Mnemonic {
 
     public static Mnemonic fromString(String mnemonicWords) {
         if (mnemonicWords == null)
-            throw new RuntimeException("Empty mnemonic provided");
+            throw new LibraRuntimeException("Empty mnemonic provided");
 
         String[] words = mnemonicWords.split(" ");
 
         if (words.length % 6 != 0)
-            throw new RuntimeException("Mnemonic must have a word count divisible with 6");
+            throw new LibraRuntimeException("Mnemonic must have a word count divisible with 6");
 
         if (!WORDS.containsAll(asList(words)))
-            throw new RuntimeException("Mnemonic contains an unknown word");
+            throw new LibraRuntimeException("Mnemonic contains an unknown word");
 
         return new Mnemonic(words);
     }
 
     public static Mnemonic fromBytes(byte[] data) {
         if (data == null || data.length % 4 != 0) {
-            throw new RuntimeException("Data for mnemonic should have a length divisible by 4");
+            throw new LibraRuntimeException("Data for mnemonic should have a length divisible by 4");
         }
 
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new LibraRuntimeException(e.getMessage());
         }
         byte[] check = digest.digest(data);
 

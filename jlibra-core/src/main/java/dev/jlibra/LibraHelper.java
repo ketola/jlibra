@@ -42,7 +42,7 @@ public class LibraHelper {
             sgr.update(digestSHA3.digest(saltDigestAndTransaction));
             signature = sgr.sign();
         } catch (Exception e) {
-            throw new RuntimeException("Signing the transaction failed", e);
+            throw new LibraRuntimeException("Signing the transaction failed", e);
         }
 
         return signature;
