@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
+import dev.jlibra.LibraRuntimeException;
+
 @Immutable
 public class Seed {
 
@@ -25,7 +27,7 @@ public class Seed {
 
             data = key.getEncoded();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new LibraRuntimeException(e.getMessage(), e);
         }
     }
 
