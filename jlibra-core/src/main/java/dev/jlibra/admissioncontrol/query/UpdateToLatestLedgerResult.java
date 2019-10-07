@@ -7,7 +7,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface UpdateToLatestLedgerResult {
 
-    List<AccountResource> getAccountStates();
+    List<AccountResource> getAccountResources();
 
     List<SignedTransactionWithProof> getAccountTransactionsBySequenceNumber();
 
