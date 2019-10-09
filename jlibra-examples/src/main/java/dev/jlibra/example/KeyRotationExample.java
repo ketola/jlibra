@@ -33,6 +33,9 @@ import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import static java.lang.String.format;
+import static java.math.RoundingMode.DOWN;
+
 /*-
  * This is a bit more complicated example demonstrating the key rotation feature
  * of Libra.
@@ -67,15 +70,12 @@ public class KeyRotationExample {
         mint(addressOriginal, 10L * 1_000_000L);
         logger.info("Here are the original signing keys of the account:");
         logger.info("Original Libra address: {}", KeyUtils.toHexStringLibraAddress(publicKeyOriginal.getEncoded()));
-        logger.info("Original Public key: {}",
-                Hex.toHexString(KeyUtils.stripPublicKeyPrefix(publicKeyOriginal.getEncoded())));
+        logger.info("Original Public key: {}", Hex.toHexString(KeyUtils.stripPublicKeyPrefix(publicKeyOriginal.getEncoded())));
         logger.info("Original Private key: {}", Hex.toHexString(privateKeyOriginal.getEncoded()));
-
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the account");
         getAccountState(addressOriginal, admissionControl);
-        logger.info(
-                "-----------------------------------------------------------------------------------------------\n");
+        logger.info("-----------------------------------------------------------------------------------------------\n");
 
         logger.info("Create the new signing keys for the account...");
         KeyPair keyPairNew = kpGen.generateKeyPair();
@@ -85,38 +85,31 @@ public class KeyRotationExample {
         logger.info("New Private key: {}", Hex.toHexString(privateKeyNew.getEncoded()));
 
         logger.info("Update the new public key for the account..");
-        SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
-                publicKeyNew, 0, admissionControl);
+        SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal, publicKeyNew, 0, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
-        logger.info(
-                "Mint some more coins for the account using the address created in the first step (this is done to demonstrate that the account address is not changed in this process)...");
+        logger.info("Mint some more coins for the account using the address created in the first step (this is done to demonstrate that the account address is not changed in this process)...");
         mint(addressOriginal, 10L * 1_000_000L);
 
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the account");
         getAccountState(addressOriginal, admissionControl);
-        logger.info(
-                "-----------------------------------------------------------------------------------------------\n");
+        logger.info("-----------------------------------------------------------------------------------------------\n");
 
-        logger.info(
-                "Create a third set of signing keys and try to update them to the account using the keys created in the beginning..");
+        logger.info("Create a third set of signing keys and try to update them to the account using the keys created in the beginning..");
         KeyPair keyPairNew2 = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyNew2 = (BCEdDSAPrivateKey) keyPairNew2.getPrivate();
         BCEdDSAPublicKey publicKeyNew2 = (BCEdDSAPublicKey) keyPairNew2.getPublic();
         logger.info("New Public key 2: {}", Hex.toHexString(publicKeyNew2.getEncoded()));
-        logger.info("New Private key 2: {}",
-                Hex.toHexString(KeyUtils.stripPublicKeyPrefix(privateKeyNew2.getEncoded())));
+        logger.info("New Private key 2: {}", Hex.toHexString(KeyUtils.stripPublicKeyPrefix(privateKeyNew2.getEncoded())));
 
-        result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
-                publicKeyNew2, 1, admissionControl);
+        result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal, publicKeyNew2, 1, admissionControl);
+
         logger.info("VM status: {}", result.getVmStatus());
         logger.info("This failed because the the original keys cannot be used anymore");
-        logger.info(
-                "-----------------------------------------------------------------------------------------------\n");
+        logger.info("-----------------------------------------------------------------------------------------------\n");
 
         logger.info("Try to update the signing keys using the current key");
-        result = rotateAuthenticationKey(privateKeyNew, publicKeyNew, addressOriginal,
-                publicKeyNew2, 1, admissionControl);
+        result = rotateAuthenticationKey(privateKeyNew, publicKeyNew, addressOriginal, publicKeyNew2, 1, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
         logger.info("This succeeded because now the updated keys were used.");
 
@@ -155,8 +148,7 @@ public class KeyRotationExample {
                 .signature(LibraHelper.signTransaction(transaction, privateKey))
                 .build();
 
-        SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
-        return result;
+        return admissionControl.submitTransaction(signedTransaction);
     }
 
     private static void mint(byte[] address, long amountInMicroLibras) {
@@ -166,8 +158,7 @@ public class KeyRotationExample {
                 .asString();
 
         if (response.getStatus() != 200) {
-            throw new IllegalStateException(
-                    String.format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
+            throw new IllegalStateException(format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
         }
     }
 
@@ -179,11 +170,8 @@ public class KeyRotationExample {
                                 .build())
                         .build());
 
-        result.getAccountStates().forEach(accountState -> {
-            logger.info("Account authentication key: {}, Balance (Libras): {}",
-                    Hex.toHexString(accountState.getAuthenticationKey()),
-                    new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));
-        });
+        result.getAccountResources().forEach(accountResource -> logger.info("Account authentication key: {}, Balance (Libras): {}",
+                Hex.toHexString(accountResource.getAuthenticationKey()),
+                new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000), DOWN)));
     }
-
 }

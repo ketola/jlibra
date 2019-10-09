@@ -10,7 +10,6 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -95,7 +94,7 @@ public class SimpleTransactionIT {
     }
 
     @Test
-    public void transferTest() throws IOException {
+    public void transferTest() {
 
         // mint something to source account so we don't run out of coins
         mint();
@@ -124,10 +123,10 @@ public class SimpleTransactionIT {
                 ImmutableQuery.builder().addAccountStateQueries(
                         ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
 
-        long balance = result.getAccountStates()
+        long balance = result.getAccountResources()
                 .stream()
-                .filter(accountState -> Arrays.equals(
-                        accountState.getAuthenticationKey(),
+                .filter(accountResource -> Arrays.equals(
+                        accountResource.getAuthenticationKey(),
                         Hex.decode(forAddress)))
                 .map(AccountResource::getBalanceInMicroLibras)
                 .findFirst()
@@ -177,10 +176,10 @@ public class SimpleTransactionIT {
                 ImmutableQuery.builder().addAccountStateQueries(
                         ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
 
-        return result.getAccountStates()
+        return result.getAccountResources()
                 .stream()
-                .filter(accountState -> Arrays.equals(
-                        accountState.getAuthenticationKey(),
+                .filter(accountResource -> Arrays.equals(
+                        accountResource.getAuthenticationKey(),
                         Hex.decode(forAddress)))
                 .map(AccountResource::getSequenceNumber)
                 .findFirst()

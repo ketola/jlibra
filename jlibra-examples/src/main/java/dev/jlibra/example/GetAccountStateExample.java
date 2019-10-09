@@ -13,6 +13,8 @@ import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
+import static java.math.RoundingMode.DOWN;
+
 public class GetAccountStateExample {
 
     private static final Logger logger = LogManager.getLogger(GetAccountStateExample.class);
@@ -33,19 +35,17 @@ public class GetAccountStateExample {
                                 .build())
                         .build());
 
-        result.getAccountStates().forEach(accountState -> {
-            logger.info("Authentication key: {}", Hex.toHexString(accountState.getAuthenticationKey()));
-            logger.info("Received events: {}", accountState.getReceivedEvents().getCount());
-            logger.info("Sent events: {}", accountState.getSentEvents().getCount());
-            logger.info("Balance (microLibras): {}", accountState.getBalanceInMicroLibras());
-            logger.info("Balance (Libras): {}",
-                    new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));
-            logger.info("Sequence number: {}", accountState.getSequenceNumber());
-            logger.info("Delegated withdrawal capability: {}", accountState.getDelegatedWithdrawalCapability());
-            logger.info("Delegated key rotation capability: {}", accountState.getDelegatedKeyRotationCapability());
+        result.getAccountResources().forEach(accountResource -> {
+            logger.info("Authentication key: {}", Hex.toHexString(accountResource.getAuthenticationKey()));
+            logger.info("Received events: {}", accountResource.getReceivedEvents().getCount());
+            logger.info("Sent events: {}", accountResource.getSentEvents().getCount());
+            logger.info("Balance (microLibras): {}", accountResource.getBalanceInMicroLibras());
+            logger.info("Balance (Libras): {}", new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000), DOWN));
+            logger.info("Sequence number: {}", accountResource.getSequenceNumber());
+            logger.info("Delegated withdrawal capability: {}", accountResource.getDelegatedWithdrawalCapability());
+            logger.info("Delegated key rotation capability: {}", accountResource.getDelegatedKeyRotationCapability());
         });
 
         channel.shutdown();
     }
-
 }
