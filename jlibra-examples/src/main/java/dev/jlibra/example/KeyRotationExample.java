@@ -1,5 +1,8 @@
 package dev.jlibra.example;
 
+import static java.lang.String.format;
+import static java.math.RoundingMode.DOWN;
+
 import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -33,15 +36,12 @@ import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
-import static java.lang.String.format;
-import static java.math.RoundingMode.DOWN;
-
 /*-
  * This is a bit more complicated example demonstrating the key rotation feature
  * of Libra.
  * 
  * With the key rotation one can change the signing keys of a Libra account to
- * a new key pair.
+ * a new key pair while keeping the account address.
  * 
  * The steps in this example are: 
  * 1. Create a key pair and mint some coins to this new account
@@ -60,61 +60,87 @@ public class KeyRotationExample {
                 .build();
         AdmissionControl admissionControl = new AdmissionControl(channel);
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("Ed25519", "BC");
 
-        logger.info("Create the account with some coins. The signing keys of this account will be later changed...\n");
+        /*
+         * Create a key pair, calculate the libra address and add some coins to the
+         * account
+         */
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("Ed25519", "BC");
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
         byte[] addressOriginal = KeyUtils.toByteArrayLibraAddress(publicKeyOriginal.getEncoded());
+        logger.info("Account address: {}", Hex.toHexString(addressOriginal));
         mint(addressOriginal, 10L * 1_000_000L);
-        logger.info("Here are the original signing keys of the account:");
-        logger.info("Original Libra address: {}", KeyUtils.toHexStringLibraAddress(publicKeyOriginal.getEncoded()));
-        logger.info("Original Public key: {}", Hex.toHexString(KeyUtils.stripPublicKeyPrefix(publicKeyOriginal.getEncoded())));
-        logger.info("Original Private key: {}", Hex.toHexString(privateKeyOriginal.getEncoded()));
-        logger.info("-----------------------------------------------------------------------------------------------");
-        logger.info("Get the account state for the account");
-        getAccountState(addressOriginal, admissionControl);
-        logger.info("-----------------------------------------------------------------------------------------------\n");
+        Thread.sleep(500);
 
-        logger.info("Create the new signing keys for the account...");
+        /*
+         * Get the account state to verify that the account exists and the coins were
+         * transferred. Notice, that at this point the address == authentication key.
+         */
+        logger.info("-----------------------------------------------------------------------------------------------");
+        logger.info("Get the account state for the new account");
+        getAccountState(addressOriginal, admissionControl);
+        logger.info(
+                "-----------------------------------------------------------------------------------------------\n");
+        /*
+         * Create a new key pair. This keypair will be changed to be the signing keys of
+         * the account created earlier
+         */
         KeyPair keyPairNew = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyNew = (BCEdDSAPrivateKey) keyPairNew.getPrivate();
         BCEdDSAPublicKey publicKeyNew = (BCEdDSAPublicKey) keyPairNew.getPublic();
-        logger.info("New Public key: {}", Hex.toHexString(KeyUtils.stripPublicKeyPrefix(publicKeyNew.getEncoded())));
-        logger.info("New Private key: {}", Hex.toHexString(privateKeyNew.getEncoded()));
 
-        logger.info("Update the new public key for the account..");
-        SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal, publicKeyNew, 0, admissionControl);
+        /*
+         * Send the transaction for changing the signing keys
+         */
+        logger.info("Change the signing keys..");
+        SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
+                publicKeyNew, 0, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
-        logger.info("Mint some more coins for the account using the address created in the first step (this is done to demonstrate that the account address is not changed in this process)...");
-        mint(addressOriginal, 10L * 1_000_000L);
 
+        /*
+         * Add some coins to the account to verify that the address is still the same
+         * but the authentication key has changed.
+         */
+        mint(addressOriginal, 10L * 1_000_000L);
+        Thread.sleep(500);
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the account");
         getAccountState(addressOriginal, admissionControl);
-        logger.info("-----------------------------------------------------------------------------------------------\n");
+        logger.info(
+                "-----------------------------------------------------------------------------------------------\n");
 
-        logger.info("Create a third set of signing keys and try to update them to the account using the keys created in the beginning..");
+        /*
+         * In this step a new key pair is created and an attempt is made to change these
+         * to be the new signing keys. This should fail because we are using the
+         * original signing keys which should not work anymore because the keys were
+         * changed.
+         */
         KeyPair keyPairNew2 = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyNew2 = (BCEdDSAPrivateKey) keyPairNew2.getPrivate();
         BCEdDSAPublicKey publicKeyNew2 = (BCEdDSAPublicKey) keyPairNew2.getPublic();
-        logger.info("New Public key 2: {}", Hex.toHexString(publicKeyNew2.getEncoded()));
-        logger.info("New Private key 2: {}", Hex.toHexString(KeyUtils.stripPublicKeyPrefix(privateKeyNew2.getEncoded())));
-
-        result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal, publicKeyNew2, 1, admissionControl);
-
+        logger.info("Change the signing keys..");
+        result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
+                publicKeyNew2, 1, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
         logger.info("This failed because the the original keys cannot be used anymore");
-        logger.info("-----------------------------------------------------------------------------------------------\n");
 
-        logger.info("Try to update the signing keys using the current key");
-        result = rotateAuthenticationKey(privateKeyNew, publicKeyNew, addressOriginal, publicKeyNew2, 1, admissionControl);
+        /*
+         * Now a new attempt is done using the correct keys and this time the
+         * transaction should go through.
+         */
+        logger.info("Change the signing keys..");
+        result = rotateAuthenticationKey(privateKeyNew, publicKeyNew, addressOriginal,
+                publicKeyNew2, 1, admissionControl);
         logger.info("VM status: {}", result.getVmStatus());
         logger.info("This succeeded because now the updated keys were used.");
+        Thread.sleep(500);
 
+        /*
+         * Get the account state to verify that the authentication key was changed.
+         */
         logger.info("-----------------------------------------------------------------------------------------------");
-        logger.info("Get the account state for the account");
         getAccountState(addressOriginal, admissionControl);
         logger.info("-----------------------------------------------------------------------------------------------");
 
@@ -158,7 +184,8 @@ public class KeyRotationExample {
                 .asString();
 
         if (response.getStatus() != 200) {
-            throw new IllegalStateException(format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
+            throw new IllegalStateException(
+                    format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
         }
     }
 
@@ -170,7 +197,8 @@ public class KeyRotationExample {
                                 .build())
                         .build());
 
-        result.getAccountResources().forEach(accountResource -> logger.info("Account authentication key: {}, Balance (Libras): {}",
+        result.getAccountResources().forEach(accountResource -> logger.info(
+                "Account authentication key: {}, Balance (Libras): {}",
                 Hex.toHexString(accountResource.getAuthenticationKey()),
                 new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000), DOWN)));
     }
