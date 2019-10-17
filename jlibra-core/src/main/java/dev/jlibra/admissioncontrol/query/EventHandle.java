@@ -5,8 +5,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface EventHandle {
 
-    public byte[] getKey();
+    byte[] getKey();
 
-    public int getCount();
+    int getCount();
 
 }

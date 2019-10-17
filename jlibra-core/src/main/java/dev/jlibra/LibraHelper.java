@@ -9,9 +9,7 @@ import java.io.DataInputStream;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 
@@ -42,35 +40,29 @@ public class LibraHelper {
             sgr.update(digestSHA3.digest(saltDigestAndTransaction));
             signature = sgr.sign();
         } catch (Exception e) {
-            throw new RuntimeException("Signing the transaction failed", e);
+            throw new LibraRuntimeException("Signing the transaction failed", e);
         }
 
         return signature;
     }
 
     public static List<AccountResource> readAccountStates(GetAccountStateResponse getAccountStateResponse) {
-        List<AccountResource> accountStates = new ArrayList<>();
+        List<AccountResource> accountResources = new ArrayList<>();
 
         byte[] blobBytes = getAccountStateResponse.getAccountStateWithProof().getBlob().getBlob().toByteArray();
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(blobBytes));
         int dataSize = readInt(in, 4);
 
-        Set<byte[]> states = new LinkedHashSet<>();
-
         for (int i = 0; i < dataSize; i++) {
             int keyLength = readInt(in, 4);
             byte[] key = readBytes(in, keyLength);
             int valLength = readInt(in, 4);
             byte[] val = readBytes(in, valLength);
-            states.add(val);
+            accountResources.add(AccountResource.deserialize(val));
         }
 
-        states.forEach(state -> {
-            accountStates.add(AccountResource.deserialize(state));
-        });
-
-        return accountStates;
+        return accountResources;
     }
 
     public static SignedTransactionWithProof readSignedTransactionWithProof(

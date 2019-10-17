@@ -10,7 +10,6 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -53,8 +52,12 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
 /**
- * 1. Create two key pairs A and B. 2. Mint X libras for account represented by
- * key pair A. 3. Transfer amount Y from A to B and verify the transaction.
+ * <p>
+ *     <ol>
+ *        <li>Create two key pairs A and B. </li>
+ *        <li>Mint X libras for account represented by key pair A. </li>
+ *        <li>Transfer amount Y from A to B and verify the transaction.</li>
+ *     </ol>
  */
 public class SimpleTransactionIT {
 
@@ -95,7 +98,7 @@ public class SimpleTransactionIT {
     }
 
     @Test
-    public void transferTest() throws IOException {
+    public void transferTest() {
 
         // mint something to source account so we don't run out of coins
         mint();
@@ -124,10 +127,10 @@ public class SimpleTransactionIT {
                 ImmutableQuery.builder().addAccountStateQueries(
                         ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
 
-        long balance = result.getAccountStates()
+        long balance = result.getAccountResources()
                 .stream()
-                .filter(accountState -> Arrays.equals(
-                        accountState.getAuthenticationKey(),
+                .filter(accountResource -> Arrays.equals(
+                        accountResource.getAuthenticationKey(),
                         Hex.decode(forAddress)))
                 .map(AccountResource::getBalanceInMicroLibras)
                 .findFirst()
@@ -177,10 +180,10 @@ public class SimpleTransactionIT {
                 ImmutableQuery.builder().addAccountStateQueries(
                         ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
 
-        return result.getAccountStates()
+        return result.getAccountResources()
                 .stream()
-                .filter(accountState -> Arrays.equals(
-                        accountState.getAuthenticationKey(),
+                .filter(accountResource -> Arrays.equals(
+                        accountResource.getAuthenticationKey(),
                         Hex.decode(forAddress)))
                 .map(AccountResource::getSequenceNumber)
                 .findFirst()

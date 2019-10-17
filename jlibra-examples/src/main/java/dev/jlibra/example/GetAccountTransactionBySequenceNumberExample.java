@@ -33,14 +33,10 @@ public class GetAccountTransactionBySequenceNumberExample {
                                 .build())
                 .build());
 
-        result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
-            tx.getEvents()
-                    .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
-                            Hex.toHexString(e.getAccountAddress()), e.getSequenceNumber(), e.getAmount()));
-        });
+        result.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
+                .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
+                        Hex.toHexString(e.getAccountAddress()), e.getSequenceNumber(), e.getAmount())));
 
         channel.shutdown();
-
     }
-
 }

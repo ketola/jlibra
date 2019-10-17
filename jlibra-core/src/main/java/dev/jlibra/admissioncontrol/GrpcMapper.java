@@ -30,11 +30,9 @@ public class GrpcMapper {
                 .setSignedTxn(ByteString.copyFrom(transaction.serialize()))
                 .build();
 
-        SubmitTransactionRequest submitTransactionRequest = SubmitTransactionRequest.newBuilder()
+        return SubmitTransactionRequest.newBuilder()
                 .setSignedTxn(signedTransaction)
                 .build();
-
-        return submitTransactionRequest;
     }
 
     public static List<RequestItem> accountStateQueriesToRequestItems(List<GetAccountState> accountStateQueries) {
@@ -46,10 +44,9 @@ public class GrpcMapper {
                     .setAddress(ByteString.copyFrom(argument.getAddress()))
                     .build();
 
-            RequestItem requestItem = RequestItem.newBuilder()
+            return RequestItem.newBuilder()
                     .setGetAccountStateRequest(getAccountStateRequest)
                     .build();
-            return requestItem;
         }).collect(toList());
     }
 
@@ -66,10 +63,9 @@ public class GrpcMapper {
                     .setFetchEvents(true)
                     .build();
 
-            RequestItem requestItem = RequestItem.newBuilder()
+            return RequestItem.newBuilder()
                     .setGetAccountTransactionBySequenceNumberRequest(getAccountTransactionBySequenceNumberRequest)
                     .build();
-            return requestItem;
         }).collect(toList());
     }
 
@@ -85,7 +81,7 @@ public class GrpcMapper {
         });
 
         return ImmutableUpdateToLatestLedgerResult.builder()
-                .accountStates(accountStates)
+                .accountResources(accountStates)
                 .accountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber)
                 .build();
     }

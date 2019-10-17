@@ -1,5 +1,8 @@
 package dev.jlibra.example;
 
+import static java.lang.String.format;
+import static java.math.RoundingMode.DOWN;
+
 import java.math.BigDecimal;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -171,8 +174,7 @@ public class KeyRotationExample {
                 .signature(LibraHelper.signTransaction(transaction, privateKey))
                 .build();
 
-        SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
-        return result;
+        return admissionControl.submitTransaction(signedTransaction);
     }
 
     private static void mint(byte[] address, long amountInMicroLibras) {
@@ -183,7 +185,7 @@ public class KeyRotationExample {
 
         if (response.getStatus() != 200) {
             throw new IllegalStateException(
-                    String.format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
+                    format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
         }
     }
 
@@ -195,11 +197,9 @@ public class KeyRotationExample {
                                 .build())
                         .build());
 
-        result.getAccountStates().forEach(accountState -> {
-            logger.info("Account authentication key: {}, Balance (Libras): {}",
-                    Hex.toHexString(accountState.getAuthenticationKey()),
-                    new BigDecimal(accountState.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000)));
-        });
+        result.getAccountResources().forEach(accountResource -> logger.info(
+                "Account authentication key: {}, Balance (Libras): {}",
+                Hex.toHexString(accountResource.getAuthenticationKey()),
+                new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000), DOWN)));
     }
-
 }

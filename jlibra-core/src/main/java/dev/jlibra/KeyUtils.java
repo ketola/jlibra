@@ -34,7 +34,7 @@ public class KeyUtils {
         try {
             return getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
         } catch (InvalidKeySpecException e) {
-            throw new RuntimeException("PrivateKey generation failed", e);
+            throw new LibraRuntimeException("PrivateKey generation failed", e);
         }
     }
 
@@ -44,7 +44,7 @@ public class KeyUtils {
         try {
             return getKeyFactory().generatePublic(new X509EncodedKeySpec(publicKeyBytes));
         } catch (InvalidKeySpecException e) {
-            throw new RuntimeException("PrivateKey generation failed", e);
+            throw new LibraRuntimeException("PrivateKey generation failed", e);
         }
     }
 
@@ -52,7 +52,7 @@ public class KeyUtils {
         try {
             return KeyFactory.getInstance("Ed25519");
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Could not get KeyFactory", e);
+            throw new LibraRuntimeException("Could not get KeyFactory", e);
         }
     }
 

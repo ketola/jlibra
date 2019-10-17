@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import dev.jlibra.LibraRuntimeException;
+
 public class Deserialization {
 
     public static int readInt(DataInputStream in, int len) {
@@ -27,7 +29,7 @@ public class Deserialization {
         try {
             in.read(data);
         } catch (IOException e) {
-            throw new RuntimeException("Could not read input stream", e);
+            throw new LibraRuntimeException("Could not read input stream", e);
         }
         return data;
     }
