@@ -1,7 +1,6 @@
 package dev.jlibra.example;
 
 import static java.lang.String.format;
-import static java.math.RoundingMode.DOWN;
 
 import java.math.BigDecimal;
 import java.security.KeyPair;
@@ -200,6 +199,6 @@ public class KeyRotationExample {
         result.getAccountResources().forEach(accountResource -> logger.info(
                 "Account authentication key: {}, Balance (Libras): {}",
                 Hex.toHexString(accountResource.getAuthenticationKey()),
-                new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000), DOWN)));
+                new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000))));
     }
 }
