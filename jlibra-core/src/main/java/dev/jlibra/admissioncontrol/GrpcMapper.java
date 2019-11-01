@@ -20,18 +20,18 @@ import types.GetWithProof.GetAccountStateRequest;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
-import types.Transaction.SignedTransaction;
+import types.TransactionOuterClass.SignedTransaction;
 
 public class GrpcMapper {
 
     public static SubmitTransactionRequest toSubmitTransactionRequest(
             dev.jlibra.admissioncontrol.transaction.SignedTransaction transaction) {
         SignedTransaction signedTransaction = SignedTransaction.newBuilder()
-                .setSignedTxn(ByteString.copyFrom(transaction.serialize()))
+                .setTxnBytes(ByteString.copyFrom(transaction.serialize()))
                 .build();
 
         return SubmitTransactionRequest.newBuilder()
-                .setSignedTxn(signedTransaction)
+                .setTransaction(signedTransaction)
                 .build();
     }
 
@@ -90,7 +90,7 @@ public class GrpcMapper {
             List<SignedTransactionWithProof> accumulator) {
         GetWithProof.GetAccountTransactionBySequenceNumberResponse transactionResponse = responseItem
                 .getGetAccountTransactionBySequenceNumberResponse();
-        if (transactionResponse.hasSignedTransactionWithProof()) {
+        if (transactionResponse.hasTransactionWithProof()) {
             accumulator.add(LibraHelper
                     .readSignedTransactionWithProof(responseItem.getGetAccountTransactionBySequenceNumberResponse()));
         }
