@@ -25,6 +25,10 @@ public class Serializer {
                 .append(byteArray);
     }
 
+    public Serializer appendByteArrayWithoutLengthInformation(byte[] byteArray) {
+        return append(byteArray);
+    }
+
     public Serializer appendTransactionArguments(List<TransactionArgument> transactionArguments) {
         Serializer serializer = append(intToByteArray(transactionArguments.size()));
         for (TransactionArgument arg : transactionArguments) {
