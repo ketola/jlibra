@@ -50,13 +50,13 @@ Maven:
 <dependency>
   <groupId>dev.jlibra</groupId>
   <artifactId>jlibra-core</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 
 Gradle:
 
-`compile("dev.jlibra:jlibra-core:0.4.0")`
+`compile("dev.jlibra:jlibra-core:0.5.0")`
 
 ## How-Tos & Step-by-Step Guides
 
