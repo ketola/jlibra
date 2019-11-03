@@ -1,5 +1,7 @@
 package dev.jlibra.example;
 
+import static java.util.Arrays.asList;
+
 import java.math.BigDecimal;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +20,7 @@ public class GetAccountStateExample {
     private static final Logger logger = LogManager.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) {
-        String address = "cf1d4e9a20a59cb3b599d2a3302c35d04a9ca7646ddc7d53af4eacad10656e82";
+        String address = "8fe46b047ab11b659dc3d0b5193adef0166253058fc11b747485c467a852ca85";
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -27,11 +29,13 @@ public class GetAccountStateExample {
         AdmissionControl admissionControl = new AdmissionControl(channel);
 
         UpdateToLatestLedgerResult result = admissionControl
-                .updateToLatestLedger(ImmutableQuery.builder()
-                        .addAccountStateQueries(ImmutableGetAccountState.builder()
-                                .address(Hex.decode(address))
-                                .build())
-                        .build());
+                .updateToLatestLedger(
+                        ImmutableQuery.builder()
+                                .accountStateQueries(asList(
+                                        ImmutableGetAccountState.builder()
+                                                .address(Hex.decode(address))
+                                                .build()))
+                                .build());
 
         result.getAccountResources().forEach(accountResource -> {
             logger.info("Authentication key: {}", Hex.toHexString(accountResource.getAuthenticationKey()));

@@ -1,6 +1,7 @@
 package dev.jlibra.example;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
 import java.security.KeyPair;
@@ -191,9 +192,9 @@ public class KeyRotationExample {
     private static void getAccountState(byte[] address, AdmissionControl admissionControl) {
         UpdateToLatestLedgerResult result = admissionControl
                 .updateToLatestLedger(ImmutableQuery.builder()
-                        .addAccountStateQueries(ImmutableGetAccountState.builder()
+                        .accountStateQueries(asList(ImmutableGetAccountState.builder()
                                 .address(address)
-                                .build())
+                                .build()))
                         .build());
 
         result.getAccountResources().forEach(accountResource -> logger.info(

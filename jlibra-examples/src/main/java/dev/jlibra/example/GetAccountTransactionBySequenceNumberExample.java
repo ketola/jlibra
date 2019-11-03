@@ -1,5 +1,7 @@
 package dev.jlibra.example;
 
+import static java.util.Arrays.asList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
@@ -26,11 +28,11 @@ public class GetAccountTransactionBySequenceNumberExample {
         AdmissionControl admissionControl = new AdmissionControl(channel);
 
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
-                .addAccountTransactionBySequenceNumberQueries(
-                        ImmutableGetAccountTransactionBySequenceNumber.builder()
+                .accountTransactionBySequenceNumberQueries(
+                        asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
                                 .accountAddress(Hex.decode(address))
                                 .sequenceNumber(sequenceNumber)
-                                .build())
+                                .build()))
                 .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
