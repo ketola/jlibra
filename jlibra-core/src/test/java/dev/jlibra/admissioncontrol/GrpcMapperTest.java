@@ -60,8 +60,8 @@ public class GrpcMapperTest {
 
         SubmitTransactionRequest request = GrpcMapper.toSubmitTransactionRequest(signedTransaction);
 
-        assertThat(Hex.toHexString(request.getSignedTxn().getSignedTxn().toByteArray()), is(
-                "010000000101000000000000000000000001000000010200000000000000e8030000000000000100000001000000010000000070170000000000000100000000000000010000000000000001000000010100000001"));
+        assertThat(Hex.toHexString(request.getTransaction().getTxnBytes().toByteArray()), is(
+                "0101000000000000000000000001000000010200000000000000e80300000000000001000000010000000070170000000000000100000000000000010000000000000001000000010100000001"));
     }
 
     @Test

@@ -22,7 +22,7 @@ public interface Transaction extends LibraSerializable {
 
     default byte[] serialize() {
         return Serializer.builder()
-                .appendByteArray(getSenderAccount())
+                .appendByteArrayWithoutLengthInformation(getSenderAccount())
                 .appendLong(getSequenceNumber())
                 .appendSerializable(getProgram())
                 .appendLong(getMaxGasAmount())

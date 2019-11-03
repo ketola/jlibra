@@ -16,7 +16,7 @@ public class AccountAddressArgument implements TransactionArgument {
     public byte[] serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendByteArray(address)
+                .appendByteArrayWithoutLengthInformation(address)
                 .toByteArray();
     }
 }

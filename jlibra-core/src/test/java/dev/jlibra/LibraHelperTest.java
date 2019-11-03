@@ -46,7 +46,7 @@ public class LibraHelperTest {
                         .build(), privateKey)));
 
         assertThat(signature, is(
-                "3d11514c47b128ecbdb84a4619d622c5425eaf83f9b1e1b4d32e672fa06df9048b125d04cace580b04d1b63fafd8a9e448affb94665a1019f178432954fc1a0d"));
+                "6161e43e8b6dd4c3dbe8dd76e0d55d77c49677a5712e3ef2466d1b30eb7878116c5cc048d9a06a946985687917bcdb7e83938c26b52db47dc597f1c202678f07"));
     }
 
     @Test

@@ -44,6 +44,16 @@ public class SerializerTest {
     }
 
     @Test
+    public void testSerializeByteArrayWithoutLengthInformation() {
+        byte[] byteArray = Hex.decode("ca820bf9305eb97d0d784f71b3955457fbf6911f5300ceaa5d7e8621529eae19");
+
+        assertThat(
+                Hex.toHexString(Serializer.builder().appendByteArrayWithoutLengthInformation(byteArray).toByteArray())
+                        .toUpperCase(),
+                is("CA820BF9305EB97D0D784F71B3955457FBF6911F5300CEAA5D7E8621529EAE19"));
+    }
+
+    @Test
     public void testSerializeTransactionArguments() {
         List<TransactionArgument> arguments = Arrays.asList(new U64Argument(9213671392124193148L));
 

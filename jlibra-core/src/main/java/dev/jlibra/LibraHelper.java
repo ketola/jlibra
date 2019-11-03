@@ -67,7 +67,7 @@ public class LibraHelper {
 
     public static SignedTransactionWithProof readSignedTransactionWithProof(
             GetAccountTransactionBySequenceNumberResponse getAccountTransactionBySequenceNumberResponse) {
-        List<Event> events = getAccountTransactionBySequenceNumberResponse.getSignedTransactionWithProof()
+        List<Event> events = getAccountTransactionBySequenceNumberResponse.getTransactionWithProof()
                 .getEvents().getEventsList().stream()
                 .map(Event::deserialize)
                 .collect(toList());
