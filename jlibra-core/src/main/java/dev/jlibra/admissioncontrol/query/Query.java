@@ -2,9 +2,10 @@ package dev.jlibra.admissioncontrol.query;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.immutables.value.Value;
 
@@ -18,19 +19,15 @@ public interface Query {
     Optional<List<GetAccountTransactionBySequenceNumber>> getAccountTransactionBySequenceNumberQueries();
 
     default List<RequestItem> toGrpcObject() {
-        List<RequestItem> requestItems = new ArrayList<>();
-
-        if (getAccountStateQueries().isPresent()) {
-            requestItems.addAll(getAccountStateQueries().get().stream().map(GetAccountState::toGrpcObject)
-                    .collect(toList()));
-        }
-
-        if (getAccountTransactionBySequenceNumberQueries().isPresent()) {
-            requestItems.addAll(getAccountTransactionBySequenceNumberQueries().get().stream()
-                    .map(GetAccountTransactionBySequenceNumber::toGrpcObject)
-                    .collect(toList()));
-        }
-
-        return requestItems;
+        return Stream.concat(
+                getAccountStateQueries()
+                        .map(Collection::stream)
+                        .orElse(Stream.empty())
+                        .map(GetAccountState::toGrpcObject),
+                getAccountTransactionBySequenceNumberQueries()
+                        .map(Collection::stream)
+                        .orElse(Stream.empty())
+                        .map(GetAccountTransactionBySequenceNumber::toGrpcObject))
+                .collect(toList());
     }
 }
