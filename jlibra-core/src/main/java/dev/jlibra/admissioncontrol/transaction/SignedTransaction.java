@@ -28,7 +28,7 @@ public interface SignedTransaction extends LibraSerializable {
     default SubmitTransactionRequest toGrpcObject() {
         types.TransactionOuterClass.SignedTransaction signedTransaction = types.TransactionOuterClass.SignedTransaction
                 .newBuilder()
-                .setTxnBytes(ByteString.copyFrom(this.serialize()))
+                .setTxnBytes(ByteString.copyFrom(serialize()))
                 .build();
         return SubmitTransactionRequest.newBuilder()
                 .setTransaction(signedTransaction)

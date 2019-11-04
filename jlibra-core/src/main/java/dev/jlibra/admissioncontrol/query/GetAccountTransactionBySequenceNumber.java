@@ -17,8 +17,8 @@ public interface GetAccountTransactionBySequenceNumber {
     default RequestItem toGrpcObject() {
         GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
                 .newBuilder()
-                .setAccount(ByteString.copyFrom(this.getAccountAddress()))
-                .setSequenceNumber(this.getSequenceNumber())
+                .setAccount(ByteString.copyFrom(getAccountAddress()))
+                .setSequenceNumber(getSequenceNumber())
                 .setFetchEvents(true)
                 .build();
 

@@ -14,7 +14,7 @@ public interface GetAccountState {
 
     default RequestItem toGrpcObject() {
         GetAccountStateRequest getAccountStateRequest = GetAccountStateRequest.newBuilder()
-                .setAddress(ByteString.copyFrom(this.getAddress()))
+                .setAddress(ByteString.copyFrom(getAddress()))
                 .build();
         return RequestItem.newBuilder()
                 .setGetAccountStateRequest(getAccountStateRequest)
