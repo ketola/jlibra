@@ -126,7 +126,7 @@ public class SimpleTransactionIT {
     private long findBalance(String forAddress) {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(
                 ImmutableQuery.builder().accountStateQueries(
-                        Arrays.asList(ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()))
+                        asList(ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()))
                         .build());
 
         long balance = result.getAccountResources()
