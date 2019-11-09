@@ -8,13 +8,13 @@ import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
 
 @Value.Immutable
-public interface GetAccountTransactionBySequenceNumber {
+public abstract class GetAccountTransactionBySequenceNumber {
 
-    byte[] getAccountAddress();
+    public abstract byte[] getAccountAddress();
 
-    long getSequenceNumber();
+    public abstract long getSequenceNumber();
 
-    default RequestItem toGrpcObject() {
+    public RequestItem toGrpcObject() {
         GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
                 .newBuilder()
                 .setAccount(ByteString.copyFrom(getAccountAddress()))

@@ -8,11 +8,11 @@ import types.GetWithProof.GetAccountStateRequest;
 import types.GetWithProof.RequestItem;
 
 @Value.Immutable
-public interface GetAccountState {
+public abstract class GetAccountState {
 
-    byte[] getAddress();
+    public abstract byte[] getAddress();
 
-    default RequestItem toGrpcObject() {
+    public RequestItem toGrpcObject() {
         GetAccountStateRequest getAccountStateRequest = GetAccountStateRequest.newBuilder()
                 .setAddress(ByteString.copyFrom(getAddress()))
                 .build();

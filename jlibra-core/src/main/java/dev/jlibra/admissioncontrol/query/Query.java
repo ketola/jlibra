@@ -12,13 +12,13 @@ import org.immutables.value.Value;
 import types.GetWithProof.RequestItem;
 
 @Value.Immutable
-public interface Query {
+public abstract class Query {
 
-    Optional<List<GetAccountState>> getAccountStateQueries();
+    public abstract Optional<List<GetAccountState>> getAccountStateQueries();
 
-    Optional<List<GetAccountTransactionBySequenceNumber>> getAccountTransactionBySequenceNumberQueries();
+    public abstract Optional<List<GetAccountTransactionBySequenceNumber>> getAccountTransactionBySequenceNumberQueries();
 
-    default List<RequestItem> toGrpcObject() {
+    public List<RequestItem> toGrpcObject() {
         return Stream.concat(
                 getAccountStateQueries()
                         .map(Collection::stream)
