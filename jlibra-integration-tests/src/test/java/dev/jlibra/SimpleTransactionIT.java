@@ -4,6 +4,7 @@ import static admission_control.AdmissionControlOuterClass.AdmissionControlStatu
 import static dev.jlibra.mnemonic.Mnemonic.WORDS;
 import static java.lang.String.format;
 import static java.time.Instant.now;
+import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.with;
@@ -53,11 +54,11 @@ import kong.unirest.Unirest;
 
 /**
  * <p>
- *     <ol>
- *        <li>Create two key pairs A and B. </li>
- *        <li>Mint X libras for account represented by key pair A. </li>
- *        <li>Transfer amount Y from A to B and verify the transaction.</li>
- *     </ol>
+ * <ol>
+ * <li>Create two key pairs A and B.</li>
+ * <li>Mint X libras for account represented by key pair A.</li>
+ * <li>Transfer amount Y from A to B and verify the transaction.</li>
+ * </ol>
  */
 public class SimpleTransactionIT {
 
@@ -124,8 +125,9 @@ public class SimpleTransactionIT {
 
     private long findBalance(String forAddress) {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(
-                ImmutableQuery.builder().addAccountStateQueries(
-                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
+                ImmutableQuery.builder().accountStateQueries(
+                        asList(ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()))
+                        .build());
 
         long balance = result.getAccountResources()
                 .stream()
@@ -177,8 +179,8 @@ public class SimpleTransactionIT {
 
     private long maybeFindSequenceNumber(AdmissionControl admissionControl, String forAddress) {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(
-                ImmutableQuery.builder().addAccountStateQueries(
-                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build()).build());
+                ImmutableQuery.builder().accountStateQueries(asList(
+                        ImmutableGetAccountState.builder().address(Hex.decode(forAddress)).build())).build());
 
         return result.getAccountResources()
                 .stream()

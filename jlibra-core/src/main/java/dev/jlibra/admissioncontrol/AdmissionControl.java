@@ -1,10 +1,5 @@
 package dev.jlibra.admissioncontrol;
 
-import static dev.jlibra.admissioncontrol.GrpcMapper.toSubmitTransactionRequest;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import admission_control.AdmissionControlGrpc;
 import admission_control.AdmissionControlGrpc.AdmissionControlBlockingStub;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
@@ -15,7 +10,6 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import io.grpc.Channel;
-import types.GetWithProof.RequestItem;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
 
@@ -28,11 +22,9 @@ public class AdmissionControl {
     }
 
     public SubmitTransactionResult submitTransaction(SignedTransaction transaction) {
-        SubmitTransactionRequest request = toSubmitTransactionRequest(transaction);
-
+        SubmitTransactionRequest request = transaction.toGrpcObject();
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
         SubmitTransactionResponse response = stub.submitTransaction(request);
-
         return ImmutableSubmitTransactionResult.builder()
                 .admissionControlStatus(response.getAcStatus())
                 .mempoolStatus(response.getMempoolStatus())
@@ -43,20 +35,10 @@ public class AdmissionControl {
 
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
-
-        List<RequestItem> requestItems = new ArrayList<>();
-
-        requestItems.addAll(GrpcMapper.accountStateQueriesToRequestItems(query.getAccountStateQueries()));
-
-        requestItems.addAll(
-                GrpcMapper.accountTransactionBySequenceNumberQueriesToRequestItems(
-                        query.getAccountTransactionBySequenceNumberQueries()));
-
         UpdateToLatestLedgerResponse response = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
-                .addAllRequestedItems(requestItems)
+                .addAllRequestedItems(query.toGrpcObject())
                 .build());
-
-        return GrpcMapper.updateToLatestLedgerResponseToResult(response);
+        return UpdateToLatestLedgerResult.fromGrpcObject(response);
     }
 
     @Override
