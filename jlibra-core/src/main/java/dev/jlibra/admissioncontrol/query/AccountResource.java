@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
+import types.AccountStateBlobOuterClass.AccountStateWithProof;
+
 @Value.Immutable
 public interface AccountResource {
 
@@ -61,16 +63,18 @@ public interface AccountResource {
                     .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
                     .delegatedKeyRotationCapability(delegatedKeyRotationCapability)
                     .receivedEvents(receivedEvents)
-                    .sentEvents(sentEvents).build();
+                    .sentEvents(sentEvents)
+                    .build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static List<AccountResource> deserializeAccountState(byte[] accountStateBlob) {
+    static List<AccountResource> fromGrpcObject(AccountStateWithProof accountStateWithProof) {
         List<AccountResource> accountResources = new ArrayList<>();
 
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(accountStateBlob));
+        DataInputStream in = new DataInputStream(
+                new ByteArrayInputStream(accountStateWithProof.getBlob().getBlob().toByteArray()));
         int dataSize = readInt(in, 4);
 
         for (int i = 0; i < dataSize; i++) {

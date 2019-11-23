@@ -20,7 +20,7 @@ public interface Event {
 
     long getSequenceNumber();
 
-    static Event deserialize(types.Events.Event event) {
+    static Event fromGrpcObject(types.Events.Event event) {
         byte[] eventData = event.getEventData().toByteArray();
         try (DataInputStream eventDataStream = new DataInputStream(new ByteArrayInputStream(eventData))) {
             long amount = Deserialization.readLong(eventDataStream, 8);

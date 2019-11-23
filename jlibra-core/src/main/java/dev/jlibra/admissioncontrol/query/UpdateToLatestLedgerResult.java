@@ -20,10 +20,10 @@ public abstract class UpdateToLatestLedgerResult {
         List<TransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
 
         for (ResponseItem item : grpcObject.getResponseItemsList()) {
-            accountStates.addAll(AccountResource.deserializeAccountState(
-                    item.getGetAccountStateResponse().getAccountStateWithProof().getBlob().getBlob().toByteArray()));
+            accountStates.addAll(AccountResource.fromGrpcObject(
+                    item.getGetAccountStateResponse().getAccountStateWithProof()));
             accountTransactionsBySequenceNumber
-                    .add(TransactionWithProof.deserialize(
+                    .add(TransactionWithProof.fromGrpcObject(
                             item.getGetAccountTransactionBySequenceNumberResponse().getTransactionWithProof()));
         }
 
