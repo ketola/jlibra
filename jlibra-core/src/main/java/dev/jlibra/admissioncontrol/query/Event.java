@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.immutables.value.Value;
 
+import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.Deserialization;
 
 @Value.Immutable
@@ -31,7 +32,7 @@ public interface Event {
                     .sequenceNumber(event.getSequenceNumber())
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new LibraRuntimeException("De-serializing Even failed", e);
         }
 
     }
