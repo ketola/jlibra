@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction.query;
+package dev.jlibra.admissioncontrol.query;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.emptyIterable;
