@@ -1,5 +1,7 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import java.security.PublicKey;
+
 import org.immutables.value.Value;
 
 import com.google.protobuf.ByteString;
@@ -13,14 +15,14 @@ public abstract class SignedTransaction implements LibraSerializable {
 
     public abstract Transaction getTransaction();
 
-    public abstract byte[] getPublicKey();
+    public abstract PublicKey getPublicKey();
 
     public abstract byte[] getSignature();
 
     public byte[] serialize() {
         return Serializer.builder()
                 .appendSerializable(getTransaction())
-                .appendByteArray(getPublicKey())
+                .appendPublicKey(getPublicKey())
                 .appendByteArray(getSignature())
                 .toByteArray();
     }

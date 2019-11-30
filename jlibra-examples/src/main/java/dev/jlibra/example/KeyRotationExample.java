@@ -169,7 +169,7 @@ public class KeyRotationExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(KeyUtils.stripPublicKeyPrefix(publicKey.getEncoded()))
+                .publicKey(publicKey)
                 .transaction(transaction)
                 .signature(LibraHelper.signTransaction(transaction, privateKey))
                 .build();
