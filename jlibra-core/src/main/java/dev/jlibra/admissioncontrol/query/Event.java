@@ -32,7 +32,7 @@ public interface Event {
                     .sequenceNumber(event.getSequenceNumber())
                     .build();
         } catch (IOException e) {
-            throw new LibraRuntimeException("De-serializing Even failed", e);
+            throw new LibraRuntimeException("Converting from grpc object failed", e);
         }
 
     }
