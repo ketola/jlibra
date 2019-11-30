@@ -20,7 +20,7 @@ public class EventTest {
                 .build();
         Event event = Event.fromGrpcObject(grpcEvent);
 
-        assertThat(Hex.toHexString(event.getAccountAddress()),
+        assertThat(event.getAccountAddress().asHexString(),
                 is("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"));
         assertThat(event.getAmount(), is(1000000L));
         assertThat(event.getSequenceNumber(), is(1L));

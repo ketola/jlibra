@@ -13,6 +13,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.google.protobuf.ByteString;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.AdmissionControl;
@@ -61,7 +62,7 @@ public class TransferExample {
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(160000)
                 .gasUnitPrice(1)
-                .senderAccount(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()))
+                .senderAccount(AccountAddress.ofPublicKey(publicKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .program(
                         ImmutableProgram.builder()

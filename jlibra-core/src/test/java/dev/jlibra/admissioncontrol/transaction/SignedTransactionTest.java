@@ -13,6 +13,7 @@ import org.junit.Test;
 import com.google.protobuf.ByteString;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
+import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 
 public class SignedTransactionTest {
@@ -31,7 +32,7 @@ public class SignedTransactionTest {
                 .gasUnitPrice(3)
                 .sequenceNumber(4)
                 .expirationTime(5L)
-                .senderAccount(new byte[] { 1 })
+                .senderAccount(AccountAddress.ofByteArray(new byte[] { 1 }))
                 .program(ImmutableProgram.builder()
                         .addArguments(new U64Argument(1000), new AccountAddressArgument(new byte[] { 2 }))
                         .code(ByteString.copyFrom(new byte[] { 3 }))
@@ -56,7 +57,7 @@ public class SignedTransactionTest {
                 .gasUnitPrice(1)
                 .sequenceNumber(1)
                 .expirationTime(1L)
-                .senderAccount(new byte[] { 1 })
+                .senderAccount(AccountAddress.ofByteArray(new byte[] { 1 }))
                 .program(ImmutableProgram.builder()
                         .addArguments(new U64Argument(1000), new AccountAddressArgument(new byte[] { 1 }))
                         .code(ByteString.copyFrom(new byte[] { 1 }))

@@ -4,8 +4,8 @@ import static java.util.Arrays.asList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
@@ -30,14 +30,14 @@ public class GetAccountTransactionBySequenceNumberExample {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
                 .accountTransactionBySequenceNumberQueries(
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                .accountAddress(Hex.decode(address))
+                                .accountAddress(AccountAddress.ofHexString(address))
                                 .sequenceNumber(sequenceNumber)
                                 .build()))
                 .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
                 .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
-                        Hex.toHexString(e.getAccountAddress()), e.getSequenceNumber(), e.getAmount())));
+                        e.getAccountAddress().asHexString(), e.getSequenceNumber(), e.getAmount())));
 
         channel.shutdown();
     }

@@ -2,13 +2,14 @@ package dev.jlibra.admissioncontrol.transaction;
 
 import org.immutables.value.Value;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.LibraSerializable;
 import dev.jlibra.serialization.Serializer;
 
 @Value.Immutable
 public interface Transaction extends LibraSerializable {
 
-    byte[] getSenderAccount();
+    AccountAddress getSenderAccount();
 
     long getSequenceNumber();
 
@@ -22,7 +23,7 @@ public interface Transaction extends LibraSerializable {
 
     default byte[] serialize() {
         return Serializer.builder()
-                .appendByteArrayWithoutLengthInformation(getSenderAccount())
+                .appendByteArrayWithoutLengthInformation(getSenderAccount().asByteArray())
                 .appendLong(getSequenceNumber())
                 .appendSerializable(getProgram())
                 .appendLong(getMaxGasAmount())

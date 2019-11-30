@@ -17,6 +17,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.google.protobuf.ByteString;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.AdmissionControl;
@@ -69,8 +70,8 @@ public class KeyRotationExample {
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
-        byte[] addressOriginal = KeyUtils.toByteArrayLibraAddress(publicKeyOriginal.getEncoded());
-        logger.info("Account address: {}", Hex.toHexString(addressOriginal));
+        AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
+        logger.info("Account address: {}", addressOriginal.asHexString());
         mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
 
@@ -149,7 +150,7 @@ public class KeyRotationExample {
     }
 
     private static SubmitTransactionResult rotateAuthenticationKey(BCEdDSAPrivateKey privateKey,
-            BCEdDSAPublicKey publicKey, byte[] address, BCEdDSAPublicKey publicKeyNew,
+            BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, AdmissionControl admissionControl) {
 
         ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
@@ -177,10 +178,10 @@ public class KeyRotationExample {
         return admissionControl.submitTransaction(signedTransaction);
     }
 
-    private static void mint(byte[] address, long amountInMicroLibras) {
+    private static void mint(AccountAddress address, long amountInMicroLibras) {
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
-                .queryString("address", Hex.toHexString(address))
+                .queryString("address", address.asHexString())
                 .asString();
 
         if (response.getStatus() != 200) {
@@ -189,11 +190,11 @@ public class KeyRotationExample {
         }
     }
 
-    private static void getAccountState(byte[] address, AdmissionControl admissionControl) {
+    private static void getAccountState(AccountAddress accountAddress, AdmissionControl admissionControl) {
         UpdateToLatestLedgerResult result = admissionControl
                 .updateToLatestLedger(ImmutableQuery.builder()
                         .accountStateQueries(asList(ImmutableGetAccountState.builder()
-                                .address(address)
+                                .address(accountAddress)
                                 .build()))
                         .build());
 
