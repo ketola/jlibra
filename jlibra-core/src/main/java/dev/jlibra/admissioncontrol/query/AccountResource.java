@@ -8,8 +8,12 @@ import static dev.jlibra.serialization.Deserialization.readLong;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.immutables.value.Value;
+
+import types.AccountStateBlobOuterClass.AccountStateWithProof;
 
 @Value.Immutable
 public interface AccountResource {
@@ -59,10 +63,29 @@ public interface AccountResource {
                     .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
                     .delegatedKeyRotationCapability(delegatedKeyRotationCapability)
                     .receivedEvents(receivedEvents)
-                    .sentEvents(sentEvents).build();
+                    .sentEvents(sentEvents)
+                    .build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static List<AccountResource> fromGrpcObject(AccountStateWithProof accountStateWithProof) {
+        List<AccountResource> accountResources = new ArrayList<>();
+
+        DataInputStream in = new DataInputStream(
+                new ByteArrayInputStream(accountStateWithProof.getBlob().getBlob().toByteArray()));
+        int dataSize = readInt(in, 4);
+
+        for (int i = 0; i < dataSize; i++) {
+            int keyLength = readInt(in, 4);
+            byte[] key = readBytes(in, keyLength);
+            int valLength = readInt(in, 4);
+            byte[] val = readBytes(in, valLength);
+            accountResources.add(AccountResource.deserialize(val));
+        }
+
+        return accountResources;
     }
 
 }

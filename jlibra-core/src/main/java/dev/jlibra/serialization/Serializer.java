@@ -4,8 +4,10 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
 import java.util.List;
 
+import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.transaction.TransactionArgument;
 
 public class Serializer {
@@ -23,6 +25,10 @@ public class Serializer {
     public Serializer appendByteArray(byte[] byteArray) {
         return append(intToByteArray(byteArray.length))
                 .append(byteArray);
+    }
+
+    public Serializer appendPublicKey(PublicKey pubKey) {
+        return appendByteArray(KeyUtils.stripPublicKeyPrefix(pubKey.getEncoded()));
     }
 
     public Serializer appendByteArrayWithoutLengthInformation(byte[] byteArray) {

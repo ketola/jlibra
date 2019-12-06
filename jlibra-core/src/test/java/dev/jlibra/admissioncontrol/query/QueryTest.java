@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction.query;
+package dev.jlibra.admissioncontrol.query;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.emptyIterable;
@@ -10,9 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
-import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
-import dev.jlibra.admissioncontrol.query.ImmutableQuery;
+import dev.jlibra.AccountAddress;
 import types.GetWithProof.RequestItem;
 
 public class QueryTest {
@@ -32,10 +30,10 @@ public class QueryTest {
                 .accountStateQueries(
                         asList(
                                 ImmutableGetAccountState.builder()
-                                        .address(address1)
+                                        .address(AccountAddress.ofByteArray(address1))
                                         .build(),
                                 ImmutableGetAccountState.builder()
-                                        .address(address2)
+                                        .address(AccountAddress.ofByteArray(address2))
                                         .build()))
                 .build();
 
@@ -54,11 +52,11 @@ public class QueryTest {
                 .accountTransactionBySequenceNumberQueries(
                         asList(
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(address1)
+                                        .accountAddress(AccountAddress.ofByteArray(address1))
                                         .sequenceNumber(1)
                                         .build(),
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(address2)
+                                        .accountAddress(AccountAddress.ofByteArray(address2))
                                         .sequenceNumber(2)
                                         .build()))
                 .build();

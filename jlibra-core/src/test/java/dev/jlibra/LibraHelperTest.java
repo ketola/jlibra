@@ -33,7 +33,7 @@ public class LibraHelperTest {
                         .gasUnitPrice(1L)
                         .maxGasAmount(1L)
                         .program(ImmutableProgram.builder().code(ByteString.copyFrom(new byte[] { 1 })).build())
-                        .senderAccount(new byte[] { 1 })
+                        .senderAccount(AccountAddress.ofByteArray(new byte[] { 1 }))
                         .sequenceNumber(1L)
                         .build(), privateKey)));
 
