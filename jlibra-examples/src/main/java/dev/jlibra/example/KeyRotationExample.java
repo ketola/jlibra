@@ -30,7 +30,7 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineExcption;
+import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
@@ -127,7 +127,7 @@ public class KeyRotationExample {
             result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
                     publicKeyNew2, 1, admissionControl);
 
-        } catch (LibraVirtualMachineExcption e) {
+        } catch (LibraVirtualMachineException e) {
             logger.error(e.getMessage());
             logger.error("This failed because the the original keys cannot be used anymore");
         }

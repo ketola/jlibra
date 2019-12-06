@@ -65,7 +65,7 @@ public class SubmitTransactionResultTest {
 
     @Test
     public void testVirtualMachineException() {
-        exception.expect(LibraVirtualMachineExcption.class);
+        exception.expect(LibraVirtualMachineException.class);
         exception.expectMessage(
                 "Submit transaction failed with virtual machine major status: 2, sub status: 3, message: some message (see https://github.com/libra/libra/blob/master/types/src/vm_error.rs#L260 for explanation for the code)");
 

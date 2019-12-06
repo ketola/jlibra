@@ -29,7 +29,7 @@ public abstract class SubmitTransactionResult {
         case MEMPOOL_STATUS:
             throw new LibraMempoolException(response.getMempoolStatus().getCode());
         case VM_STATUS:
-            throw new LibraVirtualMachineExcption(response.getVmStatus().getMajorStatus(),
+            throw new LibraVirtualMachineException(response.getVmStatus().getMajorStatus(),
                     response.getVmStatus().getSubStatus(), response.getVmStatus().getMessage());
         default:
             throw new SubmitTransactionException("Submit transaction failed with unkown status");
