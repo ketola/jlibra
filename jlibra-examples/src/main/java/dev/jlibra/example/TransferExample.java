@@ -15,7 +15,6 @@ import com.google.protobuf.ByteString;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
-import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
@@ -74,7 +73,7 @@ public class TransferExample {
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .publicKey(publicKey)
                 .transaction(transaction)
-                .signature(LibraHelper.signTransaction(transaction, privateKey))
+                .privateKey(privateKey)
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);

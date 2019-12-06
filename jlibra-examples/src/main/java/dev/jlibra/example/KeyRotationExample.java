@@ -19,7 +19,6 @@ import com.google.protobuf.ByteString;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
-import dev.jlibra.LibraHelper;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
@@ -177,7 +176,7 @@ public class KeyRotationExample {
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .publicKey(publicKey)
                 .transaction(transaction)
-                .signature(LibraHelper.signTransaction(transaction, privateKey))
+                .privateKey(privateKey)
                 .build();
 
         return admissionControl.submitTransaction(signedTransaction);

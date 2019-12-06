@@ -167,7 +167,7 @@ public class SimpleTransactionIT {
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .publicKey(sourceAccount.publicKey)
                 .transaction(transaction)
-                .signature(LibraHelper.signTransaction(transaction, sourceAccount.privateKey))
+                .privateKey(sourceAccount.privateKey)
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
