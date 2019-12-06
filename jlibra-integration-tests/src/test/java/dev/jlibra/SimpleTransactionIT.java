@@ -1,6 +1,5 @@
 package dev.jlibra;
 
-import static admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode.Accepted;
 import static dev.jlibra.mnemonic.Mnemonic.WORDS;
 import static java.lang.String.format;
 import static java.time.Instant.now;
@@ -38,9 +37,9 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.mnemonic.ChildNumber;
 import dev.jlibra.mnemonic.ExtendedPrivKey;
 import dev.jlibra.mnemonic.LibraKeyFactory;
@@ -172,10 +171,7 @@ public class SimpleTransactionIT {
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
-
         System.out.println("Transaction submitted with result: " + result.toString());
-
-        assertEquals(Accepted, result.getAdmissionControlStatus().getCode());
     }
 
     private long maybeFindSequenceNumber(AdmissionControl admissionControl, AccountAddress forAddress) {

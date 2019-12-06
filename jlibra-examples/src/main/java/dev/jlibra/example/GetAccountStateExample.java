@@ -44,7 +44,7 @@ public class GetAccountStateExample {
             logger.info("Sent events: {}", accountResource.getSentEvents().getCount());
             logger.info("Balance (microLibras): {}", accountResource.getBalanceInMicroLibras());
             logger.info("Balance (Libras): {}", new BigDecimal(accountResource.getBalanceInMicroLibras())
-                    .divide(BigDecimal.valueOf(1000000)));
+                    .divide(BigDecimal.valueOf(1_000_000)));
             logger.info("Sequence number: {}", accountResource.getSequenceNumber());
             logger.info("Delegated withdrawal capability: {}", accountResource.getDelegatedWithdrawalCapability());
             logger.info("Delegated key rotation capability: {}", accountResource.getDelegatedKeyRotationCapability());

@@ -34,4 +34,9 @@ public class AccountAddress {
         return new AccountAddress(Hex.decode(hexString));
     }
 
+    @Override
+    public String toString() {
+        return String.format("AccountAddress: %s", Hex.toHexString(address));
+    }
+
 }

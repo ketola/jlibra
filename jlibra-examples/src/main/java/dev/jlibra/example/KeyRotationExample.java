@@ -29,8 +29,9 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineExcption;
+import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -98,7 +99,7 @@ public class KeyRotationExample {
         logger.info("Change the signing keys..");
         SubmitTransactionResult result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
                 publicKeyNew, 0, admissionControl);
-        logger.info("VM status: {}", result.getVmStatus());
+        logger.info("Result: {}", result);
 
         /*
          * Add some coins to the account to verify that the address is still the same
@@ -122,10 +123,14 @@ public class KeyRotationExample {
         BCEdDSAPrivateKey privateKeyNew2 = (BCEdDSAPrivateKey) keyPairNew2.getPrivate();
         BCEdDSAPublicKey publicKeyNew2 = (BCEdDSAPublicKey) keyPairNew2.getPublic();
         logger.info("Change the signing keys..");
-        result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
-                publicKeyNew2, 1, admissionControl);
-        logger.info("VM status: {}", result.getVmStatus());
-        logger.info("This failed because the the original keys cannot be used anymore");
+        try {
+            result = rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
+                    publicKeyNew2, 1, admissionControl);
+
+        } catch (LibraVirtualMachineExcption e) {
+            logger.error(e.getMessage());
+            logger.error("This failed because the the original keys cannot be used anymore");
+        }
 
         /*
          * Now a new attempt is done using the correct keys and this time the
@@ -134,7 +139,7 @@ public class KeyRotationExample {
         logger.info("Change the signing keys..");
         result = rotateAuthenticationKey(privateKeyNew, publicKeyNew, addressOriginal,
                 publicKeyNew2, 1, admissionControl);
-        logger.info("VM status: {}", result.getVmStatus());
+        logger.info("Result: {}", result);
         logger.info("This succeeded because now the updated keys were used.");
         Thread.sleep(500);
 

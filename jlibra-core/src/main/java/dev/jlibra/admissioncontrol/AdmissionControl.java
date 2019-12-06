@@ -6,9 +6,9 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.admissioncontrol.query.Query;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
+import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionException;
+import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import io.grpc.Channel;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
@@ -21,16 +21,11 @@ public class AdmissionControl {
         this.channel = channel;
     }
 
-    public SubmitTransactionResult submitTransaction(SignedTransaction transaction) {
+    public SubmitTransactionResult submitTransaction(SignedTransaction transaction) throws SubmitTransactionException {
         SubmitTransactionRequest request = transaction.toGrpcObject();
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
         SubmitTransactionResponse response = stub.submitTransaction(request);
-        return ImmutableSubmitTransactionResult.builder()
-                .admissionControlStatus(response.getAcStatus())
-                .mempoolStatus(response.getMempoolStatus())
-                .vmStatus(response.getVmStatus())
-                .statusCase(response.getStatusCase())
-                .build();
+        return SubmitTransactionResult.fromGrpcObject(response);
     }
 
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
