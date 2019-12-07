@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
@@ -51,11 +50,7 @@ public class KeyUtilsTest {
         assertThat(publicKey, equalTo(KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX)));
     }
 
-    private static KeyFactory getKeyFactory() {
-        try {
-            return KeyFactory.getInstance("Ed25519");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Could not get KeyFactory", e);
-        }
+    private static KeyFactory getKeyFactory() throws Exception {
+        return KeyFactory.getInstance("Ed25519");
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
+import dev.jlibra.LibraRuntimeException;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
 
 @Value.Immutable
@@ -66,7 +67,7 @@ public interface AccountResource {
                     .sentEvents(sentEvents)
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new LibraRuntimeException("Deserialization of AccountResource failed", e);
         }
     }
 
