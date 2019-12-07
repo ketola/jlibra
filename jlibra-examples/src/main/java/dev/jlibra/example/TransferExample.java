@@ -22,9 +22,9 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -44,7 +44,7 @@ public class TransferExample {
         String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
         long amount = 1;
-        int sequenceNumber = 1;
+        int sequenceNumber = 0;
 
         logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
@@ -79,15 +79,9 @@ public class TransferExample {
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
 
-        logger.info(result);
-        logger.info("Status type: {}", result.getStatusCase());
-        logger.info("Admission control status: {}", result.getAdmissionControlStatus());
-        logger.info("Mempool status: {}", result.getMempoolStatus());
-        logger.info("VM status: {}", result.getVmStatus());
-
-        Thread.sleep(3000);
-        channel.shutdown();
+        logger.info("Result: " + result);
         Thread.sleep(3000); // add sleep to prevent premature closing of channel
+        channel.shutdown();
     }
 
 }

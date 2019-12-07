@@ -1,6 +1,5 @@
 package dev.jlibra;
 
-import static admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode.Accepted;
 import static dev.jlibra.mnemonic.Mnemonic.WORDS;
 import static java.lang.String.format;
 import static java.time.Instant.now;
@@ -38,9 +37,10 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.SubmitTransactionResult;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
+import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.mnemonic.ChildNumber;
 import dev.jlibra.mnemonic.ExtendedPrivKey;
 import dev.jlibra.mnemonic.LibraKeyFactory;
@@ -99,7 +99,7 @@ public class SimpleTransactionIT {
     }
 
     @Test
-    public void transferTest() {
+    public void transferTest() throws Exception {
 
         // mint something to source account so we don't run out of coins
         mint();
@@ -143,7 +143,7 @@ public class SimpleTransactionIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) {
+    private void transfer(String toAddress, long amount) throws LibraTransactionException {
 
         long sequenceNumber = maybeFindSequenceNumber(admissionControl,
                 AccountAddress.ofHexString(sourceAccount.getAddress()));
@@ -172,10 +172,7 @@ public class SimpleTransactionIT {
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
-
         System.out.println("Transaction submitted with result: " + result.toString());
-
-        assertEquals(Accepted, result.getAdmissionControlStatus().getCode());
     }
 
     private long maybeFindSequenceNumber(AdmissionControl admissionControl, AccountAddress forAddress) {
