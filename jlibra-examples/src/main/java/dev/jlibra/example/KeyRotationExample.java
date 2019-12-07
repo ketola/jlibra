@@ -30,6 +30,7 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
@@ -156,7 +157,7 @@ public class KeyRotationExample {
 
     private static SubmitTransactionResult rotateAuthenticationKey(BCEdDSAPrivateKey privateKey,
             BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
-            int sequenceNumber, AdmissionControl admissionControl) {
+            int sequenceNumber, AdmissionControl admissionControl) throws LibraTransactionException {
 
         ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
                 KeyUtils.toByteArrayLibraAddress(publicKeyNew.getEncoded()));

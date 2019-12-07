@@ -22,7 +22,7 @@ public class SubmitTransactionResultTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testAdmissionControlAccepted() {
+    public void testAdmissionControlAccepted() throws Exception {
         byte[] validatorId = new byte[] { 1 };
         SubmitTransactionResponse response = SubmitTransactionResponse.newBuilder()
                 .setAcStatus(AdmissionControlStatus.newBuilder()
@@ -36,7 +36,7 @@ public class SubmitTransactionResultTest {
     }
 
     @Test
-    public void testAdmissionControlException() {
+    public void testAdmissionControlException() throws Exception {
         exception.expect(LibraAdmissionControlException.class);
         exception.expectMessage("Submit transaction failed with admission control status Rejected (2)");
 
@@ -50,7 +50,7 @@ public class SubmitTransactionResultTest {
     }
 
     @Test
-    public void testMempoolException() {
+    public void testMempoolException() throws Exception {
         exception.expect(LibraMempoolException.class);
         exception.expectMessage("Submit transaction failed with mempool status InsufficientBalance (1)");
 
@@ -64,7 +64,7 @@ public class SubmitTransactionResultTest {
     }
 
     @Test
-    public void testVirtualMachineException() {
+    public void testVirtualMachineException() throws Exception {
         exception.expect(LibraVirtualMachineException.class);
         exception.expectMessage(
                 "Submit transaction failed with virtual machine major status: 2, sub status: 3, message: some message (see https://github.com/libra/libra/blob/master/types/src/vm_error.rs#L260 for explanation for the code)");
