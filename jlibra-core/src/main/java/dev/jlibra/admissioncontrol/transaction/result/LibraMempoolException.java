@@ -2,7 +2,7 @@ package dev.jlibra.admissioncontrol.transaction.result;
 
 import mempool_status.MempoolStatus.MempoolAddTransactionStatusCode;
 
-public class LibraMempoolException extends SubmitTransactionException {
+public class LibraMempoolException extends LibraTransactionException {
 
     public final MempoolAddTransactionStatusCode statusCode;
 

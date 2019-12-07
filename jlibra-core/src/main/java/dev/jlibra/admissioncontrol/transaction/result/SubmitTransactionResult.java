@@ -16,7 +16,8 @@ public abstract class SubmitTransactionResult {
 
     public abstract byte[] getValidatorId();
 
-    public static SubmitTransactionResult fromGrpcObject(SubmitTransactionResponse response) {
+    public static SubmitTransactionResult fromGrpcObject(SubmitTransactionResponse response)
+            throws LibraTransactionException {
         switch (response.getStatusCase()) {
         case AC_STATUS: {
             if (response.getAcStatus().getCode() == AdmissionControlStatusCode.Accepted) {
@@ -32,7 +33,7 @@ public abstract class SubmitTransactionResult {
             throw new LibraVirtualMachineException(response.getVmStatus().getMajorStatus(),
                     response.getVmStatus().getSubStatus(), response.getVmStatus().getMessage());
         default:
-            throw new SubmitTransactionException("Submit transaction failed with unkown status");
+            throw new LibraTransactionException("Submit transaction failed with unkown status");
         }
 
     }

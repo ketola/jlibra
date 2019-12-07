@@ -2,7 +2,7 @@ package dev.jlibra.admissioncontrol.transaction.result;
 
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
 
-public class LibraAdmissionControlException extends SubmitTransactionException {
+public class LibraAdmissionControlException extends LibraTransactionException {
 
     public final AdmissionControlStatusCode statusCode;
 

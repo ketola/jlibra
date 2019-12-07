@@ -1,6 +1,6 @@
 package dev.jlibra.admissioncontrol.transaction.result;
 
-public class LibraVirtualMachineException extends SubmitTransactionException {
+public class LibraVirtualMachineException extends LibraTransactionException {
 
     public final long majorStatus;
     public final long subStatus;

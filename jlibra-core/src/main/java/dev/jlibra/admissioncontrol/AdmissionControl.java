@@ -7,7 +7,7 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.admissioncontrol.query.Query;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionException;
+import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import io.grpc.Channel;
 import types.GetWithProof.UpdateToLatestLedgerRequest;
@@ -21,7 +21,7 @@ public class AdmissionControl {
         this.channel = channel;
     }
 
-    public SubmitTransactionResult submitTransaction(SignedTransaction transaction) throws SubmitTransactionException {
+    public SubmitTransactionResult submitTransaction(SignedTransaction transaction) throws LibraTransactionException {
         SubmitTransactionRequest request = transaction.toGrpcObject();
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
         SubmitTransactionResponse response = stub.submitTransaction(request);

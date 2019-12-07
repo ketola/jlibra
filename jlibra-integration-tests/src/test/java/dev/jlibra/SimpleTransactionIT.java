@@ -39,6 +39,7 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.mnemonic.ChildNumber;
 import dev.jlibra.mnemonic.ExtendedPrivKey;
@@ -98,7 +99,7 @@ public class SimpleTransactionIT {
     }
 
     @Test
-    public void transferTest() {
+    public void transferTest() throws Exception {
 
         // mint something to source account so we don't run out of coins
         mint();
@@ -142,7 +143,7 @@ public class SimpleTransactionIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) {
+    private void transfer(String toAddress, long amount) throws LibraTransactionException {
 
         long sequenceNumber = maybeFindSequenceNumber(admissionControl,
                 AccountAddress.ofHexString(sourceAccount.getAddress()));
