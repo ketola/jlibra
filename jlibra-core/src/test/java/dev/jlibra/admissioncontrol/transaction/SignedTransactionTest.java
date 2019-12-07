@@ -42,38 +42,15 @@ public class SignedTransactionTest {
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .publicKey(KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX))
-                .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
+                .signature(ImmutableSignature.builder()
+                        .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
+                        .transaction(transaction)
+                        .build())
                 .transaction(transaction)
                 .build();
 
         assertThat(Hex.toHexString(signedTransaction.serialize()).toUpperCase(), is(
                 "0104000000000000000000000001000000030200000000000000E803000000000000010000000200000000020000000000000003000000000000000500000000000000200000000B29A7ADCE0897B2D1EC18CC482237463EFA173945FA3BD2703023E1A248902140000000CDB05E40081406F4813B5A3122B3C09A5C6C5023C33B920D6D840B568B905281857D6E95582017423F6FD9721A2E40CFDCCD6BA23EAF6426B87F4C62B4EE4B03"));
-    }
-
-    @Test
-    public void testSignature() {
-        Transaction transaction = ImmutableTransaction.builder()
-                .expirationTime(1)
-                .maxGasAmount(2)
-                .gasUnitPrice(3)
-                .sequenceNumber(4)
-                .expirationTime(5L)
-                .senderAccount(AccountAddress.ofByteArray(new byte[] { 1 }))
-                .program(ImmutableProgram.builder()
-                        .addArguments(new U64Argument(1000), new AccountAddressArgument(new byte[] { 2 }))
-                        .code(ByteString.copyFrom(new byte[] { 3 }))
-                        .build())
-                .build();
-
-        SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX))
-                .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
-                .transaction(transaction)
-                .build();
-
-        assertThat(Hex.toHexString(
-                signedTransaction.signTransaction(transaction, KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))),
-                is("cdb05e40081406f4813b5a3122b3c09a5c6c5023c33b920d6d840b568b905281857d6e95582017423f6fd9721a2e40cfdccd6ba23eaf6426b87f4c62b4ee4b03"));
     }
 
     @Test
@@ -93,7 +70,10 @@ public class SignedTransactionTest {
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .publicKey(KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX))
-                .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
+                .signature(ImmutableSignature.builder()
+                        .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
+                        .transaction(transaction)
+                        .build())
                 .transaction(transaction)
                 .build();
 

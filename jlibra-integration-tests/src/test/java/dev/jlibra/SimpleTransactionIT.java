@@ -34,6 +34,7 @@ import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
@@ -168,7 +169,10 @@ public class SimpleTransactionIT {
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .publicKey(sourceAccount.publicKey)
                 .transaction(transaction)
-                .privateKey(sourceAccount.privateKey)
+                .signature(ImmutableSignature.builder()
+                        .privateKey(sourceAccount.privateKey)
+                        .transaction(transaction)
+                        .build())
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
