@@ -17,13 +17,13 @@ public abstract class SignedTransaction implements LibraSerializable {
 
     public abstract PublicKey getPublicKey();
 
-    public abstract byte[] getSignature();
+    public abstract Signature getSignature();
 
     public byte[] serialize() {
         return Serializer.builder()
                 .appendSerializable(getTransaction())
                 .appendPublicKey(getPublicKey())
-                .appendByteArray(getSignature())
+                .appendSerializable(getSignature())
                 .toByteArray();
     }
 
@@ -36,4 +36,5 @@ public abstract class SignedTransaction implements LibraSerializable {
                 .setTransaction(signedTransaction)
                 .build();
     }
+
 }
