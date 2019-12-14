@@ -13,7 +13,7 @@ public interface Transaction extends LibraSerializable {
 
     long getSequenceNumber();
 
-    Program getProgram();
+    Script getPayload();
 
     long getExpirationTime();
 
@@ -25,7 +25,7 @@ public interface Transaction extends LibraSerializable {
         return Serializer.builder()
                 .appendByteArrayWithoutLengthInformation(getSenderAccount().asByteArray())
                 .appendLong(getSequenceNumber())
-                .appendSerializable(getProgram())
+                .appendSerializable(getPayload())
                 .appendLong(getMaxGasAmount())
                 .appendLong(getGasUnitPrice())
                 .appendLong(getExpirationTime())

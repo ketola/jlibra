@@ -24,7 +24,7 @@ import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
@@ -164,15 +164,14 @@ public class KeyRotationExample {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(160000)
-                .gasUnitPrice(1)
+                .maxGasAmount(140000)
+                .gasUnitPrice(0)
                 .senderAccount(address)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
-                .program(
-                        ImmutableProgram.builder()
-                                .code(ByteString.copyFrom(Move.rotateAuthenticationKeyAsBytes()))
-                                .addArguments(newPublicKeyArgument)
-                                .build())
+                .payload(ImmutableScript.builder()
+                        .code(ByteString.copyFrom(Move.rotateAuthenticationKeyAsBytes()))
+                        .addArguments(newPublicKeyArgument)
+                        .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

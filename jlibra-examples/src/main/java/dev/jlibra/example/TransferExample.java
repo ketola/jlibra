@@ -17,7 +17,7 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
@@ -44,7 +44,7 @@ public class TransferExample {
         String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
         long amount = 1;
-        int sequenceNumber = 0;
+        int sequenceNumber = 2;
 
         logger.info("Sending from {} to {}", toHexStringLibraAddress(publicKey.getEncoded()), toAddress);
 
@@ -60,15 +60,14 @@ public class TransferExample {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(160000)
-                .gasUnitPrice(1)
+                .maxGasAmount(140000)
+                .gasUnitPrice(0)
                 .senderAccount(AccountAddress.ofPublicKey(publicKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
-                .program(
-                        ImmutableProgram.builder()
-                                .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
-                                .addArguments(addressArgument, amountArgument)
-                                .build())
+                .payload(ImmutableScript.builder()
+                        .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
+                        .addArguments(addressArgument, amountArgument)
+                        .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

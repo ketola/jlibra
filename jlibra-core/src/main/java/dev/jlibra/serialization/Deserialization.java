@@ -1,7 +1,7 @@
 package dev.jlibra.serialization;
 
-import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -9,22 +9,22 @@ import dev.jlibra.LibraRuntimeException;
 
 public class Deserialization {
 
-    public static int readInt(DataInputStream in, int len) {
+    public static int readInt(InputStream in, int len) {
         byte[] data = readBytes(in, len);
         return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getInt();
     }
 
-    public static long readLong(DataInputStream in, int len) {
+    public static long readLong(InputStream in, int len) {
         byte[] data = readBytes(in, len);
         return ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).getLong();
     }
 
-    public static boolean readBoolean(DataInputStream in) {
+    public static boolean readBoolean(InputStream in) {
         byte[] data = readBytes(in, 1);
         return data[0] == 1;
     }
 
-    public static byte[] readBytes(DataInputStream in, int len) {
+    public static byte[] readBytes(InputStream in, int len) {
         byte[] data = new byte[len];
         try {
             in.read(data);

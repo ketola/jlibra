@@ -10,20 +10,19 @@ import dev.jlibra.serialization.LibraSerializable;
 import dev.jlibra.serialization.Serializer;
 
 @Value.Immutable
-public interface Program extends LibraSerializable {
+public interface Script extends LibraSerializable {
+
+    static final int PREFIX = 2;
 
     ByteString getCode();
 
     List<TransactionArgument> getArguments();
 
     default byte[] serialize() {
-        int prefix = 0;
         return Serializer.builder()
-                .appendInt(prefix)
+                .appendInt(PREFIX)
                 .appendByteArray(getCode().toByteArray())
                 .appendTransactionArguments(getArguments())
-                // modules are not supported yet, add 0 for empty array
-                .appendInt(0)
                 .toByteArray();
     }
 

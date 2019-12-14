@@ -34,7 +34,7 @@ public class SignedTransactionTest {
                 .sequenceNumber(4)
                 .expirationTime(5L)
                 .senderAccount(AccountAddress.ofByteArray(new byte[] { 1 }))
-                .program(ImmutableProgram.builder()
+                .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000), new AccountAddressArgument(new byte[] { 2 }))
                         .code(ByteString.copyFrom(new byte[] { 3 }))
                         .build())
@@ -50,7 +50,7 @@ public class SignedTransactionTest {
                 .build();
 
         assertThat(Hex.toHexString(signedTransaction.serialize()).toUpperCase(), is(
-                "0104000000000000000000000001000000030200000000000000E803000000000000010000000200000000020000000000000003000000000000000500000000000000200000000B29A7ADCE0897B2D1EC18CC482237463EFA173945FA3BD2703023E1A248902140000000CDB05E40081406F4813B5A3122B3C09A5C6C5023C33B920D6D840B568B905281857D6E95582017423F6FD9721A2E40CFDCCD6BA23EAF6426B87F4C62B4EE4B03"));
+                "0104000000000000000200000001000000030200000000000000E8030000000000000100000002020000000000000003000000000000000500000000000000200000000B29A7ADCE0897B2D1EC18CC482237463EFA173945FA3BD2703023E1A24890214000000039856908D3C9ACCFA01E9403583A48C01B93C71600067D3422C7A3612EC213FF18355795E3E702ECD709F2361126CD14E573046C7FC3AEC34AB3EA98BE695A09"));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SignedTransactionTest {
                 .sequenceNumber(1)
                 .expirationTime(1L)
                 .senderAccount(AccountAddress.ofByteArray(new byte[] { 1 }))
-                .program(ImmutableProgram.builder()
+                .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000), new AccountAddressArgument(new byte[] { 1 }))
                         .code(ByteString.copyFrom(new byte[] { 1 }))
                         .build())
@@ -80,7 +80,7 @@ public class SignedTransactionTest {
         SubmitTransactionRequest request = signedTransaction.toGrpcObject();
 
         assertThat(Hex.toHexString(request.getTransaction().getTxnBytes().toByteArray()), is(
-                "0101000000000000000000000001000000010200000000000000e803000000000000010000000100000000701700000000000001000000000000000100000000000000200000000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a248902140000000a6031857e3c1518bc6790b7554af36a873cb23a1432dc78dfc26670a4d9502e36623cf14eff09925f26644a811fd93d17549b1d3d05cc38f3dd4e7e2a02d5608"));
+                "0101000000000000000200000001000000010200000000000000e8030000000000000100000001701700000000000001000000000000000100000000000000200000000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021400000003bd4006c7af91bd529000c0c726b901a7afe0659206618a6f6d13784a1674bafc8a3bcebc888c52724af66d457c7135a478d176682f2424e9f01ff92e341480d"));
     }
 
 }
