@@ -25,10 +25,12 @@ public abstract class SubmitTransactionResult {
                         .validatorId(response.getValidatorId().toByteArray())
                         .build();
             }
-            throw new LibraAdmissionControlException(response.getAcStatus().getCode());
+            throw new LibraAdmissionControlException(response.getAcStatus().getCode(),
+                    response.getAcStatus().getMessage());
         }
         case MEMPOOL_STATUS:
-            throw new LibraMempoolException(response.getMempoolStatus().getCode());
+            throw new LibraMempoolException(response.getMempoolStatus().getCode(),
+                    response.getMempoolStatus().getMessage());
         case VM_STATUS:
             throw new LibraVirtualMachineException(response.getVmStatus().getMajorStatus(),
                     response.getVmStatus().getSubStatus(), response.getVmStatus().getMessage());

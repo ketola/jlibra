@@ -8,16 +8,16 @@ import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 
-public class ProgramTest {
+public class ScriptTest {
 
     @Test
     public void testSerialize() {
-        Program program = ImmutableProgram.builder()
+        Script program = ImmutableScript.builder()
                 .code(ByteString.copyFrom("move".getBytes()))
                 .addArguments(new StringArgument("CAFE D00D"), new StringArgument("cafe d00d"))
                 .build();
 
         assertThat(Hex.toHexString(program.serialize()).toUpperCase(), is(
-                "00000000040000006D6F7665020000000200000009000000434146452044303044020000000900000063616665206430306400000000"));
+                "02000000040000006D6F76650200000002000000090000004341464520443030440200000009000000636166652064303064"));
     }
 }

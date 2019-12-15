@@ -25,7 +25,7 @@ public abstract class Signature implements LibraSerializable {
 
     protected byte[] signTransaction(Transaction transaction, PrivateKey privateKey) {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
-        byte[] saltDigest = digestSHA3.digest("RawTransaction@@$$LIBRA$$@@".getBytes());
+        byte[] saltDigest = digestSHA3.digest("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes());
         byte[] transactionBytes = transaction.serialize();
         byte[] saltDigestAndTransaction = new byte[saltDigest.length + transactionBytes.length];
 

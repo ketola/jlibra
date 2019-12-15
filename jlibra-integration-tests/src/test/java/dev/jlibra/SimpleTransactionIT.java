@@ -33,7 +33,7 @@ import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableProgram;
+import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
@@ -159,11 +159,10 @@ public class SimpleTransactionIT {
                 .gasUnitPrice(1)
                 .senderAccount(AccountAddress.ofPublicKey(sourceAccount.publicKey))
                 .expirationTime(now().getEpochSecond() + 1000)
-                .program(
-                        ImmutableProgram.builder()
-                                .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
-                                .addArguments(addressArgument, amountArgument)
-                                .build())
+                .payload(ImmutableScript.builder()
+                        .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
+                        .addArguments(addressArgument, amountArgument)
+                        .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

@@ -6,9 +6,10 @@ public class LibraAdmissionControlException extends LibraTransactionException {
 
     public final AdmissionControlStatusCode statusCode;
 
-    public LibraAdmissionControlException(AdmissionControlStatusCode statusCode) {
-        super(String.format("Submit transaction failed with admission control status %s (%d)", statusCode.name(),
-                statusCode.getNumber()));
+    public LibraAdmissionControlException(AdmissionControlStatusCode statusCode, String message) {
+        super(String.format("Submit transaction failed with admission control status %s (%d), message: %s",
+                statusCode.name(),
+                statusCode.getNumber(), message));
         this.statusCode = statusCode;
     }
 
