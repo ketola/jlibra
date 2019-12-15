@@ -27,7 +27,7 @@
 
   <scm>
     <connection>scm:git:git://github.com/ketola/jlibra.git</connection>
-    <developerConnection>scm:git:git://github.com/ketola/jlibra.git</developerConnection>
+    <developerConnection>scm:git:ssh://github.com/ketola/jlibra.git</developerConnection>
     <url>http://github.com/ketola/jlibra/tree/master</url>
   </scm>
 
@@ -81,8 +81,6 @@
         <version>2.5.3</version>
         <configuration>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <releaseProfiles>release</releaseProfiles>
-          <tagNameFormat>@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
     </plugins>
