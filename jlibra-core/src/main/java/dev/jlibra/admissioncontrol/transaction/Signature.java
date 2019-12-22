@@ -6,6 +6,7 @@ import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.immutables.value.Value;
 
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.LibraSerializable;
 import dev.jlibra.serialization.Serializer;
 
@@ -17,16 +18,16 @@ public abstract class Signature implements LibraSerializable {
     public abstract PrivateKey getPrivateKey();
 
     @Override
-    public byte[] serialize() {
+    public ByteSequence serialize() {
         return Serializer.builder()
-                .appendByteArray(signTransaction(getTransaction(), getPrivateKey()))
-                .toByteArray();
+                .append(signTransaction(getTransaction(), getPrivateKey()))
+                .toByteSequence();
     }
 
-    protected byte[] signTransaction(Transaction transaction, PrivateKey privateKey) {
+    protected ByteSequence signTransaction(Transaction transaction, PrivateKey privateKey) {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
         byte[] saltDigest = digestSHA3.digest("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes());
-        byte[] transactionBytes = transaction.serialize();
+        byte[] transactionBytes = transaction.serialize().toArray();
         byte[] saltDigestAndTransaction = new byte[saltDigest.length + transactionBytes.length];
 
         System.arraycopy(saltDigest, 0, saltDigestAndTransaction, 0, saltDigest.length);
@@ -43,7 +44,7 @@ public abstract class Signature implements LibraSerializable {
             throw new LibraRuntimeException("Signing the transaction failed", e);
         }
 
-        return signature;
+        return ByteSequence.from(signature);
     }
 
 }

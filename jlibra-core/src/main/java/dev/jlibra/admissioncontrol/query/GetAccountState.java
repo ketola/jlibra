@@ -2,8 +2,6 @@ package dev.jlibra.admissioncontrol.query;
 
 import org.immutables.value.Value;
 
-import com.google.protobuf.ByteString;
-
 import dev.jlibra.AccountAddress;
 import types.GetWithProof.GetAccountStateRequest;
 import types.GetWithProof.RequestItem;
@@ -15,7 +13,7 @@ public abstract class GetAccountState {
 
     public RequestItem toGrpcObject() {
         GetAccountStateRequest getAccountStateRequest = GetAccountStateRequest.newBuilder()
-                .setAddress(ByteString.copyFrom(getAddress().asByteArray()))
+                .setAddress(getAddress().getByteSequence().toByteString())
                 .build();
         return RequestItem.newBuilder()
                 .setGetAccountStateRequest(getAccountStateRequest)

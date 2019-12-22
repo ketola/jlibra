@@ -1,14 +1,16 @@
 package dev.jlibra.mnemonic;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.HKDFParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
+import dev.jlibra.serialization.ByteSequence;
 
 public class LibraKeyFactory {
 
@@ -40,7 +42,7 @@ public class LibraKeyFactory {
         hkdf.init(HKDFParameters.skipExtractParameters(master.getData(), info));
         hkdf.generateBytes(secretKey, 0, 32);
 
-        return new ExtendedPrivKey(new SecretKey(secretKey));
+        return new ExtendedPrivKey(new SecretKey(ByteSequence.from(secretKey)));
     }
 
     /**

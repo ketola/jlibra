@@ -8,7 +8,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 
 import javax.annotation.concurrent.Immutable;
 
-import dev.jlibra.LibraRuntimeException;
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -18,6 +17,8 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import dev.jlibra.KeyUtils;
+import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteSequence;
 
 @Immutable
 public class ExtendedPrivKey {
@@ -26,7 +27,7 @@ public class ExtendedPrivKey {
     public final PublicKey publicKey;
 
     public ExtendedPrivKey(SecretKey secretKey) {
-        Ed25519PrivateKeyParameters pKeyParams = new Ed25519PrivateKeyParameters(secretKey.getData(), 0);
+        Ed25519PrivateKeyParameters pKeyParams = new Ed25519PrivateKeyParameters(secretKey.getByteSequence().toArray(), 0);
 
         try {
             PrivateKeyInfo keyInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(pKeyParams);
@@ -39,6 +40,7 @@ public class ExtendedPrivKey {
     }
 
     public String getAddress() {
-        return KeyUtils.toHexStringLibraAddress(publicKey.getEncoded());
+        ByteSequence publicKeyBytes = ByteSequence.from(publicKey.getEncoded());
+        return KeyUtils.toByteSequenceLibraAddress(publicKeyBytes).toString();
     }
 }

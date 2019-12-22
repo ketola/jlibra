@@ -1,22 +1,23 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 
 public class ByteArrayArgument implements TransactionArgument {
 
     private static final int PREFIX = 3;
 
-    private byte[] bytes;
+    private ByteSequence bytes;
 
-    public ByteArrayArgument(byte[] bytes) {
+    public ByteArrayArgument(ByteSequence bytes) {
         this.bytes = bytes;
     }
 
     @Override
-    public byte[] serialize() {
+    public ByteSequence serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendByteArray(bytes)
-                .toByteArray();
+                .append(bytes)
+                .toByteSequence();
     }
 }

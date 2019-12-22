@@ -10,6 +10,7 @@ import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -30,14 +31,14 @@ public class GetAccountTransactionBySequenceNumberExample {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
                 .accountTransactionBySequenceNumberQueries(
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                .accountAddress(AccountAddress.ofHexString(address))
+                                .accountAddress(AccountAddress.ofByteSequence(ByteSequence.from(address)))
                                 .sequenceNumber(sequenceNumber)
                                 .build()))
                 .build());
 
         result.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
                 .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
-                        e.getAccountAddress().asHexString(), e.getSequenceNumber(), e.getAmount())));
+                        e.getAccountAddress(), e.getSequenceNumber(), e.getAmount())));
 
         channel.shutdown();
     }

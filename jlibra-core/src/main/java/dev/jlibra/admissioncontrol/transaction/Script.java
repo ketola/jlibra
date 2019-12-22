@@ -4,26 +4,25 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
-import com.google.protobuf.ByteString;
-
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.LibraSerializable;
 import dev.jlibra.serialization.Serializer;
 
 @Value.Immutable
 public interface Script extends LibraSerializable {
 
-    static final int PREFIX = 2;
+    int PREFIX = 2;
 
-    ByteString getCode();
+    ByteSequence getCode();
 
     List<TransactionArgument> getArguments();
 
-    default byte[] serialize() {
+    default ByteSequence serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendByteArray(getCode().toByteArray())
+                .append(getCode())
                 .appendTransactionArguments(getArguments())
-                .toByteArray();
+                .toByteSequence();
     }
 
 }

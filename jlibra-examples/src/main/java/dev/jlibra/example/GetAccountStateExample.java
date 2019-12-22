@@ -6,13 +6,13 @@ import java.math.BigDecimal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
+import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -34,12 +34,12 @@ public class GetAccountStateExample {
                         ImmutableQuery.builder()
                                 .accountStateQueries(asList(
                                         ImmutableGetAccountState.builder()
-                                                .address(AccountAddress.ofHexString(address))
+                                                .address(AccountAddress.ofByteSequence(ByteSequence.from(address)))
                                                 .build()))
                                 .build());
 
         result.getAccountResources().forEach(accountResource -> {
-            logger.info("Authentication key: {}", Hex.toHexString(accountResource.getAuthenticationKey()));
+            logger.info("Authentication key: {}", accountResource.getAuthenticationKey());
             logger.info("Received events: {}", accountResource.getReceivedEvents().getCount());
             logger.info("Sent events: {}", accountResource.getSentEvents().getCount());
             logger.info("Balance (microLibras): {}", accountResource.getBalanceInMicroLibras());

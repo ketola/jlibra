@@ -9,40 +9,33 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.encoders.Hex;
+
+import dev.jlibra.serialization.ByteSequence;
 
 public class KeyUtils {
 
-    public static String toHexStringLibraAddress(byte[] publicKeyBytes) {
-        return Hex.toHexString(toByteArrayLibraAddress(publicKeyBytes));
-    }
-
-    public static byte[] toByteArrayLibraAddress(byte[] publicKeyBytes) {
+    public static ByteSequence toByteSequenceLibraAddress(ByteSequence publicKeyBytes) {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
-        return digestSHA3.digest(stripPublicKeyPrefix(publicKeyBytes));
+        return ByteSequence
+                .from(digestSHA3
+                .digest(stripPublicKeyPrefix(publicKeyBytes).toArray()));
     }
 
-    public static byte[] stripPublicKeyPrefix(byte[] pubKeyBytes) {
-        byte[] publicKeyWithoutPrefix = new byte[32];
-        System.arraycopy(pubKeyBytes, 12, publicKeyWithoutPrefix, 0, 32);
-        return publicKeyWithoutPrefix;
+    public static ByteSequence stripPublicKeyPrefix(ByteSequence pubKeyBytes) {
+        return pubKeyBytes.subseq(12, 32);
     }
 
-    public static PrivateKey privateKeyFromHexString(String privateKeyHexString) {
-        byte[] privateKeyBytes = Hex.decode(privateKeyHexString);
-
+    public static PrivateKey privateKeyFromHexString(ByteSequence privateKey) {
         try {
-            return getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(privateKeyBytes));
+            return getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(privateKey.toArray()));
         } catch (InvalidKeySpecException e) {
             throw new LibraRuntimeException("PrivateKey generation failed", e);
         }
     }
 
-    public static PublicKey publicKeyFromHexString(String publicKeyHexString) {
-        byte[] publicKeyBytes = Hex.decode(publicKeyHexString);
-
+    public static PublicKey publicKeyFromHexString(ByteSequence publicKey) {
         try {
-            return getKeyFactory().generatePublic(new X509EncodedKeySpec(publicKeyBytes));
+            return getKeyFactory().generatePublic(new X509EncodedKeySpec(publicKey.toArray()));
         } catch (InvalidKeySpecException e) {
             throw new LibraRuntimeException("PrivateKey generation failed", e);
         }

@@ -2,41 +2,31 @@ package dev.jlibra;
 
 import java.security.PublicKey;
 
-import org.bouncycastle.util.encoders.Hex;
+import dev.jlibra.serialization.ByteSequence;
 
 public class AccountAddress {
 
-    private byte[] address;
+    private final ByteSequence byteSequence;
 
-    private AccountAddress(byte[] address) {
-        this.address = address;
-    }
-
-    public byte[] asByteArray() {
-        byte[] clone = new byte[address.length];
-        System.arraycopy(address, 0, clone, 0, address.length);
-        return clone;
-    }
-
-    public String asHexString() {
-        return Hex.toHexString(address);
+    private AccountAddress(ByteSequence byteSequence) {
+        this.byteSequence = byteSequence;
     }
 
     public static AccountAddress ofPublicKey(PublicKey publicKey) {
-        return new AccountAddress(KeyUtils.toByteArrayLibraAddress(publicKey.getEncoded()));
+        return new AccountAddress(KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKey.getEncoded())));
     }
 
-    public static AccountAddress ofByteArray(byte[] address) {
+    public static AccountAddress ofByteSequence(ByteSequence address) {
         return new AccountAddress(address);
     }
 
-    public static AccountAddress ofHexString(String hexString) {
-        return new AccountAddress(Hex.decode(hexString));
+    public ByteSequence getByteSequence() {
+        return byteSequence;
     }
 
     @Override
     public String toString() {
-        return String.format("AccountAddress: %s", Hex.toHexString(address));
+        return String.format("AccountAddress: %s", byteSequence);
     }
 
 }

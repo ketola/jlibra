@@ -11,7 +11,6 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
 import java.security.Security;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,13 +18,10 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.google.protobuf.ByteString;
 
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.AccountResource;
@@ -48,6 +44,7 @@ import dev.jlibra.mnemonic.LibraKeyFactory;
 import dev.jlibra.mnemonic.Mnemonic;
 import dev.jlibra.mnemonic.Seed;
 import dev.jlibra.move.Move;
+import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
@@ -117,7 +114,7 @@ public class SimpleTransactionIT {
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
                 .atMost(20, SECONDS)
                 .untilAsserted(() -> {
-                    long actual = findBalance(AccountAddress.ofHexString(destinationAddress));
+                    long actual = findBalance(AccountAddress.ofByteSequence(ByteSequence.from(destinationAddress)));
                     String errorMessage = format("Account address: %s, expected balance: %d, actual balance: %d",
                             destinationAddress, transactionAmount, actual);
                     assertEquals(errorMessage, actual, transactionAmount);
@@ -132,14 +129,13 @@ public class SimpleTransactionIT {
 
         long balance = result.getAccountResources()
                 .stream()
-                .filter(accountResource -> Arrays.equals(
-                        accountResource.getAuthenticationKey(),
-                        accountAddress.asByteArray()))
+                .filter(accountResource -> accountResource.getAuthenticationKey()
+                        .equals(accountAddress.getByteSequence()))
                 .map(AccountResource::getBalanceInMicroLibras)
                 .findFirst()
                 .orElse(0L);
 
-        logger.info("Balance for {} is {}", accountAddress.asHexString(), balance);
+        logger.info("Balance for {} is {}", accountAddress.toString(), balance);
 
         return balance;
     }
@@ -147,11 +143,11 @@ public class SimpleTransactionIT {
     private void transfer(String toAddress, long amount) throws LibraTransactionException {
 
         long sequenceNumber = maybeFindSequenceNumber(admissionControl,
-                AccountAddress.ofHexString(sourceAccount.getAddress()));
+                AccountAddress.ofByteSequence(ByteSequence.from(sourceAccount.getAddress())));
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(Hex.decode(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(ByteSequence.from(toAddress));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -160,7 +156,7 @@ public class SimpleTransactionIT {
                 .senderAccount(AccountAddress.ofPublicKey(sourceAccount.publicKey))
                 .expirationTime(now().getEpochSecond() + 1000)
                 .payload(ImmutableScript.builder()
-                        .code(ByteString.copyFrom(Move.peerToPeerTransferAsBytes()))
+                        .code(Move.peerToPeerTransferAsBytes())
                         .addArguments(addressArgument, amountArgument)
                         .build())
                 .build();
@@ -185,9 +181,9 @@ public class SimpleTransactionIT {
 
         return result.getAccountResources()
                 .stream()
-                .filter(accountResource -> Arrays.equals(
-                        accountResource.getAuthenticationKey(),
-                        forAddress.asByteArray()))
+                .filter(accountResource ->
+                        accountResource.getAuthenticationKey()
+                                .equals(forAddress.getByteSequence()))
                 .map(AccountResource::getSequenceNumber)
                 .findFirst()
                 .orElse(0);
@@ -203,7 +199,7 @@ public class SimpleTransactionIT {
 
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
                 .atMost(1, MINUTES)
-                .until(() -> findBalance(AccountAddress.ofHexString(sourceAccount.getAddress())) > 0);
+                .until(() -> findBalance(AccountAddress.ofByteSequence(ByteSequence.from(sourceAccount.getAddress()))) > 0);
 
         assertEquals(200, response.getStatus());
     }

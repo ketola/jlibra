@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
+import dev.jlibra.serialization.ByteSequence;
 
 /**
  * The only case where the transaction has been submitted successfully is when
@@ -14,7 +15,7 @@ import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 @Value.Immutable
 public abstract class SubmitTransactionResult {
 
-    public abstract byte[] getValidatorId();
+    public abstract ByteSequence getValidatorId();
 
     public static SubmitTransactionResult fromGrpcObject(SubmitTransactionResponse response)
             throws LibraTransactionException {
@@ -22,7 +23,7 @@ public abstract class SubmitTransactionResult {
         case AC_STATUS: {
             if (response.getAcStatus().getCode() == AdmissionControlStatusCode.Accepted) {
                 return ImmutableSubmitTransactionResult.builder()
-                        .validatorId(response.getValidatorId().toByteArray())
+                        .validatorId(ByteSequence.from(response.getValidatorId().toByteArray()))
                         .build();
             }
             throw new LibraAdmissionControlException(response.getAcStatus().getCode(),

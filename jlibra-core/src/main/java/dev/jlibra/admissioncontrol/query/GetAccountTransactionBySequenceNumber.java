@@ -2,8 +2,6 @@ package dev.jlibra.admissioncontrol.query;
 
 import org.immutables.value.Value;
 
-import com.google.protobuf.ByteString;
-
 import dev.jlibra.AccountAddress;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
@@ -18,7 +16,7 @@ public abstract class GetAccountTransactionBySequenceNumber {
     public RequestItem toGrpcObject() {
         GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
                 .newBuilder()
-                .setAccount(ByteString.copyFrom(getAccountAddress().asByteArray()))
+                .setAccount(getAccountAddress().getByteSequence().toByteString())
                 .setSequenceNumber(getSequenceNumber())
                 .setFetchEvents(true)
                 .build();

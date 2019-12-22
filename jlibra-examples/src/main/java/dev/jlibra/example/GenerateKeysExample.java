@@ -9,9 +9,9 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.serialization.ByteSequence;
 
 public class GenerateKeysExample {
 
@@ -29,8 +29,8 @@ public class GenerateKeysExample {
         BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
 
         logger.info("Libra address: {}", AccountAddress.ofPublicKey(publicKey));
-        logger.info("Public key: {}", Hex.toHexString(publicKey.getEncoded()));
-        logger.info("Private key: {}", Hex.toHexString(privateKey.getEncoded()));
+        logger.info("Public key: {}", ByteSequence.from(publicKey.getEncoded()));
+        logger.info("Private key: {}", ByteSequence.from(privateKey.getEncoded()));
     }
 
 }

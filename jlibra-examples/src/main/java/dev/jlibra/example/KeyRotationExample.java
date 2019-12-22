@@ -13,9 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
-import org.bouncycastle.util.encoders.Hex;
-
-import com.google.protobuf.ByteString;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
@@ -34,6 +31,7 @@ import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
+import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
@@ -73,7 +71,7 @@ public class KeyRotationExample {
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
         AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
-        logger.info("Account address: {}", addressOriginal.asHexString());
+        logger.info("Account address: {}", addressOriginal.toString());
         mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
 
@@ -160,7 +158,7 @@ public class KeyRotationExample {
             int sequenceNumber, AdmissionControl admissionControl) throws LibraTransactionException {
 
         ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
-                KeyUtils.toByteArrayLibraAddress(publicKeyNew.getEncoded()));
+                KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKeyNew.getEncoded())));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -169,7 +167,7 @@ public class KeyRotationExample {
                 .senderAccount(address)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(ByteString.copyFrom(Move.rotateAuthenticationKeyAsBytes()))
+                        .code(Move.rotateAuthenticationKeyAsBytes())
                         .addArguments(newPublicKeyArgument)
                         .build())
                 .build();
@@ -189,7 +187,7 @@ public class KeyRotationExample {
     private static void mint(AccountAddress address, long amountInMicroLibras) {
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
-                .queryString("address", address.asHexString())
+                .queryString("address", address.toString())
                 .asString();
 
         if (response.getStatus() != 200) {
@@ -208,7 +206,7 @@ public class KeyRotationExample {
 
         result.getAccountResources().forEach(accountResource -> logger.info(
                 "Account authentication key: {}, Balance (Libras): {}",
-                Hex.toHexString(accountResource.getAuthenticationKey()),
+                accountResource.getAuthenticationKey(),
                 new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000))));
     }
 }
