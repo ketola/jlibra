@@ -38,7 +38,7 @@ public class SignatureTest {
                         .build())
                 .build();
 
-        PrivateKey privateKey = KeyUtils.privateKeyFromHexString(PRIVATE_KEY_BYTES);
+        PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_BYTES);
         Signature signature = ImmutableSignature.builder()
                 .privateKey(privateKey)
                 .transaction(transaction)

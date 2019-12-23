@@ -25,7 +25,7 @@ public class KeyUtils {
         return pubKeyBytes.subseq(12, 32);
     }
 
-    public static PrivateKey privateKeyFromHexString(ByteSequence privateKey) {
+    public static PrivateKey privateKeyFromByteSequence(ByteSequence privateKey) {
         try {
             return getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(privateKey.toArray()));
         } catch (InvalidKeySpecException e) {
@@ -33,7 +33,7 @@ public class KeyUtils {
         }
     }
 
-    public static PublicKey publicKeyFromHexString(ByteSequence publicKey) {
+    public static PublicKey publicKeyFromByteSequence(ByteSequence publicKey) {
         try {
             return getKeyFactory().generatePublic(new X509EncodedKeySpec(publicKey.toArray()));
         } catch (InvalidKeySpecException e) {

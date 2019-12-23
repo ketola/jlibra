@@ -40,9 +40,9 @@ public class SignedTransactionTest {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX))
+                .publicKey(KeyUtils.publicKeyFromByteSequence(PUBLIC_KEY_HEX))
                 .signature(ImmutableSignature.builder()
-                        .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
+                        .privateKey(KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX))
                         .transaction(transaction)
                         .build())
                 .transaction(transaction)
@@ -68,9 +68,9 @@ public class SignedTransactionTest {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(KeyUtils.publicKeyFromHexString(PUBLIC_KEY_HEX))
+                .publicKey(KeyUtils.publicKeyFromByteSequence(PUBLIC_KEY_HEX))
                 .signature(ImmutableSignature.builder()
-                        .privateKey(KeyUtils.privateKeyFromHexString(PRIVATE_KEY_HEX))
+                        .privateKey(KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX))
                         .transaction(transaction)
                         .build())
                 .transaction(transaction)

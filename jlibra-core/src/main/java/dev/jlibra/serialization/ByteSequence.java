@@ -1,5 +1,7 @@
 package dev.jlibra.serialization;
 
+import java.util.Arrays;
+
 import javax.annotation.concurrent.Immutable;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -10,17 +12,15 @@ import com.google.protobuf.ByteString;
 public class ByteSequence {
 
     private final byte[] value;
-    private final String hexValue;
 
     private ByteSequence(byte[] array) {
-        value = array;
-        hexValue = Hex.toHexString(value);
+        byte[] cloned = new byte[array.length];
+        System.arraycopy(array, 0, cloned, 0, array.length);
+        value = cloned;
     }
 
     public static ByteSequence from(byte[] array) {
-        byte[] result = new byte[array.length];
-        System.arraycopy(array, 0, result, 0, array.length);
-        return new ByteSequence(result);
+        return new ByteSequence(array);
     }
 
     public static ByteSequence from(String hexValue) {
@@ -28,7 +28,7 @@ public class ByteSequence {
     }
 
     public String toString() {
-        return hexValue;
+        return Hex.toHexString(value);
     }
 
     public ByteSequence subseq(int start, int length) {
@@ -55,10 +55,10 @@ public class ByteSequence {
 
         ByteSequence that = (ByteSequence) o;
 
-        return hexValue.equals(that.hexValue);
+        return Arrays.equals(this.value, that.value);
     }
 
     @Override public int hashCode() {
-        return hexValue.hashCode();
+        return Arrays.hashCode(this.value);
     }
 }

@@ -187,7 +187,7 @@ public class KeyRotationExample {
     private static void mint(AccountAddress address, long amountInMicroLibras) {
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
-                .queryString("address", address.toString())
+                .queryString("address", address.getByteSequence().toString())
                 .asString();
 
         if (response.getStatus() != 200) {

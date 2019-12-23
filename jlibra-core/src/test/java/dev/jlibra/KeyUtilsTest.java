@@ -30,13 +30,13 @@ public class KeyUtilsTest {
     @Test
     public void testPrivateKeyFromHexString() throws Exception {
         PrivateKey privateKey = getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(PRIVATE_KEY.toArray()));
-        assertThat(privateKey, equalTo(KeyUtils.privateKeyFromHexString(PRIVATE_KEY)));
+        assertThat(privateKey, equalTo(KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY)));
     }
 
     @Test
     public void testPublicKeyFromHexString() throws Exception {
         PublicKey publicKey = getKeyFactory().generatePublic(new X509EncodedKeySpec(PUBLIC_KEY.toArray()));
-        assertThat(publicKey, equalTo(KeyUtils.publicKeyFromHexString(PUBLIC_KEY)));
+        assertThat(publicKey, equalTo(KeyUtils.publicKeyFromByteSequence(PUBLIC_KEY)));
     }
 
     private static KeyFactory getKeyFactory() throws Exception {
