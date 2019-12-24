@@ -2,15 +2,15 @@ package dev.jlibra.mnemonic;
 
 import static org.junit.Assert.assertEquals;
 
+import java.security.Security;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.security.Security;
-
 import dev.jlibra.KeyUtils;
+import dev.jlibra.serialization.ByteSequence;
 
 /**
  * Test data and mnemonic seed generated using libra cli.
@@ -44,7 +44,7 @@ public class ExtendedPrivKeyTest {
     public void getPublic() {
         assertEquals(
                 "be10d382d1f3de00c19607f667b5b127da22f42f0a3a4b70eaef690365421511",
-                Hex.toHexString(KeyUtils.stripPublicKeyPrefix(childPrivate0.publicKey.getEncoded())));
+                KeyUtils.stripPublicKeyPrefix(ByteSequence.from(childPrivate0.publicKey.getEncoded())).toString());
     }
 
 }

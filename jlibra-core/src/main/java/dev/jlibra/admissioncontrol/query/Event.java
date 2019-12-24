@@ -8,6 +8,7 @@ import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Deserialization;
 
 @Value.Immutable
@@ -17,7 +18,7 @@ public interface Event {
 
     long getAmount();
 
-    byte[] getKey();
+    ByteSequence getKey();
 
     long getSequenceNumber();
 
@@ -25,11 +26,11 @@ public interface Event {
         byte[] eventData = event.getEventData().toByteArray();
         try (DataInputStream eventDataStream = new DataInputStream(new ByteArrayInputStream(eventData))) {
             long amount = Deserialization.readLong(eventDataStream, 8);
-            byte[] address = Deserialization.readBytes(eventDataStream, 32);
+            ByteSequence address = Deserialization.readByteSequence(eventDataStream, 32);
             return ImmutableEvent.builder()
-                    .accountAddress(AccountAddress.ofByteArray(address))
+                    .accountAddress(AccountAddress.ofByteSequence(address))
                     .amount(amount)
-                    .key(event.getKey().toByteArray())
+                    .key(ByteSequence.from(event.getKey().toByteArray()))
                     .sequenceNumber(event.getSequenceNumber())
                     .build();
         } catch (IOException e) {

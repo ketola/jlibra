@@ -22,23 +22,27 @@ public class Serializer {
         return new Serializer(new byte[0]);
     }
 
-    public Serializer appendByteArray(byte[] byteArray) {
+    public Serializer append(ByteSequence byteSequence) {
+        return appendByteArray(byteSequence.toArray());
+    }
+
+    private Serializer appendByteArray(byte[] byteArray) {
         return append(intToByteArray(byteArray.length))
                 .append(byteArray);
     }
 
     public Serializer appendPublicKey(PublicKey pubKey) {
-        return appendByteArray(KeyUtils.stripPublicKeyPrefix(pubKey.getEncoded()));
+        return append(KeyUtils.stripPublicKeyPrefix(ByteSequence.from(pubKey.getEncoded())));
     }
 
-    public Serializer appendByteArrayWithoutLengthInformation(byte[] byteArray) {
-        return append(byteArray);
+    public Serializer appendWithoutLengthInformation(ByteSequence byteSequence) {
+        return append(byteSequence.toArray());
     }
 
     public Serializer appendTransactionArguments(List<TransactionArgument> transactionArguments) {
         Serializer serializer = append(intToByteArray(transactionArguments.size()));
         for (TransactionArgument arg : transactionArguments) {
-            serializer = serializer.append(arg.serialize());
+            serializer = serializer.append(arg.serialize().toArray());
         }
         return serializer;
     }
@@ -56,7 +60,7 @@ public class Serializer {
     }
 
     public Serializer appendSerializable(LibraSerializable serializable) {
-        return append(serializable.serialize());
+        return append(serializable.serialize().toArray());
     }
 
     private static byte[] intToByteArray(int i) {
@@ -78,14 +82,7 @@ public class Serializer {
         return new Serializer(newBytes);
     }
 
-    public byte[] toByteArray() {
-        return clone(bytes);
+    public ByteSequence toByteSequence() {
+        return ByteSequence.from(bytes);
     }
-
-    private byte[] clone(byte[] array) {
-        byte[] clone = new byte[array.length];
-        System.arraycopy(array, 0, clone, 0, array.length);
-        return clone;
-    }
-
 }

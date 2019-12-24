@@ -1,12 +1,13 @@
 package dev.jlibra.mnemonic;
 
-import javax.annotation.concurrent.Immutable;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+
+import javax.annotation.concurrent.Immutable;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 import dev.jlibra.LibraRuntimeException;
 

@@ -1,5 +1,6 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 
 public class U64Argument implements TransactionArgument {
@@ -13,11 +14,11 @@ public class U64Argument implements TransactionArgument {
     }
 
     @Override
-    public byte[] serialize() {
+    public ByteSequence serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
                 .appendLong(value)
-                .toByteArray();
+                .toByteSequence();
     }
 
 }

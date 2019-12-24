@@ -1,20 +1,18 @@
 package dev.jlibra.admissioncontrol.transaction.result;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import com.google.protobuf.ByteString;
-
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatus;
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
+import dev.jlibra.serialization.ByteSequence;
 import mempool_status.MempoolStatus.MempoolAddTransactionStatus;
 import mempool_status.MempoolStatus.MempoolAddTransactionStatusCode;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import types.VmErrors.VMStatus;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class SubmitTransactionResultTest {
 
@@ -23,12 +21,12 @@ public class SubmitTransactionResultTest {
 
     @Test
     public void testAdmissionControlAccepted() throws Exception {
-        byte[] validatorId = new byte[] { 1 };
+        ByteSequence validatorId = ByteSequence.from(new byte[] { 1 });
         SubmitTransactionResponse response = SubmitTransactionResponse.newBuilder()
                 .setAcStatus(AdmissionControlStatus.newBuilder()
                         .setCode(AdmissionControlStatusCode.Accepted)
                         .build())
-                .setValidatorId(ByteString.copyFrom(validatorId))
+                .setValidatorId(validatorId.toByteString())
                 .build();
 
         SubmitTransactionResult result = SubmitTransactionResult.fromGrpcObject(response);

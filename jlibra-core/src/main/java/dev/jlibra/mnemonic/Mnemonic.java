@@ -1,13 +1,17 @@
 package dev.jlibra.mnemonic;
 
-import javax.annotation.concurrent.Immutable;
+import static java.util.Arrays.asList;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.concurrent.Immutable;
 
 import dev.jlibra.LibraRuntimeException;
-
-import static java.util.Arrays.asList;
+import dev.jlibra.serialization.ByteSequence;
 
 @Immutable
 public class Mnemonic {
@@ -245,7 +249,8 @@ public class Mnemonic {
         return new Mnemonic(words);
     }
 
-    public static Mnemonic fromBytes(byte[] data) {
+    public static Mnemonic fromByteSequence(ByteSequence byteSequence) {
+        byte[] data = byteSequence.toArray();
         if (data == null || data.length % 4 != 0) {
             throw new LibraRuntimeException("Data for mnemonic should have a length divisible by 4");
         }

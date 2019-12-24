@@ -1,22 +1,23 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 
 public class AccountAddressArgument implements TransactionArgument {
 
     private static final int PREFIX = 1;
 
-    private byte[] address;
+    private ByteSequence address;
 
-    public AccountAddressArgument(byte[] address) {
+    public AccountAddressArgument(ByteSequence address) {
         this.address = address;
     }
 
     @Override
-    public byte[] serialize() {
+    public ByteSequence serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendByteArrayWithoutLengthInformation(address)
-                .toByteArray();
+                .appendWithoutLengthInformation(address)
+                .toByteSequence();
     }
 }

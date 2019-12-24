@@ -3,6 +3,7 @@ package dev.jlibra.admissioncontrol.transaction;
 import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.LibraSerializable;
 import dev.jlibra.serialization.Serializer;
 
@@ -21,15 +22,15 @@ public interface Transaction extends LibraSerializable {
 
     long getMaxGasAmount();
 
-    default byte[] serialize() {
+    default ByteSequence serialize() {
         return Serializer.builder()
-                .appendByteArrayWithoutLengthInformation(getSenderAccount().asByteArray())
+                .appendWithoutLengthInformation(getSenderAccount().getByteSequence())
                 .appendLong(getSequenceNumber())
                 .appendSerializable(getPayload())
                 .appendLong(getMaxGasAmount())
                 .appendLong(getGasUnitPrice())
                 .appendLong(getExpirationTime())
-                .toByteArray();
+                .toByteSequence();
     }
 
 }

@@ -1,23 +1,25 @@
 package dev.jlibra.move;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-import static java.util.stream.Collectors.joining;
+import dev.jlibra.serialization.ByteSequence;
 
 public class Move {
 
-    public static byte[] rotateAuthenticationKeyAsBytes() {
+    public static ByteSequence rotateAuthenticationKeyAsBytes() {
         return readMoveScriptBytes("/move/rotate_authentication_key.json");
     }
 
-    public static byte[] peerToPeerTransferAsBytes() {
+    public static ByteSequence peerToPeerTransferAsBytes() {
         return readMoveScriptBytes("/move/peer_to_peer_transfer.json");
     }
 
-    private static byte[] readMoveScriptBytes(String fileName) {
+    private static ByteSequence readMoveScriptBytes(String fileName) {
         InputStream jsonBinary = Move.class.getResourceAsStream(fileName);
         String json = readJson(jsonBinary);
         String[] bytesAsString = json.substring(json.indexOf('[') + 1, json.indexOf(']')).split(",");
@@ -25,7 +27,7 @@ public class Move {
         for (int idx = 0; idx < bytesAsString.length; idx++) {
             bytes[idx] = (byte) Integer.parseInt(bytesAsString[idx]);
         }
-        return bytes;
+        return ByteSequence.from(bytes);
     }
 
     private static String readJson(InputStream inputStream) {
