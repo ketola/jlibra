@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
+import types.AccountStateBlobOuterClass.AccountStateWithProof;
 import types.GetWithProof.ResponseItem;
 import types.GetWithProof.UpdateToLatestLedgerResponse;
 
@@ -20,8 +21,11 @@ public abstract class UpdateToLatestLedgerResult {
         List<TransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
 
         for (ResponseItem item : grpcObject.getResponseItemsList()) {
-            accountStates.addAll(AccountResource.fromGrpcObject(
-                    item.getGetAccountStateResponse().getAccountStateWithProof()));
+            AccountStateWithProof accountStateWithProof = item.getGetAccountStateResponse().getAccountStateWithProof();
+            if (accountStateWithProof.hasBlob()) {
+                accountStates.addAll(AccountResource.fromGrpcObject(accountStateWithProof));
+            }
+
             accountTransactionsBySequenceNumber
                     .add(TransactionWithProof.fromGrpcObject(
                             item.getGetAccountTransactionBySequenceNumberResponse().getTransactionWithProof()));
