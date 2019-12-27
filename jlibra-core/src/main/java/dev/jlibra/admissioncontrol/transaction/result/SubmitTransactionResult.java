@@ -36,7 +36,7 @@ public abstract class SubmitTransactionResult {
             throw new LibraVirtualMachineException(response.getVmStatus().getMajorStatus(),
                     response.getVmStatus().getSubStatus(), response.getVmStatus().getMessage());
         default:
-            throw new LibraTransactionException("Submit transaction failed with unkown status");
+            throw new LibraTransactionException("Submit transaction failed with unknown status");
         }
 
     }

@@ -20,8 +20,8 @@ public class GetAccountStateExample {
 
     private static final Logger logger = LogManager.getLogger(GetAccountStateExample.class);
 
-    public static void main(String[] args) {
-        String address = "8fe46b047ab11b659dc3d0b5193adef0166253058fc11b747485c467a852ca85";
+    public static void main(String[] args) throws Exception {
+        String address = "1b2d1a2b57704043fa1f97fcc08e268f45d1c5b9f7b43c481941c103b99d8ca5";
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()

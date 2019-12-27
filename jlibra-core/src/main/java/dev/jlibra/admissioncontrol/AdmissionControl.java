@@ -1,7 +1,14 @@
 package dev.jlibra.admissioncontrol;
 
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.Future;
+
+import com.google.common.util.concurrent.ListenableFuture;
+import com.spotify.futures.ListenableFuturesExtra;
+
 import admission_control.AdmissionControlGrpc;
 import admission_control.AdmissionControlGrpc.AdmissionControlBlockingStub;
+import admission_control.AdmissionControlGrpc.AdmissionControlFutureStub;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.admissioncontrol.query.Query;
@@ -28,12 +35,33 @@ public class AdmissionControl {
         return SubmitTransactionResult.fromGrpcObject(response);
     }
 
+    public Future<SubmitTransactionResult> asyncSubmitTransaction(SignedTransaction transaction) {
+        SubmitTransactionRequest request = transaction.toGrpcObject();
+        AdmissionControlFutureStub stub = AdmissionControlGrpc.newFutureStub(channel);
+        ListenableFuture<SubmitTransactionResponse> future = stub.submitTransaction(request);
+        return ListenableFuturesExtra.toCompletableFuture(future)
+                .thenApply(response -> {
+                    try { return SubmitTransactionResult.fromGrpcObject(response); }
+                    catch (LibraTransactionException e) { throw new CompletionException(e); }
+                });
+    }
+
     public UpdateToLatestLedgerResult updateToLatestLedger(Query query) {
         AdmissionControlBlockingStub stub = AdmissionControlGrpc.newBlockingStub(channel);
         UpdateToLatestLedgerResponse response = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
                 .addAllRequestedItems(query.toGrpcObject())
                 .build());
         return UpdateToLatestLedgerResult.fromGrpcObject(response);
+    }
+
+    public Future<UpdateToLatestLedgerResult> asyncUpdateToLatestLedger(Query query) {
+        AdmissionControlFutureStub stub = AdmissionControlGrpc.newFutureStub(channel);
+        ListenableFuture<UpdateToLatestLedgerResponse> future = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
+                .addAllRequestedItems(query.toGrpcObject())
+                .build());
+
+        return ListenableFuturesExtra.toCompletableFuture(future)
+                .thenApply(UpdateToLatestLedgerResult::fromGrpcObject);
     }
 
     @Override

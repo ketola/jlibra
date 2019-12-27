@@ -39,7 +39,7 @@ public class TransferExample {
         String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
 
         long amount = 1;
-        int sequenceNumber = 2;
+        int sequenceNumber = 4;
 
         logger.info("Sending from {} to {}", ByteSequence.from(publicKey.getEncoded()), toAddress);
 
@@ -75,6 +75,9 @@ public class TransferExample {
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
+
+        // use asyncSubmitTransaction() for asynchronous call
+        // SubmitTransactionResult result = admissionControl.asyncSubmitTransaction(signedTransaction).get();
 
         logger.info("Result: {}", result);
         Thread.sleep(3000); // add sleep to prevent premature closing of channel
