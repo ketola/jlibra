@@ -29,12 +29,19 @@ public class Deserialization {
     }
 
     private static byte[] readBytes(InputStream in, int len) {
-        byte[] data = new byte[len];
         try {
+            int available = in.available();
+            if (available < len) {
+                throw new LibraRuntimeException(String.format(
+                        "Message is not long enough (%d) to read %d bytes from it. It could mean the message is corrupted or different format than expected.",
+                        available, len));
+            }
+
+            byte[] data = new byte[len];
             in.read(data);
+            return data;
         } catch (IOException e) {
             throw new LibraRuntimeException("Could not read input stream", e);
         }
-        return data;
     }
 }
