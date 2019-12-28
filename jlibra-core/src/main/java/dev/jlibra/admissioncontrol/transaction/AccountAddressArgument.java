@@ -5,7 +5,7 @@ import dev.jlibra.serialization.Serializer;
 
 public class AccountAddressArgument implements TransactionArgument {
 
-    private static final int PREFIX = 1;
+    public static final int PREFIX = 1;
 
     private ByteSequence value;
 
