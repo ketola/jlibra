@@ -1,6 +1,5 @@
 package dev.jlibra.example;
 
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
@@ -34,8 +33,6 @@ import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 
 /**
  * Demonstrates the use of the async methods in AdmissionControl.
@@ -59,7 +56,7 @@ public class AsyncTransferExample {
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
         AccountAddress source = AccountAddress.ofPublicKey(publicKeySource);
-        mint(source, 20L * 1_000_000L);
+        ExampleUtils.mint(source, 20L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
@@ -143,17 +140,4 @@ public class AsyncTransferExample {
         Thread.sleep(3000); // add sleep to prevent premature closing of channel
         channel.shutdown();
     }
-
-    private static void mint(AccountAddress address, long amountInMicroLibras) {
-        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
-                .queryString("amount", amountInMicroLibras)
-                .queryString("address", address.getByteSequence().toString())
-                .asString();
-
-        if (response.getStatus() != 200) {
-            throw new IllegalStateException(
-                    format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
-        }
-    }
-
 }
