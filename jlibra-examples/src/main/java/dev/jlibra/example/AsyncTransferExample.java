@@ -106,7 +106,7 @@ public class AsyncTransferExample {
         logger.info("All transactions created. Wait for them to be accepted..");
         long time = System.currentTimeMillis();
         CompletableFuture.allOf(transactions.toArray(new CompletableFuture[transactions.size()])).get();
-        logger.info("Transactions accepted in {} ms, get account states (both accouns should have 10 Libras): ",
+        logger.info("Transactions accepted in {} ms, get account states (both accounts should have 10 Libras): ",
                 System.currentTimeMillis() - time);
 
         // sleep to make sure the transactions have been executed (submitting them
