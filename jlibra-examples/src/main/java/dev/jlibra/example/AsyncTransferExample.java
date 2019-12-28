@@ -76,7 +76,7 @@ public class AsyncTransferExample {
 
         logger.info("Start creating transactions..");
         for (int i = 0; i < 10; i++) {
-            U64Argument amountArgument = new U64Argument(1 * 1000000);
+            U64Argument amountArgument = new U64Argument(1_000_000);
             AccountAddressArgument addressArgument = new AccountAddressArgument(target.getByteSequence());
             Transaction transaction = ImmutableTransaction.builder()
                     .sequenceNumber(i)
