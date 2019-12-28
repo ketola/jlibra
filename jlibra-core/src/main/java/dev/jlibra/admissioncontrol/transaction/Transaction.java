@@ -54,7 +54,7 @@ public abstract class Transaction implements LibraSerializable {
         long sequenceNumber = readLong(in, 8);
         int payloadType = readInt(in, 4);
 
-        if (payloadType != 2) {
+        if (payloadType != Script.PREFIX) {
             throw new LibraRuntimeException("Only Script payload is supported");
         }
 
