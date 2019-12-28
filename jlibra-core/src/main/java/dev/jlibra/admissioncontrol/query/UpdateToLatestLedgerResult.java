@@ -26,9 +26,13 @@ public abstract class UpdateToLatestLedgerResult {
                 accountStates.addAll(AccountResource.fromGrpcObject(accountStateWithProof));
             }
 
-            accountTransactionsBySequenceNumber
-                    .add(TransactionWithProof.fromGrpcObject(
-                            item.getGetAccountTransactionBySequenceNumberResponse().getTransactionWithProof()));
+            types.TransactionOuterClass.TransactionWithProof transactionWithProof = item
+                    .getGetAccountTransactionBySequenceNumberResponse().getTransactionWithProof();
+            if (transactionWithProof.hasProof()) {
+                accountTransactionsBySequenceNumber
+                        .add(TransactionWithProof.fromGrpcObject(
+                                transactionWithProof));
+            }
         }
 
         return ImmutableUpdateToLatestLedgerResult.builder()

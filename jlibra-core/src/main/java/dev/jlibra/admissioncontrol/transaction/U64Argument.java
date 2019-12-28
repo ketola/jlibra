@@ -13,6 +13,10 @@ public class U64Argument implements TransactionArgument {
         this.value = value;
     }
 
+    public long getValue() {
+        return value;
+    }
+
     @Override
     public ByteSequence serialize() {
         return Serializer.builder()

@@ -7,17 +7,21 @@ public class AccountAddressArgument implements TransactionArgument {
 
     private static final int PREFIX = 1;
 
-    private ByteSequence address;
+    private ByteSequence value;
 
     public AccountAddressArgument(ByteSequence address) {
-        this.address = address;
+        this.value = address;
+    }
+
+    public ByteSequence getValue() {
+        return value;
     }
 
     @Override
     public ByteSequence serialize() {
         return Serializer.builder()
                 .appendInt(PREFIX)
-                .appendWithoutLengthInformation(address)
+                .appendWithoutLengthInformation(value)
                 .toByteSequence();
     }
 }

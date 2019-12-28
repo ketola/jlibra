@@ -19,8 +19,8 @@ public class GetAccountTransactionBySequenceNumberExample {
     private static final Logger logger = LogManager.getLogger(GetAccountTransactionBySequenceNumberExample.class);
 
     public static void main(String[] args) {
-        String address = "1b2d1a2b57704043fa1f97fcc08e268f45d1c5b9f7b43c481941c103b99d8ca5";
-        int sequenceNumber = 0;
+        String address = "d5586b1c04555911fb3c0ab6f60261ad242b3eb4d0eddd2ba22c02174d6173c4";
+        int sequenceNumber = 3;
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -36,9 +36,14 @@ public class GetAccountTransactionBySequenceNumberExample {
                                 .build()))
                 .build());
 
-        result.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
-                .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
-                        e.getAccountAddress(), e.getSequenceNumber(), e.getAmount())));
+        result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
+            logger.info("Version: " + tx.getVersion());
+            logger.info(tx.getTransaction());
+            logger.info("Events: ");
+            tx.getEvents()
+                    .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}",
+                            e.getAccountAddress(), e.getSequenceNumber(), e.getAmount()));
+        });
 
         channel.shutdown();
     }
