@@ -5,6 +5,9 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.time.Instant;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
@@ -21,8 +24,6 @@ import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class TransferExample {
 
@@ -75,9 +76,6 @@ public class TransferExample {
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
-
-        // use asyncSubmitTransaction() for asynchronous call
-        // SubmitTransactionResult result = admissionControl.asyncSubmitTransaction(signedTransaction).get();
 
         logger.info("Result: {}", result);
         Thread.sleep(3000); // add sleep to prevent premature closing of channel
