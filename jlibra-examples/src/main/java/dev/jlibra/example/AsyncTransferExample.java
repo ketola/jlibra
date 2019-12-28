@@ -114,28 +114,28 @@ public class AsyncTransferExample {
         // would be to poll the api to make sure the transactions have been executed.
         Thread.sleep(2000);
 
-        CompletableFuture<UpdateToLatestLedgerResult> result = admissionControl
-                .asyncUpdateToLatestLedger(
-                        ImmutableQuery.builder()
-                                .accountStateQueries(asList(
-                                        ImmutableGetAccountState.builder()
-                                                .address(target)
-                                                .build(),
-                                        ImmutableGetAccountState.builder()
-                                                .address(source)
-                                                .build()))
-                                .build());
+        ImmutableQuery accountStatesQuery = ImmutableQuery.builder()
+                .accountStateQueries(asList(
+                        ImmutableGetAccountState.builder()
+                                .address(target)
+                                .build(),
+                        ImmutableGetAccountState.builder()
+                                .address(source)
+                                .build()))
+                .build();
 
-        result.get().getAccountResources().forEach(accountResource -> {
-            logger.info("-------------------------------------------------------------------");
-            logger.info("Authentication key: {}", accountResource.getAuthenticationKey());
-            logger.info("Received events: {}", accountResource.getReceivedEvents().getCount());
-            logger.info("Sent events: {}", accountResource.getSentEvents().getCount());
-            logger.info("Balance (microLibras): {}", accountResource.getBalanceInMicroLibras());
-            logger.info("Balance (Libras): {}", new BigDecimal(accountResource.getBalanceInMicroLibras())
-                    .divide(BigDecimal.valueOf(1_000_000)));
-            logger.info("Sequence number: {}", accountResource.getSequenceNumber());
-        });
+        admissionControl.asyncUpdateToLatestLedger(accountStatesQuery)
+                .thenApply(UpdateToLatestLedgerResult::getAccountResources)
+                .thenAccept(resources -> resources.forEach(accountResource -> {
+                    logger.info("-------------------------------------------------------------------");
+                    logger.info("Authentication key: {}", accountResource.getAuthenticationKey());
+                    logger.info("Received events: {}", accountResource.getReceivedEvents().getCount());
+                    logger.info("Sent events: {}", accountResource.getSentEvents().getCount());
+                    logger.info("Balance (microLibras): {}", accountResource.getBalanceInMicroLibras());
+                    logger.info("Balance (Libras): {}", new BigDecimal(accountResource.getBalanceInMicroLibras())
+                            .divide(BigDecimal.valueOf(1_000_000)));
+                    logger.info("Sequence number: {}", accountResource.getSequenceNumber());
+                }));
 
         Thread.sleep(3000); // add sleep to prevent premature closing of channel
         channel.shutdown();
