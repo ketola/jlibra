@@ -1,7 +1,7 @@
 package dev.jlibra.admissioncontrol;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.Future;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.spotify.futures.ListenableFuturesExtra;
@@ -35,14 +35,17 @@ public class AdmissionControl {
         return SubmitTransactionResult.fromGrpcObject(response);
     }
 
-    public Future<SubmitTransactionResult> asyncSubmitTransaction(SignedTransaction transaction) {
+    public CompletableFuture<SubmitTransactionResult> asyncSubmitTransaction(SignedTransaction transaction) {
         SubmitTransactionRequest request = transaction.toGrpcObject();
         AdmissionControlFutureStub stub = AdmissionControlGrpc.newFutureStub(channel);
         ListenableFuture<SubmitTransactionResponse> future = stub.submitTransaction(request);
         return ListenableFuturesExtra.toCompletableFuture(future)
                 .thenApply(response -> {
-                    try { return SubmitTransactionResult.fromGrpcObject(response); }
-                    catch (LibraTransactionException e) { throw new CompletionException(e); }
+                    try {
+                        return SubmitTransactionResult.fromGrpcObject(response);
+                    } catch (LibraTransactionException e) {
+                        throw new CompletionException(e);
+                    }
                 });
     }
 
@@ -54,11 +57,12 @@ public class AdmissionControl {
         return UpdateToLatestLedgerResult.fromGrpcObject(response);
     }
 
-    public Future<UpdateToLatestLedgerResult> asyncUpdateToLatestLedger(Query query) {
+    public CompletableFuture<UpdateToLatestLedgerResult> asyncUpdateToLatestLedger(Query query) {
         AdmissionControlFutureStub stub = AdmissionControlGrpc.newFutureStub(channel);
-        ListenableFuture<UpdateToLatestLedgerResponse> future = stub.updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
-                .addAllRequestedItems(query.toGrpcObject())
-                .build());
+        ListenableFuture<UpdateToLatestLedgerResponse> future = stub
+                .updateToLatestLedger(UpdateToLatestLedgerRequest.newBuilder()
+                        .addAllRequestedItems(query.toGrpcObject())
+                        .build());
 
         return ListenableFuturesExtra.toCompletableFuture(future)
                 .thenApply(UpdateToLatestLedgerResult::fromGrpcObject);
