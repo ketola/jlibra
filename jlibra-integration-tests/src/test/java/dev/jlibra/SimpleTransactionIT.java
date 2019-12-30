@@ -10,10 +10,12 @@ import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.Assert.assertEquals;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import dev.jlibra.admissioncontrol.transaction.*;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,14 +30,6 @@ import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.mnemonic.ChildNumber;
@@ -105,7 +99,7 @@ public class SimpleTransactionIT {
         // destination account is generated
         ExtendedPrivKey destination = generateKey();
         String destinationAddress = destination.getAddress();
-        long transactionAmount = 1_000;
+        long transactionAmount = 1_111;
 
         // make the transaction
         transfer(destinationAddress, transactionAmount);
@@ -156,8 +150,8 @@ public class SimpleTransactionIT {
                 .senderAccount(AccountAddress.ofPublicKey(sourceAccount.publicKey))
                 .expirationTime(now().getEpochSecond() + 1000)
                 .payload(ImmutableScript.builder()
-                        .code(Move.peerToPeerTransferAsBytes())
-                        .addArguments(addressArgument, amountArgument)
+                        .code(Move.peerToPeerTransferWithMetadataAsBytes())
+                        .addArguments(addressArgument, amountArgument, new ByteArrayArgument(ByteSequence.from("libra".getBytes(StandardCharsets.UTF_8))))
                         .build())
                 .build();
 
