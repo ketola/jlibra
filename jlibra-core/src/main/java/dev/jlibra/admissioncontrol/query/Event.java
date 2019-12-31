@@ -33,7 +33,7 @@ public interface Event {
             ByteSequence message = ByteSequence.from(new byte[0]);
             if (eventDataStream.available() > 0) {
                 ByteSequence messageData = Deserialization.readByteSequence(eventDataStream, eventDataStream.available());
-                boolean onlyZerosStream = IntStream.range(0, messageData.toArray().length).parallel().allMatch(i -> messageData.toArray()[i] == 0);
+                boolean onlyZerosStream = IntStream.range(0, messageData.toArray().length).allMatch(i -> messageData.toArray()[i] == 0);
                 if (!onlyZerosStream) {
                     message = messageData;
                 }
