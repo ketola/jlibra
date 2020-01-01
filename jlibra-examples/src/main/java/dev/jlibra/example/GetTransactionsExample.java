@@ -1,24 +1,31 @@
 package dev.jlibra.example;
 
+import static java.util.Arrays.asList;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetTransactions;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import static java.util.Arrays.asList;
-
+/**
+ * The GetTransactions query allows you to query transaction based on the
+ * version number (see:
+ * https://developers.libra.org/docs/reference/glossary#version)
+ * 
+ */
 public class GetTransactionsExample {
 
     private static final Logger logger = LogManager.getLogger(GetTransactionsExample.class);
 
     public static void main(String[] args) {
-        long start=8720763;
-        long limit=10;
-        boolean fetchEvent=true;
+        long start = 8720763;
+        long limit = 10;
+        boolean fetchEvent = true;
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -33,12 +40,12 @@ public class GetTransactionsExample {
                                 .limit(limit)
                                 .fetchEvents(fetchEvent)
                                 .build()))
-                .build()
-        );
+                .build());
 
-        result.getTransactions().forEach(tx -> { tx.getEvents()
-                .forEach(e -> logger.info("{}: Sequence number: {},key:{} Amount: {}",
-                    e.getAccountAddress(), e.getSequenceNumber(),e.getKey(), e.getAmount()));
+        result.getTransactions().forEach(tx -> {
+            tx.getEvents()
+                    .forEach(e -> logger.info("{}: Sequence number: {},key:{} Amount: {}",
+                            e.getAccountAddress(), e.getSequenceNumber(), e.getKey(), e.getAmount()));
         });
 
         channel.shutdown();
