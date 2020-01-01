@@ -34,6 +34,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`GetAccountTransactionBySequenceNumberExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionBySequenceNumberExample.java)
 
+[`GetTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetTransactionsExample.java)
+
 [`ImportAccountMnemonicExample`](jlibra-examples/src/main/java/dev/jlibra/example/ImportAccountMnemonicExample.java)
 
 [`MintExample`](jlibra-examples/src/main/java/dev/jlibra/example/MintExample.java)
@@ -41,8 +43,6 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
 [`KeyRotationExample`](jlibra-examples/src/main/java/dev/jlibra/example/KeyRotationExample.java)
-
-[`GetTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetTransactionsExample.java)
 
 ## Use JLibra in your project
 
