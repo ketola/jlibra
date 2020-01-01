@@ -34,7 +34,7 @@ public class GetTransactionsExample {
         AdmissionControl admissionControl = new AdmissionControl(channel);
 
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
-                .transactions(
+                .transactionsQueries(
                         asList(ImmutableGetTransactions.builder()
                                 .startVersion(start)
                                 .limit(limit)
