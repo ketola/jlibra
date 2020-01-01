@@ -18,7 +18,7 @@ public abstract class Query {
 
     public abstract Optional<List<GetAccountTransactionBySequenceNumber>> getAccountTransactionBySequenceNumberQueries();
 
-    public abstract Optional<List<GetTransactions>> getTransactions();
+    public abstract Optional<List<GetTransactions>> getTransactionsQueries();
 
     public List<RequestItem> toGrpcObject() {
         Stream.Builder<RequestItem> resultBuiler = Stream.builder();
@@ -35,7 +35,7 @@ public abstract class Query {
                 .map(GetAccountTransactionBySequenceNumber::toGrpcObject)
                 .forEach(resultBuiler);
 
-        getTransactions()
+        getTransactionsQueries()
                 .map(Collection::stream)
                 .orElse(Stream.empty())
                 .map(GetTransactions::toGrpcObject)
