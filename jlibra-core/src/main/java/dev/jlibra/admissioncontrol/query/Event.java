@@ -31,20 +31,16 @@ public interface Event {
             long amount = Deserialization.readLong(eventDataStream, 8);
             ByteSequence address = Deserialization.readByteSequence(eventDataStream, 32);
             ByteSequence message = ByteSequence.from(new byte[0]);
-            if (eventDataStream.available() > 0) {
-                ByteSequence messageData = Deserialization.readByteSequence(eventDataStream, eventDataStream.available());
-                boolean onlyZerosStream = IntStream.range(0, messageData.toArray().length).allMatch(i -> messageData.toArray()[i] == 0);
-                if (!onlyZerosStream) {
-                    message = messageData;
-                }
+            int messageLength = Deserialization.readInt(eventDataStream, 4);
+            if (messageLength > 0) {
+                message = Deserialization.readByteSequence(eventDataStream, messageLength);
             }
             return ImmutableEvent.builder()
                     .accountAddress(AccountAddress.ofByteSequence(address))
+                    .key(ByteSequence.from(event.getKey().toByteArray()))
                     .amount(amount)
-                    .key(ByteSequence.from(event.getKey().toByteArray()))
-                    .metadata(message)
-                    .key(ByteSequence.from(event.getKey().toByteArray()))
                     .sequenceNumber(event.getSequenceNumber())
+                    .metadata(message)
                     .build();
         } catch (IOException e) {
             throw new LibraRuntimeException("Converting from grpc object failed", e);
