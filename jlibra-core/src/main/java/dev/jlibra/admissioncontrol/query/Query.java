@@ -21,24 +21,27 @@ public abstract class Query {
     public abstract Optional<List<GetTransactions>> getTransactions();
 
     public List<RequestItem> toGrpcObject() {
-        Stream<RequestItem> getAccountStateStream = getAccountStateQueries()
-                .map(Collection::stream)
-                .orElse(Stream.empty())
-                .map(GetAccountState::toGrpcObject);
-        Stream<RequestItem> getAccountTransactionsStream =getAccountTransactionBySequenceNumberQueries()
-                .map(Collection::stream)
-                .orElse(Stream.empty())
-                .map(GetAccountTransactionBySequenceNumber::toGrpcObject);
-        Stream<RequestItem> getTransactions = getTransactions()
-                .map(Collection::stream)
-                .orElse(Stream.empty())
-                .map(GetTransactions::toGrpcObject);
+        Stream.Builder<RequestItem> resultBuiler = Stream.builder();
 
-        Stream<RequestItem> totalStream = Stream.concat(
-                getAccountStateStream,
-                getAccountTransactionsStream);
-        totalStream= Stream.concat(totalStream, getTransactions);
+        getAccountStateQueries()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetAccountState::toGrpcObject)
+                .forEach(resultBuiler);
 
-        return totalStream.collect(toList());
+        getAccountTransactionBySequenceNumberQueries()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetAccountTransactionBySequenceNumber::toGrpcObject)
+                .forEach(resultBuiler);
+
+        getTransactions()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetTransactions::toGrpcObject)
+                .forEach(resultBuiler);
+
+        return resultBuiler.build()
+                .collect(toList());
     }
 }

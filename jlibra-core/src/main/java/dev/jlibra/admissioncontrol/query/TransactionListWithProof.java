@@ -13,13 +13,10 @@ public interface TransactionListWithProof {
     List<Event> getEvents();
 
     static TransactionWithProof fromGrpcObject(types.TransactionOuterClass.TransactionListWithProof grpcObject) {
-        List<List<Events.Event>> collect = grpcObject.getEventsForVersions().getEventsForVersionList().stream()
+        List<Event> eventResult = grpcObject.getEventsForVersions().getEventsForVersionList().stream()
                 .map(Events.EventsList::getEventsList)
-                .collect(toList());
-
-        List<Event> eventResult = collect.stream().map(eventGrpcObjects ->
-             eventGrpcObjects.stream().map(Event::fromGrpcObject).collect(toList())
-        ).flatMap(Collection::stream).collect(toList());
+                .map(eventGrpcObjects -> eventGrpcObjects.stream().map(Event::fromGrpcObject).collect(toList()))
+                .flatMap(Collection::stream).collect(toList());
 
         return ImmutableTransactionWithProof.builder()
                 .addAllEvents(eventResult)
