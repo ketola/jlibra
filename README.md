@@ -38,6 +38,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`MintExample`](jlibra-examples/src/main/java/dev/jlibra/example/MintExample.java)
 
+[`TransactionWithMetadataExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransactionWithMetadataExample.java)
+
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
 [`KeyRotationExample`](jlibra-examples/src/main/java/dev/jlibra/example/KeyRotationExample.java)
