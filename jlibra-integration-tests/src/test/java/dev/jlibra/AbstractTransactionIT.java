@@ -5,10 +5,19 @@ import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.admissioncontrol.transaction.*;
+import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
+import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
+import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
+import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
-import dev.jlibra.mnemonic.*;
+import dev.jlibra.mnemonic.ChildNumber;
+import dev.jlibra.mnemonic.ExtendedPrivKey;
+import dev.jlibra.mnemonic.LibraKeyFactory;
+import dev.jlibra.mnemonic.Mnemonic;
+import dev.jlibra.mnemonic.Seed;
 import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -52,14 +61,14 @@ public abstract class AbstractTransactionIT {
     private static final String TESTNET_ADDRESS = "ac.testnet.libra.org";
     private static final int TESTNET_PORT = 8000;
 
+    private ManagedChannel channel;
+    private AdmissionControl admissionControl;
+    protected ExtendedPrivKey sourceAccount;
+
     @BeforeClass
     public static void setUpClass() {
         Security.addProvider(new BouncyCastleProvider());
     }
-
-    private ManagedChannel channel;
-    private AdmissionControl admissionControl;
-    protected ExtendedPrivKey sourceAccount;
 
     @Before
     public void setUp() {
