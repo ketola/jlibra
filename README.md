@@ -42,6 +42,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`KeyRotationExample`](jlibra-examples/src/main/java/dev/jlibra/example/KeyRotationExample.java)
 
+[`GetTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetTransactionsExample.java)
+
 ## Use JLibra in your project
 
 Versions of JLibra are deployed to the [Central Maven repository](https://search.maven.org/), you can add JLibra as a dependency to your project:
@@ -76,6 +78,7 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 *   [ketola](https://github.com/ketola) (Sauli Ketola) 
 *   [ice09](https://github.com/ice09) (Alexander Culum)
 *   [hczerpak](https://github.com/hczerpak) (Hubert Czerpak)
+*   [zebei](https://github.com/zebei) (lizebei)
    
 ### Projects using JLibra
 *   [libra-message-signing](https://github.com/ice09/libra-message-signing) 
