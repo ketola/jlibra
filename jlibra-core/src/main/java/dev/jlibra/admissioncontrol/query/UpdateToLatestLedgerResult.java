@@ -16,12 +16,12 @@ public abstract class UpdateToLatestLedgerResult {
 
     public abstract List<TransactionWithProof> getAccountTransactionsBySequenceNumber();
 
-    public abstract List<TransactionWithProof> getTransactions();
+    public abstract List<TransactionListWithProof> getTransactions();
 
     public static UpdateToLatestLedgerResult fromGrpcObject(UpdateToLatestLedgerResponse grpcObject) {
         List<AccountResource> accountStates = new ArrayList<>();
         List<TransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
-        List<TransactionWithProof> transactions = new ArrayList<>();
+        List<TransactionListWithProof> transactions = new ArrayList<>();
 
         for (ResponseItem item : grpcObject.getResponseItemsList()) {
             AccountStateWithProof accountStateWithProof = item.getGetAccountStateResponse().getAccountStateWithProof();
@@ -29,11 +29,20 @@ public abstract class UpdateToLatestLedgerResult {
                 accountStates.addAll(AccountResource.fromGrpcObject(accountStateWithProof));
             }
 
-            accountTransactionsBySequenceNumber
-                    .add(TransactionWithProof.fromGrpcObject(
-                            item.getGetAccountTransactionBySequenceNumberResponse().getTransactionWithProof()));
-            transactions.add(TransactionListWithProof.fromGrpcObject(
-                    item.getGetTransactionsResponse().getTxnListWithProof()));
+            types.TransactionOuterClass.TransactionWithProof transactionWithProof = item
+                    .getGetAccountTransactionBySequenceNumberResponse().getTransactionWithProof();
+            if (transactionWithProof.hasProof()) {
+                accountTransactionsBySequenceNumber
+                        .add(TransactionWithProof.fromGrpcObject(
+                                transactionWithProof));
+            }
+
+            types.TransactionOuterClass.TransactionListWithProof txnListWithProof = item.getGetTransactionsResponse()
+                    .getTxnListWithProof();
+            if (txnListWithProof.hasProof()) {
+                transactions.add(TransactionListWithProof.fromGrpcObject(
+                        txnListWithProof));
+            }
         }
 
         return ImmutableUpdateToLatestLedgerResult.builder()

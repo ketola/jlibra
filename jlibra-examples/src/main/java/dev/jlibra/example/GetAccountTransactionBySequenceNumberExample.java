@@ -19,8 +19,6 @@ public class GetAccountTransactionBySequenceNumberExample {
     private static final Logger logger = LogManager.getLogger(GetAccountTransactionBySequenceNumberExample.class);
 
     public static void main(String[] args) {
-        // This can be a "transaction with Metadata" or a standard transfer, for the
-        // standard one metadata is empty.
         String address = "0703a61585597d9b56a46a658464738dff58222b4393d32dd9899bedb58666e9";
         int sequenceNumber = 70;
 
@@ -38,9 +36,14 @@ public class GetAccountTransactionBySequenceNumberExample {
                                 .build()))
                 .build());
 
-        result.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
-                .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}, Metadata: {}",
-                        e.getAccountAddress(), e.getSequenceNumber(), e.getAmount(), e.getMetadata().orElse(null))));
+        result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
+            logger.info("Version: " + tx.getVersion());
+            logger.info(tx.getTransaction());
+            logger.info("Events: ");
+            tx.getEvents()
+                    .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}, Metadata: {}",
+                            e.getAccountAddress(), e.getSequenceNumber(), e.getAmount(), e.getMetadata().orElse(null)));
+        });
 
         channel.shutdown();
     }

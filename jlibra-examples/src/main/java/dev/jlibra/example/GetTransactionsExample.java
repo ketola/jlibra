@@ -42,10 +42,20 @@ public class GetTransactionsExample {
                                 .build()))
                 .build());
 
-        result.getTransactions().forEach(tx -> {
-            tx.getEvents()
-                    .forEach(e -> logger.info("{}: Sequence number: {},key:{} Amount: {}",
-                            e.getAccountAddress(), e.getSequenceNumber(), e.getKey(), e.getAmount()));
+        result.getTransactions().forEach(txList -> {
+            logger.info("Transactions: ");
+            txList.getTransactions().forEach(tx -> {
+                logger.info(tx);
+            });
+
+            logger.info("Events: ");
+            txList.getEvents()
+                    .forEach(e -> logger.info("{}: Sequence number: {},key:{} Amount: {}, Metadata: {}",
+                            e.getAccountAddress(),
+                            e.getSequenceNumber(),
+                            e.getKey(),
+                            e.getAmount(),
+                            e.getMetadata().orElse(null)));
         });
 
         channel.shutdown();

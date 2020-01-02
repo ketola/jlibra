@@ -7,10 +7,14 @@ public class U64Argument implements TransactionArgument {
 
     private long value;
 
-    private static final int PREFIX = 0;
+    public static final int PREFIX = 0;
 
     public U64Argument(long value) {
         this.value = value;
+    }
+
+    public long getValue() {
+        return value;
     }
 
     @Override
