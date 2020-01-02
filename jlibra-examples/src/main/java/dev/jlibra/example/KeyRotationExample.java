@@ -1,6 +1,5 @@
 package dev.jlibra.example;
 
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
@@ -34,8 +33,6 @@ import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
 
 /*-
  * This is a bit more complicated example demonstrating the key rotation feature
@@ -72,7 +69,7 @@ public class KeyRotationExample {
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
         AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
-        mint(addressOriginal, 10L * 1_000_000L);
+        ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
 
         /*
@@ -104,7 +101,7 @@ public class KeyRotationExample {
          * Add some coins to the account to verify that the address is still the same
          * but the authentication key has changed.
          */
-        mint(addressOriginal, 10L * 1_000_000L);
+        ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the account");
@@ -182,18 +179,6 @@ public class KeyRotationExample {
                 .build();
 
         return admissionControl.submitTransaction(signedTransaction);
-    }
-
-    private static void mint(AccountAddress address, long amountInMicroLibras) {
-        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
-                .queryString("amount", amountInMicroLibras)
-                .queryString("address", address.getByteSequence().toString())
-                .asString();
-
-        if (response.getStatus() != 200) {
-            throw new IllegalStateException(
-                    format("Error in minting %d Libra for address %s", amountInMicroLibras, address));
-        }
     }
 
     private static void getAccountState(AccountAddress accountAddress, AdmissionControl admissionControl) {

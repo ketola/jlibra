@@ -18,16 +18,30 @@ public abstract class Query {
 
     public abstract Optional<List<GetAccountTransactionBySequenceNumber>> getAccountTransactionBySequenceNumberQueries();
 
+    public abstract Optional<List<GetTransactions>> getTransactionsQueries();
+
     public List<RequestItem> toGrpcObject() {
-        return Stream.concat(
-                getAccountStateQueries()
-                        .map(Collection::stream)
-                        .orElse(Stream.empty())
-                        .map(GetAccountState::toGrpcObject),
-                getAccountTransactionBySequenceNumberQueries()
-                        .map(Collection::stream)
-                        .orElse(Stream.empty())
-                        .map(GetAccountTransactionBySequenceNumber::toGrpcObject))
+        Stream.Builder<RequestItem> resultBuiler = Stream.builder();
+
+        getAccountStateQueries()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetAccountState::toGrpcObject)
+                .forEach(resultBuiler);
+
+        getAccountTransactionBySequenceNumberQueries()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetAccountTransactionBySequenceNumber::toGrpcObject)
+                .forEach(resultBuiler);
+
+        getTransactionsQueries()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetTransactions::toGrpcObject)
+                .forEach(resultBuiler);
+
+        return resultBuiler.build()
                 .collect(toList());
     }
 }

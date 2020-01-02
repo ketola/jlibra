@@ -16,9 +16,12 @@ public abstract class UpdateToLatestLedgerResult {
 
     public abstract List<TransactionWithProof> getAccountTransactionsBySequenceNumber();
 
+    public abstract List<TransactionListWithProof> getTransactions();
+
     public static UpdateToLatestLedgerResult fromGrpcObject(UpdateToLatestLedgerResponse grpcObject) {
         List<AccountResource> accountStates = new ArrayList<>();
         List<TransactionWithProof> accountTransactionsBySequenceNumber = new ArrayList<>();
+        List<TransactionListWithProof> transactions = new ArrayList<>();
 
         for (ResponseItem item : grpcObject.getResponseItemsList()) {
             AccountStateWithProof accountStateWithProof = item.getGetAccountStateResponse().getAccountStateWithProof();
@@ -33,11 +36,19 @@ public abstract class UpdateToLatestLedgerResult {
                         .add(TransactionWithProof.fromGrpcObject(
                                 transactionWithProof));
             }
+
+            types.TransactionOuterClass.TransactionListWithProof txnListWithProof = item.getGetTransactionsResponse()
+                    .getTxnListWithProof();
+            if (txnListWithProof.hasProof()) {
+                transactions.add(TransactionListWithProof.fromGrpcObject(
+                        txnListWithProof));
+            }
         }
 
         return ImmutableUpdateToLatestLedgerResult.builder()
                 .accountResources(accountStates)
                 .accountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber)
+                .transactions(transactions)
                 .build();
     }
 }

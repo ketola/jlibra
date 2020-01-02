@@ -26,15 +26,21 @@ JLibra simplifies integration to Libra but does not hide any features of the Lib
 
 Start sample Main classes in `dev.jlibra.example` package for examples (for a complete example with creating accounts to moving coins between them check the [how to](https://github.com/ketola/jlibra/blob/master/docs/HOWTO.md))
 
+[`AsyncTransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/AsyncTransferExample.java)
+
 [`GenerateKeysExample`](jlibra-examples/src/main/java/dev/jlibra/example/GenerateKeysExample.java)
 
 [`GetAccountStateExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java)
 
 [`GetAccountTransactionBySequenceNumberExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionBySequenceNumberExample.java)
 
+[`GetTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetTransactionsExample.java)
+
 [`ImportAccountMnemonicExample`](jlibra-examples/src/main/java/dev/jlibra/example/ImportAccountMnemonicExample.java)
 
 [`MintExample`](jlibra-examples/src/main/java/dev/jlibra/example/MintExample.java)
+
+[`TransactionWithMetadataExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransactionWithMetadataExample.java)
 
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
@@ -74,6 +80,7 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 *   [ketola](https://github.com/ketola) (Sauli Ketola) 
 *   [ice09](https://github.com/ice09) (Alexander Culum)
 *   [hczerpak](https://github.com/hczerpak) (Hubert Czerpak)
+*   [zebei](https://github.com/zebei) (lizebei)
    
 ### Projects using JLibra
 *   [libra-message-signing](https://github.com/ice09/libra-message-signing) 

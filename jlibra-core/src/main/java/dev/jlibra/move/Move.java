@@ -19,6 +19,10 @@ public class Move {
         return readMoveScriptBytes("/move/peer_to_peer_transfer.json");
     }
 
+    public static ByteSequence peerToPeerTransferWithMetadataAsBytes() {
+        return readMoveScriptBytes("/move/peer_to_peer_transfer_with_metadata.json");
+    }
+
     private static ByteSequence readMoveScriptBytes(String fileName) {
         InputStream jsonBinary = Move.class.getResourceAsStream(fileName);
         String json = readJson(jsonBinary);
