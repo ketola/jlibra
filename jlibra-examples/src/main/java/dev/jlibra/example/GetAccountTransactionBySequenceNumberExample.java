@@ -33,6 +33,7 @@ public class GetAccountTransactionBySequenceNumberExample {
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
                                 .accountAddress(AccountAddress.ofByteSequence(ByteSequence.from(address)))
                                 .sequenceNumber(sequenceNumber)
+                                .fetchEvents(true)
                                 .build()))
                 .build());
 

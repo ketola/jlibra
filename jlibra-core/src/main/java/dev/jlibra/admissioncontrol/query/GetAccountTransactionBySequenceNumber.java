@@ -13,12 +13,14 @@ public abstract class GetAccountTransactionBySequenceNumber {
 
     public abstract long getSequenceNumber();
 
+    public abstract boolean getFetchEvents();
+
     public RequestItem toGrpcObject() {
         GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
                 .newBuilder()
                 .setAccount(getAccountAddress().getByteSequence().toByteString())
                 .setSequenceNumber(getSequenceNumber())
-                .setFetchEvents(true)
+                .setFetchEvents(getFetchEvents())
                 .build();
 
         return RequestItem.newBuilder()
