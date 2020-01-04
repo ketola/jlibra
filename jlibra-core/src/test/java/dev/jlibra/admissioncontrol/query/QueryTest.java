@@ -55,10 +55,12 @@ public class QueryTest {
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
                                         .accountAddress(AccountAddress.ofByteSequence(address1))
                                         .sequenceNumber(1)
+                                        .fetchEvents(true)
                                         .build(),
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
                                         .accountAddress(AccountAddress.ofByteSequence(address2))
                                         .sequenceNumber(2)
+                                        .fetchEvents(false)
                                         .build()))
                 .build();
 
@@ -68,8 +70,10 @@ public class QueryTest {
         assertThat(requestItems.get(0).getGetAccountTransactionBySequenceNumberRequest().getAccount().toByteArray(),
                 is(address1.toArray()));
         assertThat(requestItems.get(0).getGetAccountTransactionBySequenceNumberRequest().getSequenceNumber(), is(1L));
+        assertThat(requestItems.get(0).getGetAccountTransactionBySequenceNumberRequest().getFetchEvents(), is(true));
         assertThat(requestItems.get(1).getGetAccountTransactionBySequenceNumberRequest().getAccount().toByteArray(),
                 is(address2.toArray()));
         assertThat(requestItems.get(1).getGetAccountTransactionBySequenceNumberRequest().getSequenceNumber(), is(2L));
+        assertThat(requestItems.get(1).getGetAccountTransactionBySequenceNumberRequest().getFetchEvents(), is(false));
     }
 }
