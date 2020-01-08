@@ -61,10 +61,10 @@ public abstract class UpdateToLatestLedgerResult {
         }
 
         return ImmutableUpdateToLatestLedgerResult.builder()
-                .accountResources(accountStates)
-                .accountTransactionsBySequenceNumber(accountTransactionsBySequenceNumber)
-                .transactions(transactions)
-                .events(eventsByAccessPath)
+                .accountStateQueryResults(accountStates)
+                .accountTransactionBySequenceNumberQueryResults(accountTransactionsBySequenceNumber)
+                .transactionsQueryResults(transactions)
+                .eventsByEventAccessPathQueryResults(eventsByAccessPath)
                 .build();
     }
 }
