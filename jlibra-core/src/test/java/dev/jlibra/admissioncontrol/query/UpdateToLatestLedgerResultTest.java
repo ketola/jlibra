@@ -33,7 +33,7 @@ public class UpdateToLatestLedgerResultTest {
                 .build();
 
         List<AccountResource> accountStates = UpdateToLatestLedgerResult.fromGrpcObject(grpcResponse)
-                .getAccountResources();
+                .getAccountStateQueryResults();
         assertThat(accountStates, is(iterableWithSize(1)));
         assertThat(accountStates.get(0).getAuthenticationKey().toString(),
                 is("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"));

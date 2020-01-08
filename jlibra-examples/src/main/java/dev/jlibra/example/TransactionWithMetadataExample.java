@@ -123,7 +123,7 @@ public class TransactionWithMetadataExample {
                                 .build()))
                 .build());
 
-        queryResult.getAccountTransactionsBySequenceNumber().forEach(tx -> tx.getEvents()
+        queryResult.getAccountTransactionBySequenceNumberQueryResults().forEach(tx -> tx.getEvents()
                 .forEach(e -> logger.info("{}: Sequence number: {}, Amount: {}, Metadata: {}",
                         e.getAccountAddress(), e.getSequenceNumber(), e.getAmount(),
                         new String(e.getMetadata().get().toArray(), UTF_8))));

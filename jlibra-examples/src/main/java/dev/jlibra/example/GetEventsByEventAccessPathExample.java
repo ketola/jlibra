@@ -41,7 +41,7 @@ public class GetEventsByEventAccessPathExample {
                                                 .build()))
                                 .build());
 
-        result.getEvents().forEach(e -> {
+        result.getEventsByEventAccessPathQueryResults().forEach(e -> {
             logger.info("Event: {}", e);
         });
 

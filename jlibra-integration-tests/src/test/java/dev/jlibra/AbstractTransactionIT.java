@@ -122,7 +122,7 @@ public abstract class AbstractTransactionIT {
                         asList(ImmutableGetAccountState.builder().address(accountAddress).build()))
                         .build());
 
-        long balance = result.getAccountResources()
+        long balance = result.getAccountStateQueryResults()
                 .stream()
                 .filter(accountResource -> accountResource.getAuthenticationKey()
                         .equals(accountAddress.getByteSequence()))
@@ -166,7 +166,7 @@ public abstract class AbstractTransactionIT {
                 ImmutableQuery.builder().accountStateQueries(asList(
                         ImmutableGetAccountState.builder().address(forAddress).build())).build());
 
-        return result.getAccountResources()
+        return result.getAccountStateQueryResults()
                 .stream()
                 .filter(accountResource ->
                         accountResource.getAuthenticationKey()

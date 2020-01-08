@@ -37,7 +37,7 @@ public class GetAccountTransactionBySequenceNumberExample {
                                 .build()))
                 .build());
 
-        result.getAccountTransactionsBySequenceNumber().forEach(tx -> {
+        result.getAccountTransactionBySequenceNumberQueryResults().forEach(tx -> {
             logger.info("Version: " + tx.getVersion());
             logger.info(tx.getTransaction());
             logger.info("Events: ");

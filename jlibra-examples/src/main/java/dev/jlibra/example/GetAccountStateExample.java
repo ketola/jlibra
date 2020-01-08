@@ -38,7 +38,7 @@ public class GetAccountStateExample {
                                                 .build()))
                                 .build());
 
-        result.getAccountResources().forEach(accountResource -> {
+        result.getAccountStateQueryResults().forEach(accountResource -> {
             logger.info("Authentication key: {}", accountResource.getAuthenticationKey());
             logger.info("Received events: {}", accountResource.getReceivedEvents().getCount());
             logger.info("Sent events: {}", accountResource.getSentEvents().getCount());

@@ -15,13 +15,13 @@ import types.GetWithProof.UpdateToLatestLedgerResponse;
 @Value.Immutable
 public abstract class UpdateToLatestLedgerResult {
 
-    public abstract List<AccountResource> getAccountResources();
+    public abstract List<AccountResource> getAccountStateQueryResults();
 
-    public abstract List<TransactionWithProof> getAccountTransactionsBySequenceNumber();
+    public abstract List<TransactionWithProof> getAccountTransactionBySequenceNumberQueryResults();
 
-    public abstract List<TransactionListWithProof> getTransactions();
+    public abstract List<TransactionListWithProof> getTransactionsQueryResults();
 
-    public abstract List<Event> getEvents();
+    public abstract List<Event> getEventsByEventAccessPathQueryResults();
 
     public static UpdateToLatestLedgerResult fromGrpcObject(UpdateToLatestLedgerResponse grpcObject) {
         List<AccountResource> accountStates = new ArrayList<>();
