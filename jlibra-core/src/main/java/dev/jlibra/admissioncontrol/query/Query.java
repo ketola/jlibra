@@ -20,6 +20,8 @@ public abstract class Query {
 
     public abstract Optional<List<GetTransactions>> getTransactionsQueries();
 
+    public abstract Optional<List<GetEventsByEventAccessPath>> getEventsByEventAccessPathQueries();
+
     public List<RequestItem> toGrpcObject() {
         Stream.Builder<RequestItem> resultBuiler = Stream.builder();
 
@@ -39,6 +41,12 @@ public abstract class Query {
                 .map(Collection::stream)
                 .orElse(Stream.empty())
                 .map(GetTransactions::toGrpcObject)
+                .forEach(resultBuiler);
+
+        getEventsByEventAccessPathQueries()
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(GetEventsByEventAccessPath::toGrpcObject)
                 .forEach(resultBuiler);
 
         return resultBuiler.build()
