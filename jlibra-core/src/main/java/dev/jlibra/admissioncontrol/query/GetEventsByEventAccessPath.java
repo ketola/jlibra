@@ -37,9 +37,9 @@ public abstract class GetEventsByEventAccessPath {
 
     public abstract Path getPath();
 
-    public abstract int getLimit();
+    public abstract long getLimit();
 
-    public abstract int getStartEventSequenceNumber();
+    public abstract long getStartEventSequenceNumber();
 
     public abstract boolean isAscending();
 
