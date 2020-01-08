@@ -34,6 +34,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`GetAccountTransactionBySequenceNumberExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionBySequenceNumberExample.java)
 
+[`GetEventsByEventAccessPathExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetEventsByEventAccessPathExample.java)
+
 [`GetTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetTransactionsExample.java)
 
 [`ImportAccountMnemonicExample`](jlibra-examples/src/main/java/dev/jlibra/example/ImportAccountMnemonicExample.java)
