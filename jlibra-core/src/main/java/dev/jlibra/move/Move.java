@@ -12,15 +12,15 @@ import dev.jlibra.serialization.ByteSequence;
 public class Move {
 
     public static ByteSequence rotateAuthenticationKeyAsBytes() {
-        return readMoveScriptBytes("/move/rotate_authentication_key.json");
+        return readMoveScriptBytes("/move/rotate_authentication_key.mv");
     }
 
     public static ByteSequence peerToPeerTransferAsBytes() {
-        return readMoveScriptBytes("/move/peer_to_peer_transfer.json");
+        return readMoveScriptBytes("/move/peer_to_peer_transfer.mv");
     }
 
     public static ByteSequence peerToPeerTransferWithMetadataAsBytes() {
-        return readMoveScriptBytes("/move/peer_to_peer_transfer_with_metadata.json");
+        return readMoveScriptBytes("/move/peer_to_peer_transfer_with_metadata.mv");
     }
 
     private static ByteSequence readMoveScriptBytes(String fileName) {
