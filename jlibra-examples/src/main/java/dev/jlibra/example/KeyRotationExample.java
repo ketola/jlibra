@@ -189,7 +189,7 @@ public class KeyRotationExample {
                                 .build()))
                         .build());
 
-        result.getAccountResources().forEach(accountResource -> logger.info(
+        result.getAccountStateQueryResults().forEach(accountResource -> logger.info(
                 "Account authentication key: {}, Balance (Libras): {}",
                 accountResource.getAuthenticationKey(),
                 new BigDecimal(accountResource.getBalanceInMicroLibras()).divide(BigDecimal.valueOf(1000000))));

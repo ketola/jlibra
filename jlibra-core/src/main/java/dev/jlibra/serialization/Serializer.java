@@ -59,6 +59,10 @@ public class Serializer {
         return append(intToByteArray(i));
     }
 
+    public Serializer appendByte(byte i) {
+        return append(new byte[] { i });
+    }
+
     public Serializer appendSerializable(LibraSerializable serializable) {
         return append(serializable.serialize().toArray());
     }

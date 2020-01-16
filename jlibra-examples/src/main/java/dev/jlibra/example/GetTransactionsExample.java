@@ -42,7 +42,7 @@ public class GetTransactionsExample {
                                 .build()))
                 .build());
 
-        result.getTransactions().forEach(txList -> {
+        result.getTransactionsQueryResults().forEach(txList -> {
             logger.info("Transactions: ");
             txList.getTransactions().forEach(tx -> {
                 logger.info(tx);

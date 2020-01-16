@@ -125,7 +125,7 @@ public class AsyncTransferExample {
                 .build();
 
         admissionControl.asyncUpdateToLatestLedger(accountStatesQuery)
-                .thenApply(UpdateToLatestLedgerResult::getAccountResources)
+                .thenApply(UpdateToLatestLedgerResult::getAccountStateQueryResults)
                 .thenAccept(resources -> resources.forEach(accountResource -> {
                     logger.info("-------------------------------------------------------------------");
                     logger.info("Authentication key: {}", accountResource.getAuthenticationKey());
