@@ -1,11 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import dev.jlibra.serialization.ByteSequence;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import dev.jlibra.serialization.ByteSequence;
 
 public class ByteArrayArgumentTest {
 
@@ -13,6 +14,6 @@ public class ByteArrayArgumentTest {
     public void testSerialize() {
         ByteArrayArgument arg = new ByteArrayArgument(ByteSequence.from("hello".getBytes()));
         byte[] serializedByteArrayArgument = arg.serialize().toArray();
-        assertThat(Hex.toHexString(serializedByteArrayArgument), is("030000000500000068656c6c6f"));
+        assertThat(Hex.toHexString(serializedByteArrayArgument), is("020000000500000068656c6c6f"));
     }
 }

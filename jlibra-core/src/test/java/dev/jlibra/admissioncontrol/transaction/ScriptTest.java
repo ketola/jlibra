@@ -1,10 +1,12 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import dev.jlibra.serialization.ByteSequence;
-import org.junit.Test;
-
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+
+import dev.jlibra.serialization.ByteSequence;
 
 public class ScriptTest {
 
@@ -12,7 +14,8 @@ public class ScriptTest {
     public void testSerialize() {
         Script program = ImmutableScript.builder()
                 .code(ByteSequence.from("move".getBytes()))
-                .addArguments(new StringArgument("CAFE D00D"), new StringArgument("cafe d00d"))
+                .addArguments(new ByteArrayArgument(ByteSequence.from("CAFE D00D".getBytes(UTF_8))),
+                        new ByteArrayArgument(ByteSequence.from("cafe d00d".getBytes(UTF_8))))
                 .build();
 
         assertThat(program.serialize().toString().toUpperCase(), is(
