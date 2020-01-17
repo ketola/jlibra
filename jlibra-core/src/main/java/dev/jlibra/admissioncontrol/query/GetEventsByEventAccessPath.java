@@ -21,7 +21,7 @@ public abstract class GetEventsByEventAccessPath {
     private static final String STRUCT_TAG_MODULE = "T";
     private static final String STRUCT_TAG_ADDRESS = "LibraAccount";
     private static final String STRUCT_TAG_ACCOUNT_ADDRESS = "0000000000000000000000000000000000000000000000000000000000000000";
-    private static final byte RESOURCE_TAG = (byte) 1;
+    private static final byte RESOURCE_TAG = 1;
 
     public enum Path {
         SENT_EVENTS("/sent_events_count/"), RECEIVED_EVENTS("/received_events_count/");
