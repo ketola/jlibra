@@ -2,12 +2,10 @@ package dev.jlibra.admissioncontrol.query;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.immutables.value.Value;
 
-import com.google.protobuf.ByteString;
-
 import dev.jlibra.AccountAddress;
+import dev.jlibra.Hash;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 import types.AccessPathOuterClass.AccessPath;
@@ -21,7 +19,7 @@ public abstract class GetEventsByEventAccessPath {
     private static final String STRUCT_TAG_MODULE = "T";
     private static final String STRUCT_TAG_ADDRESS = "LibraAccount";
     private static final String STRUCT_TAG_ACCOUNT_ADDRESS = "0000000000000000000000000000000000000000000000000000000000000000";
-    private static final byte RESOURCE_TAG = (byte) 1;
+    private static final byte RESOURCE_TAG = 1;
 
     public enum Path {
         SENT_EVENTS("/sent_events_count/"), RECEIVED_EVENTS("/received_events_count/");
@@ -47,8 +45,8 @@ public abstract class GetEventsByEventAccessPath {
         return RequestItem.newBuilder()
                 .setGetEventsByEventAccessPathRequest(GetEventsByEventAccessPathRequest.newBuilder()
                         .setAccessPath(AccessPath.newBuilder()
-                                .setAddress(ByteString.copyFrom(getAccountAddress().getByteSequence().toArray()))
-                                .setPath(ByteString.copyFrom(generateAccessPath(getPath())))
+                                .setAddress(getAccountAddress().getByteSequence().toByteString())
+                                .setPath(generateAccessPath(getPath()).toByteString())
                                 .build())
                         .setAscending(isAscending())
                         .setLimit(getLimit())
@@ -56,31 +54,22 @@ public abstract class GetEventsByEventAccessPath {
                 .build();
     }
 
-    private static byte[] generateAccessPath(Path path) {
-        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest256();
-
-        byte[] serializedStructTag = Serializer.builder()
+    private static ByteSequence generateAccessPath(Path path) {
+        ByteSequence serializedStructTag = Serializer.builder()
                 .appendWithoutLengthInformation(
                         ByteSequence.from(STRUCT_TAG_ACCOUNT_ADDRESS))
                 .appendString(STRUCT_TAG_ADDRESS)
                 .appendString(STRUCT_TAG_MODULE)
                 .appendInt(STRUCT_TAG_TYPE_PARAMS_LENGTH)
-                .toByteSequence()
-                .toArray();
+                .toByteSequence();
 
-        byte[] salt = digestSHA3.digest("StructTag::libra_types::language_storage@@$$LIBRA$$@@".getBytes());
-        byte[] saltAndStructTag = new byte[salt.length + serializedStructTag.length];
-        System.arraycopy(salt, 0, saltAndStructTag, 0, salt.length);
-        System.arraycopy(serializedStructTag, 0, saltAndStructTag, salt.length, serializedStructTag.length);
-        byte[] structTagHash = digestSHA3.digest(saltAndStructTag);
+        ByteSequence structTagHash = Hash.ofInput(serializedStructTag)
+                .hash(ByteSequence.from("StructTag::libra_types::language_storage@@$$LIBRA$$@@".getBytes()));
 
-        byte[] pathBytes = Serializer.builder()
+        return Serializer.builder()
                 .appendByte(RESOURCE_TAG)
-                .appendWithoutLengthInformation(ByteSequence.from(structTagHash))
+                .appendWithoutLengthInformation(structTagHash)
                 .appendWithoutLengthInformation(ByteSequence.from(path.suffix.getBytes(UTF_8)))
-                .toByteSequence()
-                .toArray();
-
-        return pathBytes;
+                .toByteSequence();
     }
 }
