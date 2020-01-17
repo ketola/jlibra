@@ -5,7 +5,7 @@ import dev.jlibra.serialization.Serializer;
 
 public class ByteArrayArgument implements TransactionArgument {
 
-    public static final int PREFIX = 3;
+    public static final int PREFIX = 2;
 
     private ByteSequence bytes;
 

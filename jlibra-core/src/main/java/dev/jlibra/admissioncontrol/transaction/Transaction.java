@@ -3,7 +3,6 @@ package dev.jlibra.admissioncontrol.transaction;
 import static dev.jlibra.serialization.Deserialization.readByteSequence;
 import static dev.jlibra.serialization.Deserialization.readInt;
 import static dev.jlibra.serialization.Deserialization.readLong;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -64,17 +63,12 @@ public abstract class Transaction implements LibraSerializable {
         List<TransactionArgument> arguments = new ArrayList<>();
         for (int i = 0; i < argumentsLength; i++) {
             int argumentType = readInt(in, 4);
-
             if (argumentType == U64Argument.PREFIX) {
                 long value = readLong(in, 8);
                 arguments.add(new U64Argument(value));
             } else if (argumentType == AccountAddressArgument.PREFIX) {
                 ByteSequence value = readByteSequence(in, 32);
                 arguments.add(new AccountAddressArgument(value));
-            } else if (argumentType == StringArgument.PREFIX) {
-                int length = readInt(in, 4);
-                String value = new String(readByteSequence(in, length).toArray(), UTF_8);
-                arguments.add(new StringArgument(value));
             } else if (argumentType == ByteArrayArgument.PREFIX) {
                 int length = readInt(in, 4);
                 ByteSequence value = readByteSequence(in, length);
