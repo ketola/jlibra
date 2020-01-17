@@ -4,8 +4,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.immutables.value.Value;
 
-import com.google.protobuf.ByteString;
-
 import dev.jlibra.AccountAddress;
 import dev.jlibra.Hash;
 import dev.jlibra.serialization.ByteSequence;
@@ -47,8 +45,8 @@ public abstract class GetEventsByEventAccessPath {
         return RequestItem.newBuilder()
                 .setGetEventsByEventAccessPathRequest(GetEventsByEventAccessPathRequest.newBuilder()
                         .setAccessPath(AccessPath.newBuilder()
-                                .setAddress(ByteString.copyFrom(getAccountAddress().getByteSequence().toArray()))
-                                .setPath(ByteString.copyFrom(generateAccessPath(getPath())))
+                                .setAddress(getAccountAddress().getByteSequence().toByteString())
+                                .setPath(generateAccessPath(getPath()).toByteString())
                                 .build())
                         .setAscending(isAscending())
                         .setLimit(getLimit())
@@ -56,7 +54,7 @@ public abstract class GetEventsByEventAccessPath {
                 .build();
     }
 
-    private static byte[] generateAccessPath(Path path) {
+    private static ByteSequence generateAccessPath(Path path) {
         ByteSequence serializedStructTag = Serializer.builder()
                 .appendWithoutLengthInformation(
                         ByteSequence.from(STRUCT_TAG_ACCOUNT_ADDRESS))
@@ -68,13 +66,10 @@ public abstract class GetEventsByEventAccessPath {
         ByteSequence structTagHash = Hash.ofInput(serializedStructTag)
                 .hash(ByteSequence.from("StructTag::libra_types::language_storage@@$$LIBRA$$@@".getBytes()));
 
-        byte[] pathBytes = Serializer.builder()
+        return Serializer.builder()
                 .appendByte(RESOURCE_TAG)
                 .appendWithoutLengthInformation(structTagHash)
                 .appendWithoutLengthInformation(ByteSequence.from(path.suffix.getBytes(UTF_8)))
-                .toByteSequence()
-                .toArray();
-
-        return pathBytes;
+                .toByteSequence();
     }
 }
