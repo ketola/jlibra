@@ -23,8 +23,8 @@ public class GetTransactionsExample {
     private static final Logger logger = LogManager.getLogger(GetTransactionsExample.class);
 
     public static void main(String[] args) {
-        long start = 8720763;
-        long limit = 10;
+        long start = 14980115;
+        long limit = 1;
         boolean fetchEvent = true;
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
