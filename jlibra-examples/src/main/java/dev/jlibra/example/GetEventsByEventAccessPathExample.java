@@ -11,7 +11,6 @@ import dev.jlibra.admissioncontrol.query.GetEventsByEventAccessPath.Path;
 import dev.jlibra.admissioncontrol.query.ImmutableGetEventsByEventAccessPath;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -32,8 +31,7 @@ public class GetEventsByEventAccessPathExample {
                         ImmutableQuery.builder()
                                 .eventsByEventAccessPathQueries(
                                         asList(ImmutableGetEventsByEventAccessPath.builder()
-                                                .accountAddress(
-                                                        AccountAddress.ofByteSequence(ByteSequence.from(address)))
+                                                .accountAddress(AccountAddress.fromHexString(address))
                                                 .limit(100)
                                                 .isAscending(true)
                                                 .startEventSequenceNumber(0)

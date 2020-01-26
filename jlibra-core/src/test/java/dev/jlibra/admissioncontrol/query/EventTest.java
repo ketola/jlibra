@@ -8,13 +8,13 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 
 public class EventTest {
 
-    private static ByteSequence EVENT_DATA = ByteSequence
+    private static ByteArray EVENT_DATA = ByteArray
             .from("40420f00000000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d00000000");
-    private static ByteSequence EVENT_DATA_WITH_METADATA = ByteSequence
+    private static ByteArray EVENT_DATA_WITH_METADATA = ByteArray
             .from("40420f00000000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d0500000068656c6c6f");
 
     @Test
@@ -25,7 +25,7 @@ public class EventTest {
                 .build();
         Event event = Event.fromGrpcObject(grpcEvent);
 
-        assertThat(event.getAccountAddress().getByteSequence().toString(),
+        assertThat(event.getAccountAddress().toString(),
                 is("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"));
         assertThat(event.getAmount(), is(1000000L));
         assertThat(event.getSequenceNumber(), is(1L));
@@ -39,7 +39,7 @@ public class EventTest {
                 .build();
         Event event = Event.fromGrpcObject(grpcEvent);
 
-        assertThat(event.getAccountAddress().getByteSequence().toString(),
+        assertThat(event.getAccountAddress().toString(),
                 is("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"));
         assertThat(event.getAmount(), is(1000000L));
         assertThat(event.getSequenceNumber(), is(1L));
@@ -54,10 +54,10 @@ public class EventTest {
                 .build();
         Event event = Event.fromGrpcObject(grpcEvent);
 
-        assertThat(event.getAccountAddress().getByteSequence().toString(),
+        assertThat(event.getAccountAddress().toString(),
                 is("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"));
         assertThat(event.getAmount(), is(1000000L));
         assertThat(event.getSequenceNumber(), is(1L));
-        assertThat(event.getMetadata().get(), is(ByteSequence.from("hello".getBytes(StandardCharsets.UTF_8))));
+        assertThat(event.getMetadata().get(), is(ByteArray.from("hello".getBytes(StandardCharsets.UTF_8))));
     }
 }

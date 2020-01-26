@@ -2,31 +2,45 @@ package dev.jlibra;
 
 import java.security.PublicKey;
 
+import com.google.protobuf.ByteString;
+
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
-public class AccountAddress {
+public class AccountAddress implements ByteSequence {
 
-    private final ByteSequence byteSequence;
+    private ByteArray bytes;
 
-    private AccountAddress(ByteSequence byteSequence) {
-        this.byteSequence = byteSequence;
+    private AccountAddress(ByteArray bytes) {
+        this.bytes = bytes;
     }
 
-    public static AccountAddress ofPublicKey(PublicKey publicKey) {
-        return new AccountAddress(KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKey.getEncoded())));
+    public static AccountAddress fromPublicKey(PublicKey publicKey) {
+        return new AccountAddress(
+                Hash.ofInput(KeyUtils.stripPublicKeyPrefix(ByteArray.from(publicKey.getEncoded()))).hash());
     }
 
-    public static AccountAddress ofByteSequence(ByteSequence address) {
-        return new AccountAddress(address);
+    public static AccountAddress fromByteArray(ByteArray bytes) {
+        return new AccountAddress(bytes);
     }
 
-    public ByteSequence getByteSequence() {
-        return byteSequence;
+    public static AccountAddress fromHexString(String hexString) {
+        return new AccountAddress(ByteArray.from(hexString));
+    }
+
+    @Override
+    public byte[] toArray() {
+        return bytes.toArray();
+    }
+
+    @Override
+    public ByteString toByteString() {
+        return bytes.toByteString();
     }
 
     @Override
     public String toString() {
-        return String.format("AccountAddress: %s", byteSequence);
+        return bytes.toString();
     }
 
 }

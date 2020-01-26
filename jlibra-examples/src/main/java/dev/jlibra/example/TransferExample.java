@@ -13,15 +13,15 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -32,17 +32,17 @@ public class TransferExample {
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-        PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteSequence.from(
-                "3051020101300506032b657004220420c18abb47a0577c71e50f408214df5bfec3a0969d361170023084c6c6ae295ab88121000e17c9353c32509613b43bb66aa4242ca9277445d526c98d71add83bc2751d13"));
-        PublicKey publicKey = KeyUtils.publicKeyFromByteSequence(ByteSequence.from(
-                "302a300506032b65700321000e17c9353c32509613b43bb66aa4242ca9277445d526c98d71add83bc2751d13"));
+        PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
+                "3051020101300506032b6570042204203093fee07b354989bcab0a57cf30b103ec071ddf507113bd1ea31c69e0d146338121006b0416ca96bd0fa06cd48e72f5279db81ec1dc46fed1befdebb5194b25fc38d8"));
+        PublicKey publicKey = KeyUtils.publicKeyFromByteSequence(ByteArray.from(
+                "302a300506032b65700321006b0416ca96bd0fa06cd48e72f5279db81ec1dc46fed1befdebb5194b25fc38d8"));
 
-        String toAddress = "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d";
+        String toAddress = "7448b4ebbd83ea973df911e458be81f36cdea018d1b3b19d92bbf05575259a0b";
 
         long amount = 1;
         int sequenceNumber = 0;
 
-        logger.info("Sending from {} to {}", AccountAddress.ofPublicKey(publicKey), toAddress);
+        logger.info("Sending from {} to {}", AccountAddress.fromPublicKey(publicKey), toAddress);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -52,13 +52,14 @@ public class TransferExample {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(ByteSequence.from(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(
+                AccountAddress.fromHexString(toAddress));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(140000)
                 .gasUnitPrice(0)
-                .senderAccount(AccountAddress.ofPublicKey(publicKey))
+                .senderAccount(AccountAddress.fromPublicKey(publicKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferAsBytes())
@@ -67,12 +68,9 @@ public class TransferExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(publicKey)
+                .publicKey(dev.jlibra.PublicKey.fromPublicKey(publicKey))
                 .transaction(transaction)
-                .signature(ImmutableSignature.builder()
-                        .privateKey(privateKey)
-                        .transaction(transaction)
-                        .build())
+                .signature(Signature.signTransaction(transaction, privateKey))
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);

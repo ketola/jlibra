@@ -1,18 +1,20 @@
 package dev.jlibra.admissioncontrol.transaction.result;
 
-import admission_control.AdmissionControlOuterClass.AdmissionControlStatus;
-import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
-import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
-import dev.jlibra.serialization.ByteSequence;
-import mempool_status.MempoolStatus.MempoolAddTransactionStatus;
-import mempool_status.MempoolStatus.MempoolAddTransactionStatusCode;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import types.VmErrors.VMStatus;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import admission_control.AdmissionControlOuterClass.AdmissionControlStatus;
+import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
+import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
+import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.serialization.ByteSequence;
+import mempool_status.MempoolStatus.MempoolAddTransactionStatus;
+import mempool_status.MempoolStatus.MempoolAddTransactionStatusCode;
+import types.VmErrors.VMStatus;
 
 public class SubmitTransactionResultTest {
 
@@ -21,7 +23,7 @@ public class SubmitTransactionResultTest {
 
     @Test
     public void testAdmissionControlAccepted() throws Exception {
-        ByteSequence validatorId = ByteSequence.from(new byte[] { 1 });
+        ByteSequence validatorId = ByteArray.from(new byte[] { 1 });
         SubmitTransactionResponse response = SubmitTransactionResponse.newBuilder()
                 .setAcStatus(AdmissionControlStatus.newBuilder()
                         .setCode(AdmissionControlStatusCode.Accepted)

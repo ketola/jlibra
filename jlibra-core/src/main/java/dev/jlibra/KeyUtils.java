@@ -8,15 +8,12 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
 public class KeyUtils {
 
-    public static ByteSequence toByteSequenceLibraAddress(ByteSequence publicKeyBytes) {
-        return Hash.ofInput(stripPublicKeyPrefix(publicKeyBytes)).hash();
-    }
-
-    public static ByteSequence stripPublicKeyPrefix(ByteSequence pubKeyBytes) {
+    public static ByteArray stripPublicKeyPrefix(ByteArray pubKeyBytes) {
         return pubKeyBytes.subseq(12, 32);
     }
 

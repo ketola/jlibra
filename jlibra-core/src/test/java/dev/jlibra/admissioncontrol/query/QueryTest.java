@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import types.GetWithProof.RequestItem;
 
 public class QueryTest {
@@ -24,17 +24,17 @@ public class QueryTest {
 
     @Test
     public void testAccountStateQueriesToRequestItems() {
-        ByteSequence address1 = ByteSequence.from(new byte[] { 1 });
-        ByteSequence address2 = ByteSequence.from(new byte[] { 2 });
+        ByteArray address1 = ByteArray.from(new byte[] { 1 });
+        ByteArray address2 = ByteArray.from(new byte[] { 2 });
 
         ImmutableQuery query = ImmutableQuery.builder()
                 .accountStateQueries(
                         asList(
                                 ImmutableGetAccountState.builder()
-                                        .address(AccountAddress.ofByteSequence(address1))
+                                        .address(AccountAddress.fromByteArray(address1))
                                         .build(),
                                 ImmutableGetAccountState.builder()
-                                        .address(AccountAddress.ofByteSequence(address2))
+                                        .address(AccountAddress.fromByteArray(address2))
                                         .build()))
                 .build();
 
@@ -46,19 +46,19 @@ public class QueryTest {
 
     @Test
     public void testAccountTransactionBySequenceNumberQueriesToRequestItems() {
-        ByteSequence address1 = ByteSequence.from(new byte[] { 1 });
-        ByteSequence address2 = ByteSequence.from(new byte[] { 2 });
+        ByteArray address1 = ByteArray.from(new byte[] { 1 });
+        ByteArray address2 = ByteArray.from(new byte[] { 2 });
 
         ImmutableQuery query = ImmutableQuery.builder()
                 .accountTransactionBySequenceNumberQueries(
                         asList(
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(AccountAddress.ofByteSequence(address1))
+                                        .accountAddress(AccountAddress.fromByteArray(address1))
                                         .sequenceNumber(1)
                                         .fetchEvents(true)
                                         .build(),
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(AccountAddress.ofByteSequence(address2))
+                                        .accountAddress(AccountAddress.fromByteArray(address2))
                                         .sequenceNumber(2)
                                         .fetchEvents(false)
                                         .build()))

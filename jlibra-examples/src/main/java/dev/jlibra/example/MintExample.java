@@ -25,7 +25,7 @@ public class MintExample {
     private static final Logger logger = LogManager.getLogger(MintExample.class);
 
     public static void main(String[] args) {
-        String toAddress = "1b2d1a2b57704043fa1f97fcc08e268f45d1c5b9f7b43c481941c103b99d8ca5";
+        String toAddress = "1b5fbc93e89a775db9203a857181c88a9e6e2c96ed385c3f1bd4a1b1dd99f7b2";
         long amountInMicroLibras = 10L * 1_000_000L;
 
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")

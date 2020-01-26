@@ -1,13 +1,34 @@
 package dev.jlibra;
 
+import static dev.jlibra.mnemonic.Mnemonic.WORDS;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.with;
+import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static org.junit.Assert.assertEquals;
+
+import java.security.Security;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.AccountResource;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -18,32 +39,11 @@ import dev.jlibra.mnemonic.ExtendedPrivKey;
 import dev.jlibra.mnemonic.LibraKeyFactory;
 import dev.jlibra.mnemonic.Mnemonic;
 import dev.jlibra.mnemonic.Seed;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.security.Security;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static dev.jlibra.mnemonic.Mnemonic.WORDS;
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
-import static org.junit.Assert.assertEquals;
 
 /**
  * <p>
@@ -99,7 +99,7 @@ public abstract class AbstractTransactionIT {
 
         // destination account is generated
         ExtendedPrivKey destination = generateKey();
-        String destinationAddress = destination.getAddress();
+        AccountAddress destinationAddress = destination.getAddress();
         long transactionAmount = 1_111;
 
         // make the transaction
@@ -107,9 +107,9 @@ public abstract class AbstractTransactionIT {
 
         // wait for balance to become visible
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
-                .atMost(20, SECONDS)
+                .atMost(10, SECONDS)
                 .untilAsserted(() -> {
-                    long actual = findBalance(AccountAddress.ofByteSequence(ByteSequence.from(destinationAddress)));
+                    long actual = findBalance(destinationAddress);
                     String errorMessage = format("Account address: %s, expected balance: %d, actual balance: %d",
                             destinationAddress, transactionAmount, actual);
                     assertEquals(errorMessage, actual, transactionAmount);
@@ -125,7 +125,7 @@ public abstract class AbstractTransactionIT {
         long balance = result.getAccountStateQueryResults()
                 .stream()
                 .filter(accountResource -> accountResource.getAuthenticationKey()
-                        .equals(accountAddress.getByteSequence()))
+                        .equals(ByteArray.from(accountAddress.toArray())))
                 .map(AccountResource::getBalanceInMicroLibras)
                 .findFirst()
                 .orElse(0L);
@@ -135,31 +135,28 @@ public abstract class AbstractTransactionIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) throws LibraTransactionException {
+    private void transfer(AccountAddress toAddress, long amount) throws LibraTransactionException {
 
-        long sequenceNumber = maybeFindSequenceNumber(admissionControl,
-                AccountAddress.ofByteSequence(ByteSequence.from(sourceAccount.getAddress())));
+        long sequenceNumber = maybeFindSequenceNumber(admissionControl, sourceAccount.getAddress());
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(ByteSequence.from(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(toAddress);
 
         Transaction transaction = createTransaction(sequenceNumber, amountArgument, addressArgument);
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(sourceAccount.publicKey)
+                .publicKey(PublicKey.fromPublicKey(sourceAccount.publicKey))
                 .transaction(transaction)
-                .signature(ImmutableSignature.builder()
-                        .privateKey(sourceAccount.privateKey)
-                        .transaction(transaction)
-                        .build())
+                .signature(Signature.signTransaction(transaction, sourceAccount.privateKey))
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
         System.out.println("Transaction submitted with result: " + result.toString());
     }
 
-    protected abstract Transaction createTransaction(long sequenceNumber, U64Argument amountArgument, AccountAddressArgument addressArgument);
+    protected abstract Transaction createTransaction(long sequenceNumber, U64Argument amountArgument,
+            AccountAddressArgument addressArgument);
 
     private long maybeFindSequenceNumber(AdmissionControl admissionControl, AccountAddress forAddress) {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(
@@ -168,9 +165,8 @@ public abstract class AbstractTransactionIT {
 
         return result.getAccountStateQueryResults()
                 .stream()
-                .filter(accountResource ->
-                        accountResource.getAuthenticationKey()
-                                .equals(forAddress.getByteSequence()))
+                .filter(accountResource -> accountResource.getAuthenticationKey()
+                        .equals(ByteArray.from(forAddress.toArray())))
                 .map(AccountResource::getSequenceNumber)
                 .findFirst()
                 .orElse(0);
@@ -181,12 +177,12 @@ public abstract class AbstractTransactionIT {
 
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
-                .queryString("address", sourceAccount.getAddress())
+                .queryString("address", sourceAccount.getAddress().toString())
                 .asString();
 
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
-                .atMost(1, MINUTES)
-                .until(() -> findBalance(AccountAddress.ofByteSequence(ByteSequence.from(sourceAccount.getAddress()))) > 0);
+                .atMost(10, SECONDS)
+                .until(() -> findBalance(sourceAccount.getAddress()) > 0);
 
         assertEquals(200, response.getStatus());
     }

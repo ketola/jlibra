@@ -1,8 +1,8 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS;
 
+@LCS.ExternallyTaggedEnumeration(dev.jlibra.serialization.lcs.type.TransactionArgument.U64)
 public class U64Argument implements TransactionArgument {
 
     private long value;
@@ -13,16 +13,9 @@ public class U64Argument implements TransactionArgument {
         this.value = value;
     }
 
+    @LCS.Field(0)
     public long getValue() {
         return value;
-    }
-
-    @Override
-    public ByteSequence serialize() {
-        return Serializer.builder()
-                .appendInt(PREFIX)
-                .appendLong(value)
-                .toByteSequence();
     }
 
 }

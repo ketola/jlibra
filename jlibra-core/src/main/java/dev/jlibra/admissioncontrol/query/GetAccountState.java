@@ -13,7 +13,7 @@ public abstract class GetAccountState {
 
     public RequestItem toGrpcObject() {
         GetAccountStateRequest getAccountStateRequest = GetAccountStateRequest.newBuilder()
-                .setAddress(getAddress().getByteSequence().toByteString())
+                .setAddress(getAddress().toByteString())
                 .build();
         return RequestItem.newBuilder()
                 .setGetAccountStateRequest(getAccountStateRequest)

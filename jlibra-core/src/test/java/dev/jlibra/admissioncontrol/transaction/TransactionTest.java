@@ -8,30 +8,7 @@ import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 
-import dev.jlibra.AccountAddress;
-import dev.jlibra.serialization.ByteSequence;
-
 public class TransactionTest {
-
-    @Test
-    public void testSerialize() {
-        Transaction transaction = ImmutableTransaction.builder()
-                .expirationTime(1)
-                .maxGasAmount(2)
-                .gasUnitPrice(3)
-                .sequenceNumber(4)
-                .expirationTime(5L)
-                .senderAccount(AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
-                .payload(ImmutableScript.builder()
-                        .addArguments(new U64Argument(1000),
-                                new AccountAddressArgument(ByteSequence.from(new byte[] { 2 })))
-                        .code(ByteSequence.from(new byte[] { 3 }))
-                        .build())
-                .build();
-
-        assertThat(transaction.serialize().toString().toUpperCase(), is(
-                "0104000000000000000200000001000000030200000000000000E8030000000000000100000002020000000000000003000000000000000500000000000000"));
-    }
 
     @Test
     public void testFromGrpcObject() {
@@ -42,12 +19,14 @@ public class TransactionTest {
 
         Transaction transaction = Transaction.fromGrpcObject(t);
 
-        assertThat(transaction.getSenderAccount().getByteSequence().toString(),
+        assertThat(transaction.getSenderAccount().toString(),
                 is("d5586b1c04555911fb3c0ab6f60261ad242b3eb4d0eddd2ba22c02174d6173c4"));
         assertThat(transaction.getSequenceNumber(), is(3L));
         assertThat(transaction.getPayload().getCode().toArray().length, is(184));
         assertThat(transaction.getPayload().getArguments().size(), is(2));
-        assertThat(((AccountAddressArgument) transaction.getPayload().getArguments().get(0)).getValue().toString(),
+        assertThat(
+                ((AccountAddressArgument) transaction.getPayload().getArguments().get(0)).getValue()
+                        .toString(),
                 is("8b8dda4052b55bb475f5e69a160013508ca20e3766fb33b6a7e0325611fdeb22"));
         assertThat(((U64Argument) transaction.getPayload().getArguments().get(1)).getValue(), is(1_000_000L));
         assertThat(transaction.getExpirationTime(), is(1577527101L));

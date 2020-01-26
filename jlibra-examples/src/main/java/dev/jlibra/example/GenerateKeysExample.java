@@ -11,7 +11,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 
 public class GenerateKeysExample {
 
@@ -28,9 +28,9 @@ public class GenerateKeysExample {
 
         BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyPair.getPublic();
 
-        logger.info("Libra address: {}", AccountAddress.ofPublicKey(publicKey));
-        logger.info("Public key: {}", ByteSequence.from(publicKey.getEncoded()));
-        logger.info("Private key: {}", ByteSequence.from(privateKey.getEncoded()));
+        logger.info("Libra address: {}", AccountAddress.fromPublicKey(publicKey));
+        logger.info("Public key: {}", ByteArray.from(publicKey.getEncoded()));
+        logger.info("Private key: {}", ByteArray.from(privateKey.getEncoded()));
     }
 
 }
