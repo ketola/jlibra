@@ -16,21 +16,28 @@ import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.LibraSerializable;
 import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS;
 
 @Value.Immutable
 public abstract class Transaction implements LibraSerializable {
 
+    @LCS.Field(ordinal = 0)
     public abstract AccountAddress getSenderAccount();
 
+    @LCS.Field(ordinal = 1)
     public abstract long getSequenceNumber();
 
+    @LCS.Field(ordinal = 2)
     public abstract Script getPayload();
 
-    public abstract long getExpirationTime();
+    @LCS.Field(ordinal = 3)
+    public abstract long getMaxGasAmount();
 
+    @LCS.Field(ordinal = 4)
     public abstract long getGasUnitPrice();
 
-    public abstract long getMaxGasAmount();
+    @LCS.Field(ordinal = 5)
+    public abstract long getExpirationTime();
 
     @Override
     public ByteSequence serialize() {
@@ -49,6 +56,7 @@ public abstract class Transaction implements LibraSerializable {
 
         InputStream in = new ByteArrayInputStream(bytes);
         int structPrefix = readInt(in, 4);
+
         AccountAddress senderAccount = AccountAddress.ofByteSequence(readByteSequence(in, 32));
         long sequenceNumber = readLong(in, 8);
         int payloadType = readInt(in, 4);
@@ -68,7 +76,7 @@ public abstract class Transaction implements LibraSerializable {
                 arguments.add(new U64Argument(value));
             } else if (argumentType == AccountAddressArgument.PREFIX) {
                 ByteSequence value = readByteSequence(in, 32);
-                arguments.add(new AccountAddressArgument(value));
+                arguments.add(new AccountAddressArgument(AccountAddress.ofByteSequence(value)));
             } else if (argumentType == ByteArrayArgument.PREFIX) {
                 int length = readInt(in, 4);
                 ByteSequence value = readByteSequence(in, length);

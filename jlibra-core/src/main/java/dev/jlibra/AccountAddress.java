@@ -3,6 +3,7 @@ package dev.jlibra;
 import java.security.PublicKey;
 
 import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.LibraSerializable;
 
 public class AccountAddress {
 

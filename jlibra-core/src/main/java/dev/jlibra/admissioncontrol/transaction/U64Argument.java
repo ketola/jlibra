@@ -2,7 +2,9 @@ package dev.jlibra.admissioncontrol.transaction;
 
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS;
 
+@LCS.Enum(ordinal = 0)
 public class U64Argument implements TransactionArgument {
 
     private long value;
@@ -13,6 +15,7 @@ public class U64Argument implements TransactionArgument {
         this.value = value;
     }
 
+    @LCS.Field(ordinal = 0)
     public long getValue() {
         return value;
     }

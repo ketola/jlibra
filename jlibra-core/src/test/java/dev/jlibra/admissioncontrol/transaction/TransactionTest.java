@@ -24,7 +24,8 @@ public class TransactionTest {
                 .senderAccount(AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000),
-                                new AccountAddressArgument(ByteSequence.from(new byte[] { 2 })))
+                                new AccountAddressArgument(
+                                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 2 }))))
                         .code(ByteSequence.from(new byte[] { 3 }))
                         .build())
                 .build();
@@ -47,7 +48,9 @@ public class TransactionTest {
         assertThat(transaction.getSequenceNumber(), is(3L));
         assertThat(transaction.getPayload().getCode().toArray().length, is(184));
         assertThat(transaction.getPayload().getArguments().size(), is(2));
-        assertThat(((AccountAddressArgument) transaction.getPayload().getArguments().get(0)).getValue().toString(),
+        assertThat(
+                ((AccountAddressArgument) transaction.getPayload().getArguments().get(0)).getValue().getByteSequence()
+                        .toString(),
                 is("8b8dda4052b55bb475f5e69a160013508ca20e3766fb33b6a7e0325611fdeb22"));
         assertThat(((U64Argument) transaction.getPayload().getArguments().get(1)).getValue(), is(1_000_000L));
         assertThat(transaction.getExpirationTime(), is(1577527101L));

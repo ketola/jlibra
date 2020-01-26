@@ -1,17 +1,18 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.security.PrivateKey;
 import java.security.Security;
 
-import dev.jlibra.AccountAddress;
-import dev.jlibra.KeyUtils;
-import dev.jlibra.serialization.ByteSequence;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import dev.jlibra.AccountAddress;
+import dev.jlibra.KeyUtils;
+import dev.jlibra.serialization.ByteSequence;
 
 public class SignatureTest {
 
@@ -33,7 +34,9 @@ public class SignatureTest {
                 .expirationTime(5L)
                 .senderAccount(AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
-                        .addArguments(new U64Argument(1000), new AccountAddressArgument(ByteSequence.from(new byte[] { 2 })))
+                        .addArguments(new U64Argument(1000),
+                                new AccountAddressArgument(
+                                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 2 }))))
                         .code(ByteSequence.from(new byte[] { 3 }))
                         .build())
                 .build();
