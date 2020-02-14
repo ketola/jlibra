@@ -1,31 +1,22 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.Serializer;
 import dev.jlibra.serialization.lcs.LCS;
 
-@LCS.Enum(ordinal = 1)
+@LCS.ExternallyTaggedEnumeration(dev.jlibra.serialization.lcs.type.TransactionArgument.Address)
 public class AccountAddressArgument implements TransactionArgument {
 
     public static final int PREFIX = 1;
 
-    private AccountAddress value;
+    private ByteSequence value;
 
-    public AccountAddressArgument(AccountAddress address) {
+    public AccountAddressArgument(ByteSequence address) {
         this.value = address;
     }
 
-    @LCS.Field(ordinal = 0)
-    public AccountAddress getValue() {
+    @LCS.Field(0)
+    public ByteSequence getValue() {
         return value;
     }
 
-    @Override
-    public ByteSequence serialize() {
-        return Serializer.builder()
-                .appendInt(PREFIX)
-                .appendWithoutLengthInformation(value.getByteSequence())
-                .toByteSequence();
-    }
 }

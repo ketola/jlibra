@@ -1,30 +1,21 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.Serializer;
 import dev.jlibra.serialization.lcs.LCS;
 
-@LCS.Enum(ordinal = 2)
+@LCS.ExternallyTaggedEnumeration(dev.jlibra.serialization.lcs.type.TransactionArgument.ByteArray)
 public class ByteArrayArgument implements TransactionArgument {
 
     public static final int PREFIX = 2;
 
-    private ByteSequence bytes;
+    private VariableLengthByteSequence bytes;
 
-    public ByteArrayArgument(ByteSequence bytes) {
+    public ByteArrayArgument(VariableLengthByteSequence bytes) {
         this.bytes = bytes;
     }
 
-    @LCS.Field(ordinal = 0)
-    public ByteSequence getValue() {
+    @LCS.Field(0)
+    public VariableLengthByteSequence getValue() {
         return bytes;
     }
 
-    @Override
-    public ByteSequence serialize() {
-        return Serializer.builder()
-                .appendInt(PREFIX)
-                .append(bytes)
-                .toByteSequence();
-    }
 }

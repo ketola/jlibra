@@ -10,13 +10,14 @@ import org.immutables.value.Value;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.admissioncontrol.query.ImmutableEvent.Builder;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Deserialization;
 
 @Value.Immutable
 public interface Event {
 
-    AccountAddress getAccountAddress();
+    FixedLengthByteSequence getAccountAddress();
 
     long getAmount();
 

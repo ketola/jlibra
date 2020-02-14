@@ -5,25 +5,34 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
-import java.util.List;
+
+import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.transaction.TransactionArgument;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
+import dev.jlibra.admissioncontrol.transaction.ImmutableVariableLengthByteSequence;
+import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 
 public class Serializer {
 
     private byte[] bytes;
+    private String bytesString;
 
     private Serializer(byte[] bytes) {
         this.bytes = bytes;
+        this.bytesString = Hex.toHexString(bytes);
     }
 
     public static Serializer builder() {
         return new Serializer(new byte[0]);
     }
 
-    public Serializer append(ByteSequence byteSequence) {
-        return appendByteArray(byteSequence.toArray());
+    public Serializer append(VariableLengthByteSequence byteSequence) {
+        return appendByteArray(byteSequence.getValue().toArray());
+    }
+
+    public Serializer appendW(VariableLengthByteSequence byteSequence) {
+        return append(byteSequence.getValue().toArray());
     }
 
     private Serializer appendByteArray(byte[] byteArray) {
@@ -32,20 +41,20 @@ public class Serializer {
     }
 
     public Serializer appendPublicKey(PublicKey pubKey) {
-        return append(KeyUtils.stripPublicKeyPrefix(ByteSequence.from(pubKey.getEncoded())));
+        return append(KeyUtils.stripPublicKeyPrefix(ByteSequence.from(pubKey.getEncoded())).toArray());
     }
 
-    public Serializer appendWithoutLengthInformation(ByteSequence byteSequence) {
-        return append(byteSequence.toArray());
+    public Serializer append(FixedLengthByteSequence byteSequence) {
+        return append(byteSequence.getValue().toArray());
     }
 
-    public Serializer appendTransactionArguments(List<TransactionArgument> transactionArguments) {
-        Serializer serializer = append(intToByteArray(transactionArguments.size()));
-        for (TransactionArgument arg : transactionArguments) {
-            serializer = serializer.append(arg.serialize().toArray());
-        }
-        return serializer;
-    }
+    /*
+     * public Serializer appendTransactionArguments(List<TransactionArgument>
+     * transactionArguments) { Serializer serializer =
+     * append(intToByteArray(transactionArguments.size())); for (TransactionArgument
+     * arg : transactionArguments) { serializer =
+     * serializer.append(arg.serialize()); } return serializer; }
+     */
 
     public Serializer appendString(String str) {
         return appendByteArray(str.getBytes(StandardCharsets.UTF_8));
@@ -64,7 +73,7 @@ public class Serializer {
     }
 
     public Serializer appendSerializable(LibraSerializable serializable) {
-        return append(serializable.serialize().toArray());
+        return append(serializable.serialize());
     }
 
     private static byte[] intToByteArray(int i) {
@@ -88,5 +97,11 @@ public class Serializer {
 
     public ByteSequence toByteSequence() {
         return ByteSequence.from(bytes);
+    }
+
+    public VariableLengthByteSequence toVariableLengthByteSequence() {
+        return ImmutableVariableLengthByteSequence.builder()
+                .value(ByteSequence.from(bytes))
+                .build();
     }
 }

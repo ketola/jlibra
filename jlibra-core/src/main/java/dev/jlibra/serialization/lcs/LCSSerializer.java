@@ -7,59 +7,61 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Stream;
 
-import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.LibraSerializable;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
+import dev.jlibra.admissioncontrol.transaction.ImmutableVariableLengthByteSequence;
+import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.serialization.Serializer;
 
 public class LCSSerializer {
 
-    public ByteSequence serialize(LibraSerializable serializable, Class<?> type) {
+    public VariableLengthByteSequence serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 
-        LCS.Enum enumAnnotation = type.getAnnotation(LCS.Enum.class);
+        LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
         if (enumAnnotation != null) {
-            s = s.appendInt(enumAnnotation.ordinal());
+            s = s.appendInt(enumAnnotation.value());
         }
 
         List<Method> methods = Stream.of(type.getMethods())
                 .filter(m -> m.getAnnotation(LCS.Field.class) != null)
-                .sorted((m1, m2) -> m1.getDeclaredAnnotation(LCS.Field.class).ordinal()
-                        - m2.getDeclaredAnnotation(LCS.Field.class).ordinal())
+                .sorted((m1, m2) -> m1.getDeclaredAnnotation(LCS.Field.class).value()
+                        - m2.getDeclaredAnnotation(LCS.Field.class).value())
                 .collect(toList());
 
         for (Method m : methods) {
             Class<?> returnType = m.getReturnType();
 
-            if (returnType.equals(AccountAddress.class)) {
-                AccountAddress value = (AccountAddress) invokeMethod(serializable, m);
-                s = s.appendWithoutLengthInformation(value.getByteSequence());
+            if (returnType.getAnnotation(LCS.Structure.class) != null
+                    || returnType.getAnnotation(LCS.ExternallyTaggedEnumeration.class) != null) {
+                Object l = invokeMethod(serializable, m);
+                VariableLengthByteSequence value = serialize(l, returnType);
+                s = s.appendW(value);
             } else if (returnType.equals(long.class)) {
                 long value = (long) invokeMethod(serializable, m);
                 s = s.appendLong(value);
-            } else if (LibraSerializable.class.isAssignableFrom(returnType)) {
-                LibraSerializable l = (LibraSerializable) invokeMethod(serializable, m);
-                ByteSequence value = serialize(l, returnType);
-                s = s.appendWithoutLengthInformation(value);
-            } else if (returnType.equals(ByteSequence.class)) {
-                ByteSequence value = (ByteSequence) invokeMethod(serializable, m);
+            } else if (returnType.equals(FixedLengthByteSequence.class)) {
+                FixedLengthByteSequence value = (FixedLengthByteSequence) invokeMethod(serializable, m);
+                s = s.append(value);
+            } else if (returnType.equals(VariableLengthByteSequence.class)) {
+                VariableLengthByteSequence value = (VariableLengthByteSequence) invokeMethod(serializable, m);
                 s = s.append(value);
             } else if (returnType.equals(List.class)) {
-                @SuppressWarnings("unchecked")
-                List<? extends LibraSerializable> list = (List<? extends LibraSerializable>) invokeMethod(serializable,
+                List<?> list = (List<?>) invokeMethod(serializable,
                         m);
                 s = s.appendInt(list.size());
-                for (LibraSerializable e : list) {
-                    s = s.appendWithoutLengthInformation(serialize(e, e.getClass()));
+                for (Object e : list) {
+                    s = s.appendW(serialize(e, e.getClass()));
                 }
             }
         }
 
-        return s.toByteSequence();
+        return ImmutableVariableLengthByteSequence.builder()
+                .value(s.toByteSequence())
+                .build();
     }
 
-    private Object invokeMethod(LibraSerializable serializable, Method m) {
+    private Object invokeMethod(Object serializable, Method m) {
         try {
             return m.invoke(serializable);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

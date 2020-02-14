@@ -15,17 +15,20 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
+import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
+import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
@@ -67,7 +70,7 @@ public class KeyRotationExample {
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
-        AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
+        FixedLengthByteSequence addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
         ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
@@ -151,11 +154,11 @@ public class KeyRotationExample {
     }
 
     private static SubmitTransactionResult rotateAuthenticationKey(BCEdDSAPrivateKey privateKey,
-            BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
+            BCEdDSAPublicKey publicKey, FixedLengthByteSequence address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, AdmissionControl admissionControl) throws LibraTransactionException {
 
-        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
-                KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKeyNew.getEncoded())));
+        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(VariableLengthByteSequence.ofByteSequence(
+                KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKeyNew.getEncoded()))));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -164,24 +167,21 @@ public class KeyRotationExample {
                 .senderAccount(address)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(Move.rotateAuthenticationKeyAsBytes())
+                        .code(VariableLengthByteSequence.ofByteSequence(Move.rotateAuthenticationKeyAsBytes()))
                         .addArguments(newPublicKeyArgument)
                         .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(publicKey)
+                .publicKey(PublicKey.ofPublicKey(publicKey))
                 .transaction(transaction)
-                .signature(ImmutableSignature.builder()
-                        .privateKey(privateKey)
-                        .transaction(transaction)
-                        .build())
+                .signature(Signature.signTransaction(transaction, privateKey))
                 .build();
 
         return admissionControl.submitTransaction(signedTransaction);
     }
 
-    private static void getAccountState(AccountAddress accountAddress, AdmissionControl admissionControl) {
+    private static void getAccountState(FixedLengthByteSequence accountAddress, AdmissionControl admissionControl) {
         UpdateToLatestLedgerResult result = admissionControl
                 .updateToLatestLedger(ImmutableQuery.builder()
                         .accountStateQueries(asList(ImmutableGetAccountState.builder()

@@ -12,13 +12,20 @@ public class LCS {
     @Target(METHOD)
     @Retention(RUNTIME)
     public @interface Field {
-        int ordinal();
+        int value();
+
+        boolean fixedLenght() default false;
     }
 
     @Target(TYPE)
     @Retention(RUNTIME)
-    public @interface Enum {
-        int ordinal();
+    public @interface ExternallyTaggedEnumeration {
+        int value();
+    }
+
+    @Target(TYPE)
+    @Retention(RUNTIME)
+    public @interface Structure {
     }
 
 }

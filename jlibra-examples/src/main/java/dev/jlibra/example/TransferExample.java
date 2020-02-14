@@ -13,12 +13,13 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteSequence;
@@ -52,7 +53,8 @@ public class TransferExample {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(ByteSequence.from(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(
+                AccountAddress.ofByteSequence(ByteSequence.from(toAddress)));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -61,18 +63,15 @@ public class TransferExample {
                 .senderAccount(AccountAddress.ofPublicKey(publicKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(Move.peerToPeerTransferAsBytes())
+                        .code(VariableLengthByteSequence.ofByteSequence(Move.peerToPeerTransferAsBytes()))
                         .addArguments(addressArgument, amountArgument)
                         .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(publicKey)
+                .publicKey(dev.jlibra.PublicKey.ofPublicKey(publicKey))
                 .transaction(transaction)
-                .signature(ImmutableSignature.builder()
-                        .privateKey(privateKey)
-                        .transaction(transaction)
-                        .build())
+                .signature(Signature.signTransaction(transaction, privateKey))
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);

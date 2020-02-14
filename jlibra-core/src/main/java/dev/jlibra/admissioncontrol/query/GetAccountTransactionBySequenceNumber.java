@@ -2,14 +2,14 @@ package dev.jlibra.admissioncontrol.query;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.AccountAddress;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
 import types.GetWithProof.GetAccountTransactionBySequenceNumberRequest;
 import types.GetWithProof.RequestItem;
 
 @Value.Immutable
 public abstract class GetAccountTransactionBySequenceNumber {
 
-    public abstract AccountAddress getAccountAddress();
+    public abstract FixedLengthByteSequence getAccountAddress();
 
     public abstract long getSequenceNumber();
 
@@ -18,7 +18,7 @@ public abstract class GetAccountTransactionBySequenceNumber {
     public RequestItem toGrpcObject() {
         GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
                 .newBuilder()
-                .setAccount(getAccountAddress().getByteSequence().toByteString())
+                .setAccount(getAccountAddress().getValue().toByteString())
                 .setSequenceNumber(getSequenceNumber())
                 .setFetchEvents(getFetchEvents())
                 .build();

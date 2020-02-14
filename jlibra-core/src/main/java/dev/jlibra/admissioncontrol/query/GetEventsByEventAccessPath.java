@@ -4,8 +4,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.AccountAddress;
 import dev.jlibra.Hash;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
+import dev.jlibra.admissioncontrol.transaction.ImmutableVariableLengthByteSequence;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 import types.AccessPathOuterClass.AccessPath;
@@ -31,7 +32,7 @@ public abstract class GetEventsByEventAccessPath {
         }
     }
 
-    public abstract AccountAddress getAccountAddress();
+    public abstract FixedLengthByteSequence getAccountAddress();
 
     public abstract Path getPath();
 
@@ -45,7 +46,7 @@ public abstract class GetEventsByEventAccessPath {
         return RequestItem.newBuilder()
                 .setGetEventsByEventAccessPathRequest(GetEventsByEventAccessPathRequest.newBuilder()
                         .setAccessPath(AccessPath.newBuilder()
-                                .setAddress(getAccountAddress().getByteSequence().toByteString())
+                                .setAddress(getAccountAddress().getValue().toByteString())
                                 .setPath(generateAccessPath(getPath()).toByteString())
                                 .build())
                         .setAscending(isAscending())
@@ -56,8 +57,9 @@ public abstract class GetEventsByEventAccessPath {
 
     private static ByteSequence generateAccessPath(Path path) {
         ByteSequence serializedStructTag = Serializer.builder()
-                .appendWithoutLengthInformation(
-                        ByteSequence.from(STRUCT_TAG_ACCOUNT_ADDRESS))
+                .append(ImmutableVariableLengthByteSequence.builder()
+                        .value(ByteSequence.from(STRUCT_TAG_ACCOUNT_ADDRESS))
+                        .build())
                 .appendString(STRUCT_TAG_ADDRESS)
                 .appendString(STRUCT_TAG_MODULE)
                 .appendInt(STRUCT_TAG_TYPE_PARAMS_LENGTH)
@@ -68,8 +70,12 @@ public abstract class GetEventsByEventAccessPath {
 
         return Serializer.builder()
                 .appendByte(RESOURCE_TAG)
-                .appendWithoutLengthInformation(structTagHash)
-                .appendWithoutLengthInformation(ByteSequence.from(path.suffix.getBytes(UTF_8)))
+                .append(ImmutableVariableLengthByteSequence.builder()
+                        .value(structTagHash)
+                        .build())
+                .append(ImmutableVariableLengthByteSequence.builder()
+                        .value(ByteSequence.from(path.suffix.getBytes(UTF_8)))
+                        .build())
                 .toByteSequence();
     }
 }

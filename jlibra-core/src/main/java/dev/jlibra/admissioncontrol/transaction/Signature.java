@@ -7,25 +7,17 @@ import org.immutables.value.Value;
 import dev.jlibra.Hash;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.LibraSerializable;
-import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS;
 
 @Value.Immutable
-public abstract class Signature implements LibraSerializable {
+@LCS.Structure
+public abstract class Signature {
 
-    public abstract Transaction getTransaction();
+    @LCS.Field(0)
+    public abstract VariableLengthByteSequence getSignature();
 
-    public abstract PrivateKey getPrivateKey();
-
-    @Override
-    public ByteSequence serialize() {
-        return Serializer.builder()
-                .append(signTransaction(getTransaction(), getPrivateKey()))
-                .toByteSequence();
-    }
-
-    protected ByteSequence signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteSequence transactionBytes = transaction.serialize();
+    public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
+        ByteSequence transactionBytes = transaction.serialize().getValue();
 
         byte[] signature;
 
@@ -40,7 +32,11 @@ public abstract class Signature implements LibraSerializable {
             throw new LibraRuntimeException("Signing the transaction failed", e);
         }
 
-        return ByteSequence.from(signature);
+        return ImmutableSignature.builder()
+                .signature(ImmutableVariableLengthByteSequence.builder()
+                        .value(ByteSequence.from(signature))
+                        .build())
+                .build();
     }
 
 }

@@ -14,19 +14,22 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
+import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
+import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteSequence;
@@ -59,12 +62,12 @@ public class TransactionWithMetadataExample {
         KeyPair keyPairSource = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
-        AccountAddress source = AccountAddress.ofPublicKey(publicKeySource);
+        FixedLengthByteSequence source = AccountAddress.ofPublicKey(publicKeySource);
         ExampleUtils.mint(source, 10L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
-        AccountAddress target = AccountAddress.ofPublicKey(publicKeyTarget);
+        FixedLengthByteSequence target = AccountAddress.ofPublicKey(publicKeyTarget);
 
         // sleep for 1 sec to make sure the minted money is available in the account.
         // Sometimes the faucet api is working slowly and you might need to increase the
@@ -81,10 +84,11 @@ public class TransactionWithMetadataExample {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(1_000_000);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(target.getByteSequence());
-        ByteArrayArgument metadata = new ByteArrayArgument(
+        AccountAddressArgument addressArgument = new AccountAddressArgument(
+                FixedLengthByteSequence.ofByteSequence(target.getValue()));
+        ByteArrayArgument metadata = new ByteArrayArgument(VariableLengthByteSequence.ofByteSequence(
                 ByteSequence
-                        .from("Logic will get you from A to Z; imagination will get you everywhere.".getBytes(UTF_8)));
+                        .from("Logic will get you from A to Z; imagination will get you everywhere.".getBytes(UTF_8))));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(0)
@@ -93,18 +97,15 @@ public class TransactionWithMetadataExample {
                 .senderAccount(AccountAddress.ofPublicKey(publicKeySource))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(Move.peerToPeerTransferWithMetadataAsBytes())
+                        .code(VariableLengthByteSequence.ofByteSequence(Move.peerToPeerTransferWithMetadataAsBytes()))
                         .addArguments(addressArgument, amountArgument, metadata)
                         .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(publicKeySource)
+                .publicKey(PublicKey.ofPublicKey(publicKeySource))
                 .transaction(transaction)
-                .signature(ImmutableSignature.builder()
-                        .privateKey(privateKeySource)
-                        .transaction(transaction)
-                        .build())
+                .signature(Signature.signTransaction(transaction, privateKeySource))
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
@@ -118,7 +119,7 @@ public class TransactionWithMetadataExample {
         UpdateToLatestLedgerResult queryResult = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
                 .accountTransactionBySequenceNumberQueries(
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                .accountAddress(AccountAddress.ofByteSequence(source.getByteSequence()))
+                                .accountAddress(AccountAddress.ofByteSequence(source.getValue()))
                                 .sequenceNumber(0)
                                 .build()))
                 .build());

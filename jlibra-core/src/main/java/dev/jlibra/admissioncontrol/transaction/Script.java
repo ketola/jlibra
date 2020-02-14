@@ -4,29 +4,23 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.LibraSerializable;
-import dev.jlibra.serialization.Serializer;
 import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.serialization.lcs.LCSSerializer;
+import dev.jlibra.serialization.lcs.type.TransactionPayload;
 
 @Value.Immutable
-@LCS.Enum(ordinal = 2)
+@LCS.ExternallyTaggedEnumeration(TransactionPayload.Script)
 public interface Script extends LibraSerializable {
 
-    int PREFIX = 2;
+    @LCS.Field(0)
+    VariableLengthByteSequence getCode();
 
-    @LCS.Field(ordinal = 0)
-    ByteSequence getCode();
-
-    @LCS.Field(ordinal = 1)
+    @LCS.Field(1)
     List<TransactionArgument> getArguments();
 
-    default ByteSequence serialize() {
-        return Serializer.builder()
-                .appendInt(PREFIX)
-                .append(getCode())
-                .appendTransactionArguments(getArguments())
-                .toByteSequence();
+    default VariableLengthByteSequence serialize() {
+        return new LCSSerializer().serialize(this, Script.class);
     }
 
 }

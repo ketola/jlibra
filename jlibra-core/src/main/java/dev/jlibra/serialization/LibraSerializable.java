@@ -1,5 +1,7 @@
 package dev.jlibra.serialization;
 
+import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
+
 public interface LibraSerializable {
-    ByteSequence serialize();
+    VariableLengthByteSequence serialize();
 }
