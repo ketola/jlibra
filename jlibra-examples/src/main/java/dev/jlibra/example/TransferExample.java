@@ -19,7 +19,6 @@ import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
-import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteSequence;
@@ -54,7 +53,7 @@ public class TransferExample {
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
         AccountAddressArgument addressArgument = new AccountAddressArgument(
-                AccountAddress.ofByteSequence(ByteSequence.from(toAddress)));
+                AccountAddress.ofHexString(toAddress));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -63,7 +62,7 @@ public class TransferExample {
                 .senderAccount(AccountAddress.ofPublicKey(publicKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(VariableLengthByteSequence.ofByteSequence(Move.peerToPeerTransferAsBytes()))
+                        .code(Move.peerToPeerTransferAsBytes())
                         .addArguments(addressArgument, amountArgument)
                         .build())
                 .build();

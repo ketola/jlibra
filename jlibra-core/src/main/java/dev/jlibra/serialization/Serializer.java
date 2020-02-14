@@ -9,9 +9,6 @@ import java.security.PublicKey;
 import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
-import dev.jlibra.admissioncontrol.transaction.ImmutableVariableLengthByteSequence;
-import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 
 public class Serializer {
 
@@ -27,12 +24,8 @@ public class Serializer {
         return new Serializer(new byte[0]);
     }
 
-    public Serializer append(VariableLengthByteSequence byteSequence) {
-        return appendByteArray(byteSequence.getValue().toArray());
-    }
-
-    public Serializer appendW(VariableLengthByteSequence byteSequence) {
-        return append(byteSequence.getValue().toArray());
+    public Serializer append(ByteSequence byteSequence) {
+        return appendByteArray(byteSequence.toArray());
     }
 
     private Serializer appendByteArray(byte[] byteArray) {
@@ -44,17 +37,9 @@ public class Serializer {
         return append(KeyUtils.stripPublicKeyPrefix(ByteSequence.from(pubKey.getEncoded())).toArray());
     }
 
-    public Serializer append(FixedLengthByteSequence byteSequence) {
-        return append(byteSequence.getValue().toArray());
+    public Serializer appendFixedLength(ByteSequence byteSequence) {
+        return append(byteSequence.toArray());
     }
-
-    /*
-     * public Serializer appendTransactionArguments(List<TransactionArgument>
-     * transactionArguments) { Serializer serializer =
-     * append(intToByteArray(transactionArguments.size())); for (TransactionArgument
-     * arg : transactionArguments) { serializer =
-     * serializer.append(arg.serialize()); } return serializer; }
-     */
 
     public Serializer appendString(String str) {
         return appendByteArray(str.getBytes(StandardCharsets.UTF_8));
@@ -70,10 +55,6 @@ public class Serializer {
 
     public Serializer appendByte(byte i) {
         return append(new byte[] { i });
-    }
-
-    public Serializer appendSerializable(LibraSerializable serializable) {
-        return append(serializable.serialize());
     }
 
     private static byte[] intToByteArray(int i) {
@@ -99,9 +80,7 @@ public class Serializer {
         return ByteSequence.from(bytes);
     }
 
-    public VariableLengthByteSequence toVariableLengthByteSequence() {
-        return ImmutableVariableLengthByteSequence.builder()
-                .value(ByteSequence.from(bytes))
-                .build();
+    public ByteSequence toVariableLengthByteSequence() {
+        return ByteSequence.from(bytes);
     }
 }

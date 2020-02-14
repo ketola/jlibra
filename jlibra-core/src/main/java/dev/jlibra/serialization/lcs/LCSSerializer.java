@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
-import dev.jlibra.admissioncontrol.transaction.ImmutableVariableLengthByteSequence;
-import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
+import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 
 public class LCSSerializer {
 
-    public VariableLengthByteSequence serialize(Object serializable, Class<?> type) {
+    public ByteSequence serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 
         LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
@@ -31,34 +29,30 @@ public class LCSSerializer {
 
         for (Method m : methods) {
             Class<?> returnType = m.getReturnType();
-
             if (returnType.getAnnotation(LCS.Structure.class) != null
                     || returnType.getAnnotation(LCS.ExternallyTaggedEnumeration.class) != null) {
                 Object l = invokeMethod(serializable, m);
-                VariableLengthByteSequence value = serialize(l, returnType);
-                s = s.appendW(value);
+                ByteSequence value = serialize(l, returnType);
+                s = s.appendFixedLength(value);
             } else if (returnType.equals(long.class)) {
                 long value = (long) invokeMethod(serializable, m);
                 s = s.appendLong(value);
-            } else if (returnType.equals(FixedLengthByteSequence.class)) {
-                FixedLengthByteSequence value = (FixedLengthByteSequence) invokeMethod(serializable, m);
-                s = s.append(value);
-            } else if (returnType.equals(VariableLengthByteSequence.class)) {
-                VariableLengthByteSequence value = (VariableLengthByteSequence) invokeMethod(serializable, m);
-                s = s.append(value);
+            } else if (ByteSequence.class.isAssignableFrom(returnType)) {
+                if (m.getAnnotation(LCS.Field.class).fixedLength()) {
+                    s = s.appendFixedLength((ByteSequence) invokeMethod(serializable, m));
+                } else {
+                    s = s.append((ByteSequence) invokeMethod(serializable, m));
+                }
             } else if (returnType.equals(List.class)) {
                 List<?> list = (List<?>) invokeMethod(serializable,
                         m);
                 s = s.appendInt(list.size());
                 for (Object e : list) {
-                    s = s.appendW(serialize(e, e.getClass()));
+                    s = s.appendFixedLength(serialize(e, e.getClass()));
                 }
             }
         }
-
-        return ImmutableVariableLengthByteSequence.builder()
-                .value(s.toByteSequence())
-                .build();
+        return s.toByteSequence();
     }
 
     private Object invokeMethod(Object serializable, Method m) {

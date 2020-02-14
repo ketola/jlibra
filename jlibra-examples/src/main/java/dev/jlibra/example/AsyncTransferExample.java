@@ -23,8 +23,6 @@ import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
-import dev.jlibra.admissioncontrol.transaction.ImmutableFixedLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
@@ -32,9 +30,9 @@ import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
-import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
+import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -59,12 +57,12 @@ public class AsyncTransferExample {
         KeyPair keyPairSource = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
-        FixedLengthByteSequence source = AccountAddress.ofPublicKey(publicKeySource);
+        ByteSequence source = AccountAddress.ofPublicKey(publicKeySource);
         ExampleUtils.mint(source, 20L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
-        FixedLengthByteSequence target = AccountAddress.ofPublicKey(publicKeyTarget);
+        AccountAddress target = AccountAddress.ofPublicKey(publicKeyTarget);
 
         // sleep for 1 sec to make sure the minted money is available in the account.
         // Sometimes the faucet api is working slowly and you might need to increase the
@@ -82,9 +80,7 @@ public class AsyncTransferExample {
         for (int i = 0; i < 10; i++) {
             U64Argument amountArgument = new U64Argument(1_000_000);
             AccountAddressArgument addressArgument = new AccountAddressArgument(
-                    ImmutableFixedLengthByteSequence.builder()
-                            .value(target.getValue())
-                            .build());
+                    target);
             Transaction transaction = ImmutableTransaction.builder()
                     .sequenceNumber(i)
                     .maxGasAmount(140000)
@@ -92,7 +88,7 @@ public class AsyncTransferExample {
                     .senderAccount(AccountAddress.ofPublicKey(publicKeySource))
                     .expirationTime(Instant.now().getEpochSecond() + 60)
                     .payload(ImmutableScript.builder()
-                            .code(VariableLengthByteSequence.ofByteSequence(Move.peerToPeerTransferAsBytes()))
+                            .code(Move.peerToPeerTransferAsBytes())
                             .addArguments(addressArgument, amountArgument)
                             .build())
                     .build();
@@ -103,8 +99,8 @@ public class AsyncTransferExample {
                     .build();
             transactions.add(admissionControl
                     .asyncSubmitTransaction(signedTransaction));
-            logger.info("Created transaction {}, sending 1 libra from {} to {}", i, source.getValue(),
-                    target.getValue());
+            logger.info("Created transaction {}, sending 1 libra from {} to {}", i, source,
+                    target);
         }
 
         logger.info("All transactions created. Wait for them to be accepted..");

@@ -7,17 +7,15 @@ import java.util.Optional;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.admissioncontrol.query.ImmutableEvent.Builder;
-import dev.jlibra.admissioncontrol.transaction.FixedLengthByteSequence;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Deserialization;
 
 @Value.Immutable
 public interface Event {
 
-    FixedLengthByteSequence getAccountAddress();
+    ByteSequence getAccountAddress();
 
     long getAmount();
 
@@ -34,7 +32,7 @@ public interface Event {
             ByteSequence address = Deserialization.readByteSequence(eventDataStream, 32);
 
             Builder builder = ImmutableEvent.builder()
-                    .accountAddress(AccountAddress.ofByteSequence(address))
+                    .accountAddress(address)
                     .key(ByteSequence.from(event.getKey().toByteArray()))
                     .amount(amount)
                     .sequenceNumber(event.getSequenceNumber());

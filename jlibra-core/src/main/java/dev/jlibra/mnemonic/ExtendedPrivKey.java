@@ -27,7 +27,8 @@ public class ExtendedPrivKey {
     public final PublicKey publicKey;
 
     public ExtendedPrivKey(SecretKey secretKey) {
-        Ed25519PrivateKeyParameters pKeyParams = new Ed25519PrivateKeyParameters(secretKey.getByteSequence().toArray(), 0);
+        Ed25519PrivateKeyParameters pKeyParams = new Ed25519PrivateKeyParameters(secretKey.getByteSequence().toArray(),
+                0);
 
         try {
             PrivateKeyInfo keyInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(pKeyParams);

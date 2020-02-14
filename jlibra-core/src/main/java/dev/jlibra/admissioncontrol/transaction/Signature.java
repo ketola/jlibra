@@ -8,16 +8,17 @@ import dev.jlibra.Hash;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.serialization.lcs.LCSSerializer;
 
 @Value.Immutable
 @LCS.Structure
 public abstract class Signature {
 
     @LCS.Field(0)
-    public abstract VariableLengthByteSequence getSignature();
+    public abstract ByteSequence getSignature();
 
     public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteSequence transactionBytes = transaction.serialize().getValue();
+        ByteSequence transactionBytes = new LCSSerializer().serialize(transaction, Transaction.class);
 
         byte[] signature;
 
@@ -33,9 +34,7 @@ public abstract class Signature {
         }
 
         return ImmutableSignature.builder()
-                .signature(ImmutableVariableLengthByteSequence.builder()
-                        .value(ByteSequence.from(signature))
-                        .build())
+                .signature(ByteSequence.from(signature))
                 .build();
     }
 

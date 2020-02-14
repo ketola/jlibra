@@ -51,7 +51,8 @@ public class AccountResourceTest {
         try {
             AccountResource.fromGrpcObject(accountStateWithProof);
         } catch (LibraRuntimeException e) {
-            assertThat(e.getMessage(), is("Message is not long enough (102) to read 3000000 bytes from it. It could mean the message is corrupted or different format than expected."));
+            assertThat(e.getMessage(), is(
+                    "Message is not long enough (102) to read 3000000 bytes from it. It could mean the message is corrupted or different format than expected."));
         }
     }
 }

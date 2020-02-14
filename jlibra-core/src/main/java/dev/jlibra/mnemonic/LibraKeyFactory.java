@@ -46,7 +46,8 @@ public class LibraKeyFactory {
     }
 
     /**
-     * application info in the HKDF context is defined as Libra derived key$child_number.
+     * application info in the HKDF context is defined as Libra derived
+     * key$child_number.
      */
     private byte[] createInfo(ChildNumber childNumber) {
         return ByteBuffer.allocate(INFO_PREFIX.length + 8)

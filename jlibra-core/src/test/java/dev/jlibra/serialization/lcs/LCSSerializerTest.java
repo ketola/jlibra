@@ -6,12 +6,11 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableFixedLengthByteSequence;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.VariableLengthByteSequence;
 import dev.jlibra.serialization.ByteSequence;
 
 public class LCSSerializerTest {
@@ -23,24 +22,20 @@ public class LCSSerializerTest {
                 .gasUnitPrice(1)
                 .maxGasAmount(2)
                 .payload(ImmutableScript.builder()
-                        .code(VariableLengthByteSequence.ofByteSequence(
-                                ByteSequence.from("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d")))
+                        .code(
+                                ByteSequence.from("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"))
                         .arguments(
-                                asList(new AccountAddressArgument(ImmutableFixedLengthByteSequence.builder()
-                                        .value(ByteSequence.from(
-                                                "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"))
-                                        .build())))
+                                asList(new AccountAddressArgument(AccountAddress.ofByteSequence(ByteSequence.from(
+                                        "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d")))))
                         .build())
-                .senderAccount(
-                        ImmutableFixedLengthByteSequence.builder()
-                                .value(ByteSequence
-                                        .from("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"))
-                                .build())
+                .senderAccount(AccountAddress.ofByteSequence(
+                        ByteSequence
+                                .from("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d")))
                 .sequenceNumber(3)
                 .build();
 
         LCSSerializer ser = new LCSSerializer();
-        VariableLengthByteSequence bytes = ser.serialize(transaction, Transaction.class);
+        ByteSequence bytes = ser.serialize(transaction, Transaction.class);
         // System.out.println(Hex.toHexString(bytes.toArray()));
         // System.out.println(Hex.toHexString(transaction.serialize().toArray()));
     }

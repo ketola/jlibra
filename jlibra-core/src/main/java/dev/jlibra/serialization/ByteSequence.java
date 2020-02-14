@@ -13,7 +13,7 @@ public class ByteSequence {
 
     private final byte[] value;
 
-    private ByteSequence(byte[] array) {
+    protected ByteSequence(byte[] array) {
         byte[] cloned = new byte[array.length];
         System.arraycopy(array, 0, cloned, 0, array.length);
         value = cloned;
@@ -47,7 +47,8 @@ public class ByteSequence {
         return ByteString.copyFrom(value);
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof ByteSequence))
@@ -58,7 +59,8 @@ public class ByteSequence {
         return Arrays.equals(this.value, that.value);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Arrays.hashCode(this.value);
     }
 }

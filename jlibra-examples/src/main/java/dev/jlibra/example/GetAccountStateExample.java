@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
@@ -34,7 +33,7 @@ public class GetAccountStateExample {
                         ImmutableQuery.builder()
                                 .accountStateQueries(asList(
                                         ImmutableGetAccountState.builder()
-                                                .address(AccountAddress.ofByteSequence(ByteSequence.from(address)))
+                                                .address(ByteSequence.from(address))
                                                 .build()))
                                 .build());
 

@@ -14,7 +14,7 @@ public class LCS {
     public @interface Field {
         int value();
 
-        boolean fixedLenght() default false;
+        boolean fixedLength() default false;
     }
 
     @Target(TYPE)

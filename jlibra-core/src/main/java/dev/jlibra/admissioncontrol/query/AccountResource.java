@@ -35,7 +35,8 @@ public interface AccountResource {
     boolean getDelegatedKeyRotationCapability();
 
     static AccountResource deserialize(ByteSequence byteSequence) {
-        try (DataInputStream accountDataStream = new DataInputStream(new ByteArrayInputStream(byteSequence.toArray()))) {
+        try (DataInputStream accountDataStream = new DataInputStream(
+                new ByteArrayInputStream(byteSequence.toArray()))) {
             int addressLength = readInt(accountDataStream, 4);
             ByteSequence address = readByteSequence(accountDataStream, addressLength);
             long balance = readLong(accountDataStream, 8);

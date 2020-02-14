@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
+import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.serialization.ByteSequence;
 
@@ -33,22 +34,17 @@ public class SignedTransactionTest {
                 .gasUnitPrice(3)
                 .sequenceNumber(4)
                 .expirationTime(5L)
-                .senderAccount(
-                        ImmutableFixedLengthByteSequence.builder()
-                                .value(ByteSequence.from(new byte[] { 1 }))
-                                .build())
+                .senderAccount(AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000),
                                 new AccountAddressArgument(
-                                        ImmutableFixedLengthByteSequence.builder()
-                                                .value(ByteSequence.from(new byte[] { 2 }))
-                                                .build()))
-                        .code(VariableLengthByteSequence.ofByteSequence(ByteSequence.from(new byte[] { 3 })))
+                                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 2 }))))
+                        .code(ByteSequence.from(new byte[] { 3 }))
                         .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(VariableLengthByteSequence.ofByteSequence(PUBLIC_KEY_HEX))
+                .publicKey(PUBLIC_KEY_HEX)
                 .signature(Signature.signTransaction(transaction,
                         KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX)))
                 .transaction(transaction)
@@ -68,21 +64,17 @@ public class SignedTransactionTest {
                 .sequenceNumber(1)
                 .expirationTime(1L)
                 .senderAccount(
-                        ImmutableFixedLengthByteSequence.builder()
-                                .value(ByteSequence.from(new byte[] { 1 }))
-                                .build())
+                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000),
                                 new AccountAddressArgument(
-                                        ImmutableFixedLengthByteSequence.builder()
-                                                .value(ByteSequence.from(new byte[] { 1 }))
-                                                .build()))
-                        .code(VariableLengthByteSequence.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
+                                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 }))))
+                        .code(ByteSequence.from(new byte[] { 1 }))
                         .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(VariableLengthByteSequence.ofByteSequence(PUBLIC_KEY_HEX))
+                .publicKey(PUBLIC_KEY_HEX)
                 .signature(Signature.signTransaction(transaction, KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX)))
                 .transaction(transaction)
                 .build();

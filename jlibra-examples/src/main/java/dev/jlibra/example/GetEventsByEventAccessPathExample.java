@@ -5,7 +5,6 @@ import static java.util.Arrays.asList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.GetEventsByEventAccessPath.Path;
 import dev.jlibra.admissioncontrol.query.ImmutableGetEventsByEventAccessPath;
@@ -33,7 +32,7 @@ public class GetEventsByEventAccessPathExample {
                                 .eventsByEventAccessPathQueries(
                                         asList(ImmutableGetEventsByEventAccessPath.builder()
                                                 .accountAddress(
-                                                        AccountAddress.ofByteSequence(ByteSequence.from(address)))
+                                                        ByteSequence.from(address))
                                                 .limit(100)
                                                 .isAscending(true)
                                                 .startEventSequenceNumber(0)
