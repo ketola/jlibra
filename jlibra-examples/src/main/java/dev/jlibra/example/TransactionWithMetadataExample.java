@@ -60,12 +60,12 @@ public class TransactionWithMetadataExample {
         KeyPair keyPairSource = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
-        ByteSequence source = AccountAddress.ofPublicKey(publicKeySource);
+        AccountAddress source = AccountAddress.ofPublicKey(publicKeySource);
         ExampleUtils.mint(source, 10L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
-        ByteSequence target = AccountAddress.ofPublicKey(publicKeyTarget);
+        AccountAddress target = AccountAddress.ofPublicKey(publicKeyTarget);
 
         // sleep for 1 sec to make sure the minted money is available in the account.
         // Sometimes the faucet api is working slowly and you might need to increase the
@@ -82,8 +82,7 @@ public class TransactionWithMetadataExample {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(1_000_000);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(AccountAddress.ofByteSequence(
-                target));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(target);
         ByteArrayArgument metadata = new ByteArrayArgument(
                 ByteSequence
                         .from("Logic will get you from A to Z; imagination will get you everywhere.".getBytes(UTF_8)));

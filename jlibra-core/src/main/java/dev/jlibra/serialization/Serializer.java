@@ -68,8 +68,4 @@ public class Serializer {
     public ByteSequence toByteSequence() {
         return ByteSequence.from(bytes);
     }
-
-    public ByteSequence toVariableLengthByteSequence() {
-        return ByteSequence.from(bytes);
-    }
 }

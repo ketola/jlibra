@@ -7,11 +7,11 @@ import java.math.BigDecimal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -33,7 +33,7 @@ public class GetAccountStateExample {
                         ImmutableQuery.builder()
                                 .accountStateQueries(asList(
                                         ImmutableGetAccountState.builder()
-                                                .address(ByteSequence.from(address))
+                                                .address(AccountAddress.ofHexString(address))
                                                 .build()))
                                 .build());
 

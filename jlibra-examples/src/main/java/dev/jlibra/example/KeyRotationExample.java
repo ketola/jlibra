@@ -68,7 +68,7 @@ public class KeyRotationExample {
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
-        ByteSequence addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
+        AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
         ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
@@ -179,7 +179,7 @@ public class KeyRotationExample {
         return admissionControl.submitTransaction(signedTransaction);
     }
 
-    private static void getAccountState(ByteSequence accountAddress, AdmissionControl admissionControl) {
+    private static void getAccountState(AccountAddress accountAddress, AdmissionControl admissionControl) {
         UpdateToLatestLedgerResult result = admissionControl
                 .updateToLatestLedger(ImmutableQuery.builder()
                         .accountStateQueries(asList(ImmutableGetAccountState.builder()

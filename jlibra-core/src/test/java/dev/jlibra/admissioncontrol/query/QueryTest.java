@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.ByteSequence;
 import types.GetWithProof.RequestItem;
 
@@ -30,10 +31,10 @@ public class QueryTest {
                 .accountStateQueries(
                         asList(
                                 ImmutableGetAccountState.builder()
-                                        .address(address1)
+                                        .address(AccountAddress.ofByteSequence(address1))
                                         .build(),
                                 ImmutableGetAccountState.builder()
-                                        .address(address2)
+                                        .address(AccountAddress.ofByteSequence(address2))
                                         .build()))
                 .build();
 
@@ -52,12 +53,12 @@ public class QueryTest {
                 .accountTransactionBySequenceNumberQueries(
                         asList(
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(address1)
+                                        .accountAddress(AccountAddress.ofByteSequence(address1))
                                         .sequenceNumber(1)
                                         .fetchEvents(true)
                                         .build(),
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(address2)
+                                        .accountAddress(AccountAddress.ofByteSequence(address2))
                                         .sequenceNumber(2)
                                         .fetchEvents(false)
                                         .build()))

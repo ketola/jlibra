@@ -120,7 +120,7 @@ public class AsyncTransferExample {
                                 .address(target)
                                 .build(),
                         ImmutableGetAccountState.builder()
-                                .address(source)
+                                .address(AccountAddress.ofByteSequence(source))
                                 .build()))
                 .build();
 

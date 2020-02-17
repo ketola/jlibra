@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.immutables.value.Value;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.Hash;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
@@ -30,7 +31,7 @@ public abstract class GetEventsByEventAccessPath {
         }
     }
 
-    public abstract ByteSequence getAccountAddress();
+    public abstract AccountAddress getAccountAddress();
 
     public abstract Path getPath();
 
