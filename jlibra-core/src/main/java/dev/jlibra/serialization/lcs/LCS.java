@@ -18,7 +18,7 @@ public class LCS {
 
     /**
      * An annotation for marking a method that is capable of returning the the value
-     * for either a Structure or an Externally Tagged enumeration
+     * for either a Structure or an Externally Tagged Enumeration
      */
     @Target(METHOD)
     @Retention(RUNTIME)
@@ -31,8 +31,8 @@ public class LCS {
         int value();
 
         /**
-         * Set the value to true if the returned value of the fields should be
-         * serialized as a fixed-length byte array.
+         * Set the value to true if the returned value of the field should be serialized
+         * as a fixed-length byte array.
          * 
          * @return
          */
