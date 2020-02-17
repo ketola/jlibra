@@ -27,35 +27,6 @@ public class SignedTransactionTest {
     }
 
     @Test
-    public void testSerialize() {
-        Transaction transaction = ImmutableTransaction.builder()
-                .expirationTime(1)
-                .maxGasAmount(2)
-                .gasUnitPrice(3)
-                .sequenceNumber(4)
-                .expirationTime(5L)
-                .senderAccount(AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
-                .payload(ImmutableScript.builder()
-                        .addArguments(new U64Argument(1000),
-                                new AccountAddressArgument(
-                                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 2 }))))
-                        .code(ByteSequence.from(new byte[] { 3 }))
-                        .build())
-                .build();
-
-        SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(PUBLIC_KEY_HEX)
-                .signature(Signature.signTransaction(transaction,
-                        KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX)))
-                .transaction(transaction)
-                .build();
-
-        // assertThat(signedTransaction.serialize().getValue().toString().toUpperCase(),
-        // is(
-        // "0104000000000000000200000001000000030200000000000000E8030000000000000100000002020000000000000003000000000000000500000000000000200000000B29A7ADCE0897B2D1EC18CC482237463EFA173945FA3BD2703023E1A24890214000000039856908D3C9ACCFA01E9403583A48C01B93C71600067D3422C7A3612EC213FF18355795E3E702ECD709F2361126CD14E573046C7FC3AEC34AB3EA98BE695A09"));
-    }
-
-    @Test
     public void testToGrpcObject() {
         Transaction transaction = ImmutableTransaction.builder()
                 .expirationTime(10)

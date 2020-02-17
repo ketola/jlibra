@@ -4,20 +4,13 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
-
-import org.bouncycastle.util.encoders.Hex;
-
-import dev.jlibra.KeyUtils;
 
 public class Serializer {
 
     private byte[] bytes;
-    private String bytesString;
 
     private Serializer(byte[] bytes) {
         this.bytes = bytes;
-        this.bytesString = Hex.toHexString(bytes);
     }
 
     public static Serializer builder() {
@@ -31,10 +24,6 @@ public class Serializer {
     private Serializer appendByteArray(byte[] byteArray) {
         return append(intToByteArray(byteArray.length))
                 .append(byteArray);
-    }
-
-    public Serializer appendPublicKey(PublicKey pubKey) {
-        return append(KeyUtils.stripPublicKeyPrefix(ByteSequence.from(pubKey.getEncoded())).toArray());
     }
 
     public Serializer appendFixedLength(ByteSequence byteSequence) {
