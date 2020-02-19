@@ -50,6 +50,8 @@ public class LCSSerializer {
                 for (Object e : list) {
                     s = s.appendFixedLength(serialize(e, e.getClass()));
                 }
+            } else {
+                throw new LibraRuntimeException("Return type " + returnType + " is not recognized for serialization.");
             }
         }
         return s.toByteSequence();
