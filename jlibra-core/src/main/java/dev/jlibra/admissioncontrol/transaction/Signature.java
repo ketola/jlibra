@@ -12,10 +12,10 @@ import dev.jlibra.serialization.lcs.LCSSerializer;
 
 @Value.Immutable
 @LCS.Structure
-public abstract class Signature {
+public interface Signature {
 
     @LCS.Field(0)
-    public abstract ByteSequence getSignature();
+    ByteSequence getSignature();
 
     public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
         ByteSequence transactionBytes = new LCSSerializer().serialize(transaction, Transaction.class);

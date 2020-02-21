@@ -19,7 +19,7 @@ import dev.jlibra.serialization.lcs.type.TransactionPayload;
 
 @Value.Immutable
 @LCS.Structure
-public abstract class Transaction {
+public interface Transaction {
 
     @LCS.Field(value = 0, fixedLength = true)
     public abstract AccountAddress getSenderAccount();
