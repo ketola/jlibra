@@ -35,8 +35,7 @@ public class LCSSerializerTest {
                 .sequenceNumber(3)
                 .build();
 
-        LCSSerializer ser = new LCSSerializer();
-        ByteSequence bytes = ser.serialize(transaction, Transaction.class);
+        ByteSequence bytes = LCSSerializer.create().serialize(transaction, Transaction.class);
 
         assertThat(bytes.toString(), Matchers.is(
                 "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d030000000000000002000000200000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d01000000010000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d020000000000000001000000000000000100000000000000"));

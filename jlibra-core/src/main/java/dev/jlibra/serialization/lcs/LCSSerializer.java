@@ -14,6 +14,13 @@ import dev.jlibra.serialization.Serializer;
 
 public class LCSSerializer {
 
+    private LCSSerializer() {
+    }
+
+    public static LCSSerializer create() {
+        return new LCSSerializer();
+    }
+
     public ByteArray serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 

@@ -19,7 +19,7 @@ public interface Signature {
     ByteSequence getSignature();
 
     public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteArray transactionBytes = new LCSSerializer().serialize(transaction, Transaction.class);
+        ByteArray transactionBytes = LCSSerializer.create().serialize(transaction, Transaction.class);
 
         byte[] signature;
 

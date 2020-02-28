@@ -23,7 +23,7 @@ public abstract class SignedTransaction {
     public SubmitTransactionRequest toGrpcObject() {
         types.TransactionOuterClass.SignedTransaction signedTransaction = types.TransactionOuterClass.SignedTransaction
                 .newBuilder()
-                .setTxnBytes(new LCSSerializer().serialize(this, SignedTransaction.class).toByteString())
+                .setTxnBytes(LCSSerializer.create().serialize(this, SignedTransaction.class).toByteString())
                 .build();
         return SubmitTransactionRequest.newBuilder()
                 .setTransaction(signedTransaction)
