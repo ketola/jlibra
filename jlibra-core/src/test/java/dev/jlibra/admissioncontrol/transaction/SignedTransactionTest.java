@@ -35,11 +35,11 @@ public class SignedTransactionTest {
                 .sequenceNumber(1)
                 .expirationTime(1L)
                 .senderAccount(
-                        AccountAddress.ofByteArray(ByteArray.from(new byte[] { 1 })))
+                        AccountAddress.fromByteArray(ByteArray.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000),
                                 new AccountAddressArgument(
-                                        AccountAddress.ofByteArray(ByteArray.from(new byte[] { 1 }))))
+                                        AccountAddress.fromByteArray(ByteArray.from(new byte[] { 1 }))))
                         .code(ByteArray.from(new byte[] { 1 }))
                         .build())
                 .build();

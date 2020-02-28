@@ -31,10 +31,10 @@ public class QueryTest {
                 .accountStateQueries(
                         asList(
                                 ImmutableGetAccountState.builder()
-                                        .address(AccountAddress.ofByteArray(address1))
+                                        .address(AccountAddress.fromByteArray(address1))
                                         .build(),
                                 ImmutableGetAccountState.builder()
-                                        .address(AccountAddress.ofByteArray(address2))
+                                        .address(AccountAddress.fromByteArray(address2))
                                         .build()))
                 .build();
 
@@ -53,12 +53,12 @@ public class QueryTest {
                 .accountTransactionBySequenceNumberQueries(
                         asList(
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(AccountAddress.ofByteArray(address1))
+                                        .accountAddress(AccountAddress.fromByteArray(address1))
                                         .sequenceNumber(1)
                                         .fetchEvents(true)
                                         .build(),
                                 ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                        .accountAddress(AccountAddress.ofByteArray(address2))
+                                        .accountAddress(AccountAddress.fromByteArray(address2))
                                         .sequenceNumber(2)
                                         .fetchEvents(false)
                                         .build()))

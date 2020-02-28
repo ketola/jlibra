@@ -20,11 +20,11 @@ public class AccountAddress implements ByteSequence {
                 Hash.ofInput(KeyUtils.stripPublicKeyPrefix(ByteArray.from(publicKey.getEncoded()))).hash());
     }
 
-    public static AccountAddress ofByteArray(ByteArray bytes) {
+    public static AccountAddress fromByteArray(ByteArray bytes) {
         return new AccountAddress(bytes);
     }
 
-    public static AccountAddress ofHexString(String hexString) {
+    public static AccountAddress fromHexString(String hexString) {
         return new AccountAddress(ByteArray.from(hexString));
     }
 

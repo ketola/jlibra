@@ -146,7 +146,7 @@ public abstract class AbstractTransactionIT {
         Transaction transaction = createTransaction(sequenceNumber, amountArgument, addressArgument);
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(PublicKey.ofPublicKey(sourceAccount.publicKey))
+                .publicKey(PublicKey.fromPublicKey(sourceAccount.publicKey))
                 .transaction(transaction)
                 .signature(Signature.signTransaction(transaction, sourceAccount.privateKey))
                 .build();

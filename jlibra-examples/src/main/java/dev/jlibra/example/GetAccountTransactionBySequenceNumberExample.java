@@ -30,7 +30,7 @@ public class GetAccountTransactionBySequenceNumberExample {
         UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
                 .accountTransactionBySequenceNumberQueries(
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
-                                .accountAddress(AccountAddress.ofHexString(address))
+                                .accountAddress(AccountAddress.fromHexString(address))
                                 .sequenceNumber(sequenceNumber)
                                 .fetchEvents(true)
                                 .build()))

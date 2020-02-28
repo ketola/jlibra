@@ -33,7 +33,7 @@ public class GetAccountStateExample {
                         ImmutableQuery.builder()
                                 .accountStateQueries(asList(
                                         ImmutableGetAccountState.builder()
-                                                .address(AccountAddress.ofHexString(address))
+                                                .address(AccountAddress.fromHexString(address))
                                                 .build()))
                                 .build());
 

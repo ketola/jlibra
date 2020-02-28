@@ -34,7 +34,7 @@ public interface Event {
             ByteArray address = Deserialization.readByteArray(eventDataStream, 32);
 
             Builder builder = ImmutableEvent.builder()
-                    .accountAddress(AccountAddress.ofByteArray(address))
+                    .accountAddress(AccountAddress.fromByteArray(address))
                     .key(ByteArray.from(event.getKey().toByteArray()))
                     .amount(amount)
                     .sequenceNumber(event.getSequenceNumber());

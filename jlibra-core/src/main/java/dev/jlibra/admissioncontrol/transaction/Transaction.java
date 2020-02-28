@@ -64,7 +64,7 @@ public interface Transaction {
                 arguments.add(new U64Argument(value));
             } else if (argumentType == AccountAddressArgument.PREFIX) {
                 ByteArray value = readByteArray(in, 32);
-                arguments.add(new AccountAddressArgument(AccountAddress.ofByteArray(value)));
+                arguments.add(new AccountAddressArgument(AccountAddress.fromByteArray(value)));
             } else if (argumentType == ByteArrayArgument.PREFIX) {
                 int length = readInt(in, 4);
                 ByteArray value = readByteArray(in, length);
@@ -79,7 +79,7 @@ public interface Transaction {
         long expirationTime = readLong(in, 8);
 
         return ImmutableTransaction.builder()
-                .senderAccount(AccountAddress.ofByteArray(senderAccount))
+                .senderAccount(AccountAddress.fromByteArray(senderAccount))
                 .sequenceNumber(sequenceNumber)
                 .payload(ImmutableScript.builder()
                         .code(code)

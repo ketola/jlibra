@@ -100,7 +100,7 @@ public class TransactionWithMetadataExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(PublicKey.ofPublicKey(publicKeySource))
+                .publicKey(PublicKey.fromPublicKey(publicKeySource))
                 .transaction(transaction)
                 .signature(Signature.signTransaction(transaction, privateKeySource))
                 .build();

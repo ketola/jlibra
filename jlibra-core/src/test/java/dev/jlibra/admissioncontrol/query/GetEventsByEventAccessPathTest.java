@@ -16,7 +16,7 @@ public class GetEventsByEventAccessPathTest {
     public void testToGrpcObject() {
         String accountAddress = "0703a61585597d9b56a46a658464738dff58222b4393d32dd9899bedb58666e9";
         GetEventsByEventAccessPath o = ImmutableGetEventsByEventAccessPath.builder()
-                .accountAddress(AccountAddress.ofHexString(accountAddress))
+                .accountAddress(AccountAddress.fromHexString(accountAddress))
                 .isAscending(true)
                 .limit(10)
                 .path(Path.SENT_EVENTS)

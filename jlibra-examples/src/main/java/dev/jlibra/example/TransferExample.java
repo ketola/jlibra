@@ -53,7 +53,7 @@ public class TransferExample {
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount * 1000000);
         AccountAddressArgument addressArgument = new AccountAddressArgument(
-                AccountAddress.ofHexString(toAddress));
+                AccountAddress.fromHexString(toAddress));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -68,7 +68,7 @@ public class TransferExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(dev.jlibra.PublicKey.ofPublicKey(publicKey))
+                .publicKey(dev.jlibra.PublicKey.fromPublicKey(publicKey))
                 .transaction(transaction)
                 .signature(Signature.signTransaction(transaction, privateKey))
                 .build();

@@ -13,11 +13,11 @@ public class PublicKey implements ByteSequence {
         this.bytes = bytes;
     }
 
-    public static PublicKey ofPublicKey(java.security.PublicKey pk) {
+    public static PublicKey fromPublicKey(java.security.PublicKey pk) {
         return new PublicKey(KeyUtils.stripPublicKeyPrefix(ByteArray.from(pk.getEncoded())));
     }
 
-    public static PublicKey ofByteSequence(ByteArray byteSequence) {
+    public static PublicKey fromByteSequence(ByteArray byteSequence) {
         return new PublicKey(byteSequence);
     }
 

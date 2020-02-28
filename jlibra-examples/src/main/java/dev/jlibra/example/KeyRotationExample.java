@@ -168,7 +168,7 @@ public class KeyRotationExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(PublicKey.ofPublicKey(publicKey))
+                .publicKey(PublicKey.fromPublicKey(publicKey))
                 .transaction(transaction)
                 .signature(Signature.signTransaction(transaction, privateKey))
                 .build();

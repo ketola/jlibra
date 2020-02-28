@@ -31,7 +31,7 @@ public class GetEventsByEventAccessPathExample {
                         ImmutableQuery.builder()
                                 .eventsByEventAccessPathQueries(
                                         asList(ImmutableGetEventsByEventAccessPath.builder()
-                                                .accountAddress(AccountAddress.ofHexString(address))
+                                                .accountAddress(AccountAddress.fromHexString(address))
                                                 .limit(100)
                                                 .isAscending(true)
                                                 .startEventSequenceNumber(0)
