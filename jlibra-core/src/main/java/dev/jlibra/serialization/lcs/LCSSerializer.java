@@ -8,12 +8,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 
 public class LCSSerializer {
 
-    public ByteSequence serialize(Object serializable, Class<?> type) {
+    public ByteArray serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 
         LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
@@ -54,7 +55,7 @@ public class LCSSerializer {
                 throw new LibraRuntimeException("Return type " + returnType + " is not recognized for serialization.");
             }
         }
-        return s.toByteSequence();
+        return s.toByteArray();
     }
 
     private Object invokeMethod(Object serializable, Method m) {

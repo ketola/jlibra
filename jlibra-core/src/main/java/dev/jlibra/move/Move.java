@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
 public class Move {
@@ -31,7 +32,7 @@ public class Move {
         for (int idx = 0; idx < bytesAsString.length; idx++) {
             bytes[idx] = (byte) Integer.parseInt(bytesAsString[idx]);
         }
-        return ByteSequence.from(bytes);
+        return ByteArray.from(bytes);
     }
 
     private static String readJson(InputStream inputStream) {

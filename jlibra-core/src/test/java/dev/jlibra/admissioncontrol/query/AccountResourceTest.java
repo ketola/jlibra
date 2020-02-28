@@ -6,16 +6,16 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import types.AccountStateBlobOuterClass.AccountStateBlob;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
 
 public class AccountResourceTest {
 
-    private static final ByteSequence ACCOUNT_DATA = ByteSequence
+    private static final ByteArray ACCOUNT_DATA = ByteArray
             .from("200000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5dc0c62d00000000000000030000000000000020000000e7753442710f04596279f6ea097c48782b0683e8b50071e8f2e34be523d7f2c5000000000000000020000000885ae34cf1f18d0c970b416afc7c5475f132511c5f3bbdce4af52ea09a0fd7030000000000000000");
 
-    private static final ByteSequence ACCOUNT_STATE_BLOB = ByteSequence
+    private static final ByteArray ACCOUNT_STATE_BLOB = ByteArray
             .from("0100000001000000018e000000200000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5dc0c62d00000000000000030000000000000020000000e7753442710f04596279f6ea097c48782b0683e8b50071e8f2e34be523d7f2c5000000000000000020000000885ae34cf1f18d0c970b416afc7c5475f132511c5f3bbdce4af52ea09a0fd7030000000000000000");
 
     @Test
@@ -42,7 +42,7 @@ public class AccountResourceTest {
 
     @Test
     public void fromGrpcObjectInvalidMessageFormat() {
-        ByteSequence blob = ByteSequence
+        ByteArray blob = ByteArray
                 .from("01000000200000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5dc0c62d00000000000000030000000000000020000000e7753442710f04596279f6ea097c48782b0683e8b50071e8f2e34be523d7f2c5000000000000000020000000885ae34cf1f18d0c970b416afc7c5475f132511c5f3bbdce4af52ea09a0fd7030000000000000000");
 
         AccountStateWithProof accountStateWithProof = AccountStateWithProof.newBuilder()

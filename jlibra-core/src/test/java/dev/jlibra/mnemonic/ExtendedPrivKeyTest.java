@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import dev.jlibra.KeyUtils;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 
 /**
  * Test data and mnemonic seed generated using libra cli.
@@ -44,7 +44,7 @@ public class ExtendedPrivKeyTest {
     public void getPublic() {
         assertEquals(
                 "be10d382d1f3de00c19607f667b5b127da22f42f0a3a4b70eaef690365421511",
-                KeyUtils.stripPublicKeyPrefix(ByteSequence.from(childPrivate0.publicKey.getEncoded())).toString());
+                KeyUtils.stripPublicKeyPrefix(ByteArray.from(childPrivate0.publicKey.getEncoded())).toString());
     }
 
 }

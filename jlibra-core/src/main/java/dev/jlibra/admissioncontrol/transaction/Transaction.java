@@ -1,6 +1,6 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import static dev.jlibra.serialization.Deserialization.readByteSequence;
+import static dev.jlibra.serialization.Deserialization.readByteArray;
 import static dev.jlibra.serialization.Deserialization.readInt;
 import static dev.jlibra.serialization.Deserialization.readLong;
 
@@ -13,7 +13,7 @@ import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.lcs.LCS;
 import dev.jlibra.serialization.lcs.type.TransactionPayload;
 
@@ -45,7 +45,7 @@ public interface Transaction {
         InputStream in = new ByteArrayInputStream(bytes);
         int structPrefix = readInt(in, 4);
 
-        ByteSequence senderAccount = readByteSequence(in, 32);
+        ByteArray senderAccount = readByteArray(in, 32);
         long sequenceNumber = readLong(in, 8);
         int payloadType = readInt(in, 4);
 
@@ -54,7 +54,7 @@ public interface Transaction {
         }
 
         int codeLength = readInt(in, 4);
-        ByteSequence code = readByteSequence(in, codeLength);
+        ByteArray code = readByteArray(in, codeLength);
         int argumentsLength = readInt(in, 4);
         List<TransactionArgument> arguments = new ArrayList<>();
         for (int i = 0; i < argumentsLength; i++) {
@@ -63,11 +63,11 @@ public interface Transaction {
                 long value = readLong(in, 8);
                 arguments.add(new U64Argument(value));
             } else if (argumentType == AccountAddressArgument.PREFIX) {
-                ByteSequence value = readByteSequence(in, 32);
-                arguments.add(new AccountAddressArgument(AccountAddress.ofByteSequence(value)));
+                ByteArray value = readByteArray(in, 32);
+                arguments.add(new AccountAddressArgument(AccountAddress.ofByteArray(value)));
             } else if (argumentType == ByteArrayArgument.PREFIX) {
                 int length = readInt(in, 4);
-                ByteSequence value = readByteSequence(in, length);
+                ByteArray value = readByteArray(in, length);
                 arguments.add(new ByteArrayArgument(value));
             } else {
                 throw new LibraRuntimeException("Unknown transaction argument type " + argumentType);
@@ -79,7 +79,7 @@ public interface Transaction {
         long expirationTime = readLong(in, 8);
 
         return ImmutableTransaction.builder()
-                .senderAccount(AccountAddress.ofByteSequence(senderAccount))
+                .senderAccount(AccountAddress.ofByteArray(senderAccount))
                 .sequenceNumber(sequenceNumber)
                 .payload(ImmutableScript.builder()
                         .code(code)

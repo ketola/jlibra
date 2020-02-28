@@ -13,13 +13,13 @@ import java.security.spec.X509EncodedKeySpec;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 
 public class KeyUtilsTest {
 
-    private static final ByteSequence PRIVATE_KEY = ByteSequence
+    private static final ByteArray PRIVATE_KEY = ByteArray
             .from("3051020101300506032b6570042204206dadf7a252c0e74add2e545a1e3c811f1f4bdd88f8c5e0080e068f4df6d909128121000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021");
-    private static final ByteSequence PUBLIC_KEY = ByteSequence
+    private static final ByteArray PUBLIC_KEY = ByteArray
             .from("302a300506032b65700321000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021");
 
     @BeforeClass

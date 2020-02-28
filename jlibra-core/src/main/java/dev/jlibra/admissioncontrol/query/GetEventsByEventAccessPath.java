@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.Hash;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
 import types.AccessPathOuterClass.AccessPath;
@@ -55,20 +56,20 @@ public abstract class GetEventsByEventAccessPath {
     }
 
     private static ByteSequence generateAccessPath(Path path) {
-        ByteSequence serializedStructTag = Serializer.builder()
-                .appendFixedLength(ByteSequence.from(STRUCT_TAG_ACCOUNT_ADDRESS))
+        ByteArray serializedStructTag = Serializer.builder()
+                .appendFixedLength(ByteArray.from(STRUCT_TAG_ACCOUNT_ADDRESS))
                 .appendString(STRUCT_TAG_ADDRESS)
                 .appendString(STRUCT_TAG_MODULE)
                 .appendInt(STRUCT_TAG_TYPE_PARAMS_LENGTH)
-                .toByteSequence();
+                .toByteArray();
 
-        ByteSequence structTagHash = Hash.ofInput(serializedStructTag)
-                .hash(ByteSequence.from("StructTag::libra_types::language_storage@@$$LIBRA$$@@".getBytes()));
+        ByteArray structTagHash = Hash.ofInput(serializedStructTag)
+                .hash(ByteArray.from("StructTag::libra_types::language_storage@@$$LIBRA$$@@".getBytes()));
 
         return Serializer.builder()
                 .appendByte(RESOURCE_TAG)
                 .appendFixedLength(structTagHash)
-                .appendFixedLength(ByteSequence.from(path.suffix.getBytes(UTF_8)))
-                .toByteSequence();
+                .appendFixedLength(ByteArray.from(path.suffix.getBytes(UTF_8)))
+                .toByteArray();
     }
 }

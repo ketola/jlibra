@@ -13,12 +13,12 @@ import org.junit.Test;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 
 public class SignedTransactionTest {
-    private static final ByteSequence PUBLIC_KEY_HEX = KeyUtils.stripPublicKeyPrefix(ByteSequence
+    private static final ByteArray PUBLIC_KEY_HEX = KeyUtils.stripPublicKeyPrefix(ByteArray
             .from("302a300506032b65700321000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021"));
-    private static final ByteSequence PRIVATE_KEY_HEX = ByteSequence
+    private static final ByteArray PRIVATE_KEY_HEX = ByteArray
             .from("3051020101300506032b6570042204206dadf7a252c0e74add2e545a1e3c811f1f4bdd88f8c5e0080e068f4df6d909128121000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021");
 
     @BeforeClass
@@ -35,12 +35,12 @@ public class SignedTransactionTest {
                 .sequenceNumber(1)
                 .expirationTime(1L)
                 .senderAccount(
-                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 })))
+                        AccountAddress.ofByteArray(ByteArray.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000),
                                 new AccountAddressArgument(
-                                        AccountAddress.ofByteSequence(ByteSequence.from(new byte[] { 1 }))))
-                        .code(ByteSequence.from(new byte[] { 1 }))
+                                        AccountAddress.ofByteArray(ByteArray.from(new byte[] { 1 }))))
+                        .code(ByteArray.from(new byte[] { 1 }))
                         .build())
                 .build();
 

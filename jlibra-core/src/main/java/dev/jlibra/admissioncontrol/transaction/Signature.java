@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 
 import dev.jlibra.Hash;
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.lcs.LCS;
 import dev.jlibra.serialization.lcs.LCSSerializer;
@@ -18,7 +19,7 @@ public interface Signature {
     ByteSequence getSignature();
 
     public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteSequence transactionBytes = new LCSSerializer().serialize(transaction, Transaction.class);
+        ByteArray transactionBytes = new LCSSerializer().serialize(transaction, Transaction.class);
 
         byte[] signature;
 
@@ -26,7 +27,7 @@ public interface Signature {
             java.security.Signature sgr = java.security.Signature.getInstance("Ed25519", "BC");
             sgr.initSign(privateKey);
             sgr.update(Hash.ofInput(transactionBytes)
-                    .hash(ByteSequence.from("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes()))
+                    .hash(ByteArray.from("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes()))
                     .toArray());
             signature = sgr.sign();
         } catch (Exception e) {
@@ -34,7 +35,7 @@ public interface Signature {
         }
 
         return ImmutableSignature.builder()
-                .signature(ByteSequence.from(signature))
+                .signature(ByteArray.from(signature))
                 .build();
     }
 

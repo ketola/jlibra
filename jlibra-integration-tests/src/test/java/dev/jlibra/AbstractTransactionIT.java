@@ -3,7 +3,6 @@ package dev.jlibra;
 import static dev.jlibra.mnemonic.Mnemonic.WORDS;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
@@ -40,7 +39,7 @@ import dev.jlibra.mnemonic.ExtendedPrivKey;
 import dev.jlibra.mnemonic.LibraKeyFactory;
 import dev.jlibra.mnemonic.Mnemonic;
 import dev.jlibra.mnemonic.Seed;
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import kong.unirest.HttpResponse;
@@ -100,7 +99,7 @@ public abstract class AbstractTransactionIT {
 
         // destination account is generated
         ExtendedPrivKey destination = generateKey();
-        String destinationAddress = destination.getAddress();
+        AccountAddress destinationAddress = destination.getAddress();
         long transactionAmount = 1_111;
 
         // make the transaction
@@ -108,9 +107,9 @@ public abstract class AbstractTransactionIT {
 
         // wait for balance to become visible
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
-                .atMost(20, SECONDS)
+                .atMost(10, SECONDS)
                 .untilAsserted(() -> {
-                    long actual = findBalance(AccountAddress.ofByteSequence(ByteSequence.from(destinationAddress)));
+                    long actual = findBalance(destinationAddress);
                     String errorMessage = format("Account address: %s, expected balance: %d, actual balance: %d",
                             destinationAddress, transactionAmount, actual);
                     assertEquals(errorMessage, actual, transactionAmount);
@@ -126,7 +125,7 @@ public abstract class AbstractTransactionIT {
         long balance = result.getAccountStateQueryResults()
                 .stream()
                 .filter(accountResource -> accountResource.getAuthenticationKey()
-                        .equals(accountAddress))
+                        .equals(ByteArray.from(accountAddress.toArray())))
                 .map(AccountResource::getBalanceInMicroLibras)
                 .findFirst()
                 .orElse(0L);
@@ -136,14 +135,13 @@ public abstract class AbstractTransactionIT {
         return balance;
     }
 
-    private void transfer(String toAddress, long amount) throws LibraTransactionException {
+    private void transfer(AccountAddress toAddress, long amount) throws LibraTransactionException {
 
-        long sequenceNumber = maybeFindSequenceNumber(admissionControl,
-                AccountAddress.ofByteSequence(ByteSequence.from(sourceAccount.getAddress())));
+        long sequenceNumber = maybeFindSequenceNumber(admissionControl, sourceAccount.getAddress());
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(amount);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(AccountAddress.ofHexString(toAddress));
+        AccountAddressArgument addressArgument = new AccountAddressArgument(toAddress);
 
         Transaction transaction = createTransaction(sequenceNumber, amountArgument, addressArgument);
 
@@ -168,7 +166,7 @@ public abstract class AbstractTransactionIT {
         return result.getAccountStateQueryResults()
                 .stream()
                 .filter(accountResource -> accountResource.getAuthenticationKey()
-                        .equals(forAddress))
+                        .equals(ByteArray.from(forAddress.toArray())))
                 .map(AccountResource::getSequenceNumber)
                 .findFirst()
                 .orElse(0);
@@ -179,13 +177,12 @@ public abstract class AbstractTransactionIT {
 
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
                 .queryString("amount", amountInMicroLibras)
-                .queryString("address", sourceAccount.getAddress())
+                .queryString("address", sourceAccount.getAddress().toString())
                 .asString();
 
         with().pollInterval(fibonacci().with().timeUnit(SECONDS)).await()
-                .atMost(1, MINUTES)
-                .until(() -> findBalance(
-                        AccountAddress.ofByteSequence(ByteSequence.from(sourceAccount.getAddress()))) > 0);
+                .atMost(10, SECONDS)
+                .until(() -> findBalance(sourceAccount.getAddress()) > 0);
 
         assertEquals(200, response.getStatus());
     }

@@ -32,7 +32,6 @@ import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
-import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -57,12 +56,12 @@ public class AsyncTransferExample {
         KeyPair keyPairSource = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
-        ByteSequence source = AccountAddress.ofPublicKey(publicKeySource);
+        AccountAddress source = AccountAddress.fromPublicKey(publicKeySource);
         ExampleUtils.mint(source, 20L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
-        AccountAddress target = AccountAddress.ofPublicKey(publicKeyTarget);
+        AccountAddress target = AccountAddress.fromPublicKey(publicKeyTarget);
 
         // sleep for 1 sec to make sure the minted money is available in the account.
         // Sometimes the faucet api is working slowly and you might need to increase the
@@ -85,7 +84,7 @@ public class AsyncTransferExample {
                     .sequenceNumber(i)
                     .maxGasAmount(140000)
                     .gasUnitPrice(0)
-                    .senderAccount(AccountAddress.ofPublicKey(publicKeySource))
+                    .senderAccount(AccountAddress.fromPublicKey(publicKeySource))
                     .expirationTime(Instant.now().getEpochSecond() + 60)
                     .payload(ImmutableScript.builder()
                             .code(Move.peerToPeerTransferAsBytes())
@@ -120,7 +119,7 @@ public class AsyncTransferExample {
                                 .address(target)
                                 .build(),
                         ImmutableGetAccountState.builder()
-                                .address(AccountAddress.ofByteSequence(source))
+                                .address(source)
                                 .build()))
                 .build();
 

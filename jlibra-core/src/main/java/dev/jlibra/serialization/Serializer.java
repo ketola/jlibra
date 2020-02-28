@@ -65,7 +65,7 @@ public class Serializer {
         return new Serializer(newBytes);
     }
 
-    public ByteSequence toByteSequence() {
-        return ByteSequence.from(bytes);
+    public ByteArray toByteArray() {
+        return ByteArray.from(bytes);
     }
 }

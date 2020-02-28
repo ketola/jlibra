@@ -14,7 +14,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
@@ -31,7 +30,6 @@ import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
-import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -68,7 +66,7 @@ public class KeyRotationExample {
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
-        AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
+        AccountAddress addressOriginal = AccountAddress.fromPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
         ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
@@ -152,17 +150,16 @@ public class KeyRotationExample {
     }
 
     private static SubmitTransactionResult rotateAuthenticationKey(BCEdDSAPrivateKey privateKey,
-            BCEdDSAPublicKey publicKey, ByteSequence address, BCEdDSAPublicKey publicKeyNew,
+            BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, AdmissionControl admissionControl) throws LibraTransactionException {
 
-        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
-                KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKeyNew.getEncoded())));
+        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(AccountAddress.fromPublicKey(publicKeyNew));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(140000)
                 .gasUnitPrice(0)
-                .senderAccount(AccountAddress.ofByteSequence(address))
+                .senderAccount(address)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.rotateAuthenticationKeyAsBytes())

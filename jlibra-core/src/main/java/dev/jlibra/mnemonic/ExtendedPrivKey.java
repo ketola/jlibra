@@ -16,9 +16,9 @@ import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.serialization.ByteSequence;
 
 @Immutable
 public class ExtendedPrivKey {
@@ -40,8 +40,7 @@ public class ExtendedPrivKey {
         }
     }
 
-    public String getAddress() {
-        ByteSequence publicKeyBytes = ByteSequence.from(publicKey.getEncoded());
-        return KeyUtils.toByteSequenceLibraAddress(publicKeyBytes).toString();
+    public AccountAddress getAddress() {
+        return AccountAddress.fromPublicKey(publicKey);
     }
 }
