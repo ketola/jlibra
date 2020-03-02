@@ -1,8 +1,9 @@
 package dev.jlibra.admissioncontrol.transaction;
 
 import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS;
 
+@LCS.ExternallyTaggedEnumeration(dev.jlibra.serialization.lcs.type.TransactionArgument.ByteArray)
 public class ByteArrayArgument implements TransactionArgument {
 
     public static final int PREFIX = 2;
@@ -13,11 +14,9 @@ public class ByteArrayArgument implements TransactionArgument {
         this.bytes = bytes;
     }
 
-    @Override
-    public ByteSequence serialize() {
-        return Serializer.builder()
-                .appendInt(PREFIX)
-                .append(bytes)
-                .toByteSequence();
+    @LCS.Field(0)
+    public ByteSequence getValue() {
+        return bytes;
     }
+
 }

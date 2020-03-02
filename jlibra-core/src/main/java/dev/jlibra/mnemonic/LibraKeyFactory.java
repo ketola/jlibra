@@ -10,7 +10,7 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.HKDFParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 
 public class LibraKeyFactory {
 
@@ -42,11 +42,12 @@ public class LibraKeyFactory {
         hkdf.init(HKDFParameters.skipExtractParameters(master.getData(), info));
         hkdf.generateBytes(secretKey, 0, 32);
 
-        return new ExtendedPrivKey(new SecretKey(ByteSequence.from(secretKey)));
+        return new ExtendedPrivKey(new SecretKey(ByteArray.from(secretKey)));
     }
 
     /**
-     * application info in the HKDF context is defined as Libra derived key$child_number.
+     * application info in the HKDF context is defined as Libra derived
+     * key$child_number.
      */
     private byte[] createInfo(ChildNumber childNumber) {
         return ByteBuffer.allocate(INFO_PREFIX.length + 8)

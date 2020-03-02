@@ -6,26 +6,20 @@ import org.immutables.value.Value;
 
 import dev.jlibra.Hash;
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.LibraSerializable;
-import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.serialization.lcs.LCSSerializer;
 
 @Value.Immutable
-public abstract class Signature implements LibraSerializable {
+@LCS.Structure
+public interface Signature {
 
-    public abstract Transaction getTransaction();
+    @LCS.Field(0)
+    ByteSequence getSignature();
 
-    public abstract PrivateKey getPrivateKey();
-
-    @Override
-    public ByteSequence serialize() {
-        return Serializer.builder()
-                .append(signTransaction(getTransaction(), getPrivateKey()))
-                .toByteSequence();
-    }
-
-    protected ByteSequence signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteSequence transactionBytes = transaction.serialize();
+    public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
+        ByteArray transactionBytes = LCSSerializer.create().serialize(transaction, Transaction.class);
 
         byte[] signature;
 
@@ -33,14 +27,16 @@ public abstract class Signature implements LibraSerializable {
             java.security.Signature sgr = java.security.Signature.getInstance("Ed25519", "BC");
             sgr.initSign(privateKey);
             sgr.update(Hash.ofInput(transactionBytes)
-                    .hash(ByteSequence.from("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes()))
+                    .hash(ByteArray.from("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes()))
                     .toArray());
             signature = sgr.sign();
         } catch (Exception e) {
             throw new LibraRuntimeException("Signing the transaction failed", e);
         }
 
-        return ByteSequence.from(signature);
+        return ImmutableSignature.builder()
+                .signature(ByteArray.from(signature))
+                .build();
     }
 
 }

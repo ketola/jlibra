@@ -1,7 +1,7 @@
 package dev.jlibra.admissioncontrol.query;
 
 import static dev.jlibra.serialization.Deserialization.readBoolean;
-import static dev.jlibra.serialization.Deserialization.readByteSequence;
+import static dev.jlibra.serialization.Deserialization.readByteArray;
 import static dev.jlibra.serialization.Deserialization.readInt;
 import static dev.jlibra.serialization.Deserialization.readLong;
 
@@ -35,9 +35,10 @@ public interface AccountResource {
     boolean getDelegatedKeyRotationCapability();
 
     static AccountResource deserialize(ByteSequence byteSequence) {
-        try (DataInputStream accountDataStream = new DataInputStream(new ByteArrayInputStream(byteSequence.toArray()))) {
+        try (DataInputStream accountDataStream = new DataInputStream(
+                new ByteArrayInputStream(byteSequence.toArray()))) {
             int addressLength = readInt(accountDataStream, 4);
-            ByteSequence address = readByteSequence(accountDataStream, addressLength);
+            ByteSequence address = readByteArray(accountDataStream, addressLength);
             long balance = readLong(accountDataStream, 8);
             boolean delegatedKeyRotationCapability = readBoolean(accountDataStream);
             boolean delegatedWithdrawalCapability = readBoolean(accountDataStream);
@@ -47,14 +48,14 @@ public interface AccountResource {
             readInt(accountDataStream, 4);
             EventHandle receivedEvents = ImmutableEventHandle.builder()
                     .count(receivedEventsCount)
-                    .key(readByteSequence(accountDataStream, readInt(accountDataStream, 4)))
+                    .key(readByteArray(accountDataStream, readInt(accountDataStream, 4)))
                     .build();
 
             int sentEventsCount = readInt(accountDataStream, 4);
             // skip struct attribute sequence number
             readInt(accountDataStream, 4);
             EventHandle sentEvents = ImmutableEventHandle.builder()
-                    .key(readByteSequence(accountDataStream, readInt(accountDataStream, 4)))
+                    .key(readByteArray(accountDataStream, readInt(accountDataStream, 4)))
                     .count(sentEventsCount)
                     .build();
 
@@ -81,9 +82,9 @@ public interface AccountResource {
 
         for (int i = 0; i < dataSize; i++) {
             int keyLength = readInt(in, 4);
-            ByteSequence keyValue = readByteSequence(in, keyLength);
+            ByteSequence keyValue = readByteArray(in, keyLength);
             int valLength = readInt(in, 4);
-            ByteSequence val = readByteSequence(in, valLength);
+            ByteSequence val = readByteArray(in, valLength);
             accountResources.add(AccountResource.deserialize(val));
         }
 

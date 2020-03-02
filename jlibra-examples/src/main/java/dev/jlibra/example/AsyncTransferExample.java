@@ -17,15 +17,16 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -55,12 +56,12 @@ public class AsyncTransferExample {
         KeyPair keyPairSource = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
-        AccountAddress source = AccountAddress.ofPublicKey(publicKeySource);
+        AccountAddress source = AccountAddress.fromPublicKey(publicKeySource);
         ExampleUtils.mint(source, 20L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
-        AccountAddress target = AccountAddress.ofPublicKey(publicKeyTarget);
+        AccountAddress target = AccountAddress.fromPublicKey(publicKeyTarget);
 
         // sleep for 1 sec to make sure the minted money is available in the account.
         // Sometimes the faucet api is working slowly and you might need to increase the
@@ -77,12 +78,13 @@ public class AsyncTransferExample {
         logger.info("Start creating transactions..");
         for (int i = 0; i < 10; i++) {
             U64Argument amountArgument = new U64Argument(1_000_000);
-            AccountAddressArgument addressArgument = new AccountAddressArgument(target.getByteSequence());
+            AccountAddressArgument addressArgument = new AccountAddressArgument(
+                    target);
             Transaction transaction = ImmutableTransaction.builder()
                     .sequenceNumber(i)
                     .maxGasAmount(140000)
                     .gasUnitPrice(0)
-                    .senderAccount(AccountAddress.ofPublicKey(publicKeySource))
+                    .senderAccount(AccountAddress.fromPublicKey(publicKeySource))
                     .expirationTime(Instant.now().getEpochSecond() + 60)
                     .payload(ImmutableScript.builder()
                             .code(Move.peerToPeerTransferAsBytes())
@@ -90,17 +92,14 @@ public class AsyncTransferExample {
                             .build())
                     .build();
             SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                    .publicKey(publicKeySource)
+                    .publicKey(PublicKey.fromPublicKey(publicKeySource))
                     .transaction(transaction)
-                    .signature(ImmutableSignature.builder()
-                            .privateKey(privateKeySource)
-                            .transaction(transaction)
-                            .build())
+                    .signature(Signature.signTransaction(transaction, privateKeySource))
                     .build();
             transactions.add(admissionControl
                     .asyncSubmitTransaction(signedTransaction));
-            logger.info("Created transaction {}, sending 1 libra from {} to {}", i, source.getByteSequence(),
-                    target.getByteSequence());
+            logger.info("Created transaction {}, sending 1 libra from {} to {}", i, source,
+                    target);
         }
 
         logger.info("All transactions created. Wait for them to be accepted..");

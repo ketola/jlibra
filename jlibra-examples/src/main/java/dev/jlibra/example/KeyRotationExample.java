@@ -14,23 +14,22 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.KeyUtils;
+import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
 import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignature;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
 import dev.jlibra.move.Move;
-import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -67,7 +66,7 @@ public class KeyRotationExample {
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
-        AccountAddress addressOriginal = AccountAddress.ofPublicKey(publicKeyOriginal);
+        AccountAddress addressOriginal = AccountAddress.fromPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
         ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
         Thread.sleep(500);
@@ -154,8 +153,7 @@ public class KeyRotationExample {
             BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, AdmissionControl admissionControl) throws LibraTransactionException {
 
-        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(
-                KeyUtils.toByteSequenceLibraAddress(ByteSequence.from(publicKeyNew.getEncoded())));
+        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(AccountAddress.fromPublicKey(publicKeyNew));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -170,12 +168,9 @@ public class KeyRotationExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(publicKey)
+                .publicKey(PublicKey.fromPublicKey(publicKey))
                 .transaction(transaction)
-                .signature(ImmutableSignature.builder()
-                        .privateKey(privateKey)
-                        .transaction(transaction)
-                        .build())
+                .signature(Signature.signTransaction(transaction, privateKey))
                 .build();
 
         return admissionControl.submitTransaction(signedTransaction);

@@ -4,11 +4,6 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
-import java.util.List;
-
-import dev.jlibra.KeyUtils;
-import dev.jlibra.admissioncontrol.transaction.TransactionArgument;
 
 public class Serializer {
 
@@ -31,20 +26,8 @@ public class Serializer {
                 .append(byteArray);
     }
 
-    public Serializer appendPublicKey(PublicKey pubKey) {
-        return append(KeyUtils.stripPublicKeyPrefix(ByteSequence.from(pubKey.getEncoded())));
-    }
-
-    public Serializer appendWithoutLengthInformation(ByteSequence byteSequence) {
+    public Serializer appendFixedLength(ByteSequence byteSequence) {
         return append(byteSequence.toArray());
-    }
-
-    public Serializer appendTransactionArguments(List<TransactionArgument> transactionArguments) {
-        Serializer serializer = append(intToByteArray(transactionArguments.size()));
-        for (TransactionArgument arg : transactionArguments) {
-            serializer = serializer.append(arg.serialize().toArray());
-        }
-        return serializer;
     }
 
     public Serializer appendString(String str) {
@@ -61,10 +44,6 @@ public class Serializer {
 
     public Serializer appendByte(byte i) {
         return append(new byte[] { i });
-    }
-
-    public Serializer appendSerializable(LibraSerializable serializable) {
-        return append(serializable.serialize().toArray());
     }
 
     private static byte[] intToByteArray(int i) {
@@ -86,7 +65,7 @@ public class Serializer {
         return new Serializer(newBytes);
     }
 
-    public ByteSequence toByteSequence() {
-        return ByteSequence.from(bytes);
+    public ByteArray toByteArray() {
+        return ByteArray.from(bytes);
     }
 }

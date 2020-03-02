@@ -18,7 +18,7 @@ public abstract class GetAccountTransactionBySequenceNumber {
     public RequestItem toGrpcObject() {
         GetAccountTransactionBySequenceNumberRequest getAccountTransactionBySequenceNumberRequest = GetAccountTransactionBySequenceNumberRequest
                 .newBuilder()
-                .setAccount(getAccountAddress().getByteSequence().toByteString())
+                .setAccount(getAccountAddress().toByteString())
                 .setSequenceNumber(getSequenceNumber())
                 .setFetchEvents(getFetchEvents())
                 .build();

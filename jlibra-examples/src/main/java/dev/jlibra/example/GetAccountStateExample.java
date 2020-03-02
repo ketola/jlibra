@@ -12,7 +12,6 @@ import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
 import dev.jlibra.admissioncontrol.query.ImmutableQuery;
 import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import dev.jlibra.serialization.ByteSequence;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -21,7 +20,7 @@ public class GetAccountStateExample {
     private static final Logger logger = LogManager.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "1b2d1a2b57704043fa1f97fcc08e268f45d1c5b9f7b43c481941c103b99d8ca5";
+        String address = "7448b4ebbd83ea973df911e458be81f36cdea018d1b3b19d92bbf05575259a0b";
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
@@ -34,7 +33,7 @@ public class GetAccountStateExample {
                         ImmutableQuery.builder()
                                 .accountStateQueries(asList(
                                         ImmutableGetAccountState.builder()
-                                                .address(AccountAddress.ofByteSequence(ByteSequence.from(address)))
+                                                .address(AccountAddress.fromHexString(address))
                                                 .build()))
                                 .build());
 

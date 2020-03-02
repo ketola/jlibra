@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
 /**
@@ -23,7 +24,7 @@ public abstract class SubmitTransactionResult {
         case AC_STATUS: {
             if (response.getAcStatus().getCode() == AdmissionControlStatusCode.Accepted) {
                 return ImmutableSubmitTransactionResult.builder()
-                        .validatorId(ByteSequence.from(response.getValidatorId().toByteArray()))
+                        .validatorId(ByteArray.from(response.getValidatorId().toByteArray()))
                         .build();
             }
             throw new LibraAdmissionControlException(response.getAcStatus().getCode(),

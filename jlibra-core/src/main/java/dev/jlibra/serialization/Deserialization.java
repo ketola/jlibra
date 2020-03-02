@@ -24,8 +24,8 @@ public class Deserialization {
         return data[0] == 1;
     }
 
-    public static ByteSequence readByteSequence(InputStream in, int len) {
-        return ByteSequence.from(readBytes(in, len));
+    public static ByteArray readByteArray(InputStream in, int len) {
+        return ByteArray.from(readBytes(in, len));
     }
 
     private static byte[] readBytes(InputStream in, int len) {
