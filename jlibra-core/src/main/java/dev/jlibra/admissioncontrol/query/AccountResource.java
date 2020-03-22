@@ -14,13 +14,14 @@ import java.util.List;
 import org.immutables.value.Value;
 
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
 
 @Value.Immutable
 public interface AccountResource {
 
-    ByteSequence getAuthenticationKey();
+    ByteArray getAuthenticationKey();
 
     long getBalanceInMicroLibras();
 
@@ -38,7 +39,7 @@ public interface AccountResource {
         try (DataInputStream accountDataStream = new DataInputStream(
                 new ByteArrayInputStream(byteSequence.toArray()))) {
             int addressLength = readInt(accountDataStream, 4);
-            ByteSequence address = readByteArray(accountDataStream, addressLength);
+            ByteArray address = readByteArray(accountDataStream, addressLength);
             long balance = readLong(accountDataStream, 8);
             boolean delegatedKeyRotationCapability = readBoolean(accountDataStream);
             boolean delegatedWithdrawalCapability = readBoolean(accountDataStream);

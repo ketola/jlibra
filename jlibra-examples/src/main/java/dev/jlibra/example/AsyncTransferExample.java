@@ -31,6 +31,10 @@ import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
+import dev.jlibra.example.util.ExampleUtils;
+import dev.jlibra.example.wait.Wait;
+import dev.jlibra.example.wait.condition.Account;
+import dev.jlibra.example.wait.condition.Transactions;
 import dev.jlibra.move.Move;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -63,17 +67,15 @@ public class AsyncTransferExample {
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
         AccountAddress target = AccountAddress.fromPublicKey(publicKeyTarget);
 
-        // sleep for 1 sec to make sure the minted money is available in the account.
-        // Sometimes the faucet api is working slowly and you might need to increase the
-        // time.
-        Thread.sleep(1000);
-
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()
                 .build();
         AdmissionControl admissionControl = new AdmissionControl(channel);
 
-        List<CompletableFuture<SubmitTransactionResult>> transactions = new ArrayList<>();
+        Wait.until(Account.exists(admissionControl, source));
+
+        List<Transaction> transactions = new ArrayList<>();
+        List<CompletableFuture<SubmitTransactionResult>> transactionResults = new ArrayList<>();
 
         logger.info("Start creating transactions..");
         for (int i = 0; i < 10; i++) {
@@ -96,22 +98,21 @@ public class AsyncTransferExample {
                     .transaction(transaction)
                     .signature(Signature.signTransaction(transaction, privateKeySource))
                     .build();
-            transactions.add(admissionControl
+            transactions.add(transaction);
+            transactionResults.add(admissionControl
                     .asyncSubmitTransaction(signedTransaction));
             logger.info("Created transaction {}, sending 1 libra from {} to {}", i, source,
                     target);
         }
 
         logger.info("All transactions created. Wait for them to be accepted..");
+
         long time = System.currentTimeMillis();
-        CompletableFuture.allOf(transactions.toArray(new CompletableFuture[transactions.size()])).get();
+        CompletableFuture.allOf(transactionResults.toArray(new CompletableFuture[transactionResults.size()])).get();
         logger.info("Transactions accepted in {} ms, get account states (both accounts should have 10 Libras): ",
                 System.currentTimeMillis() - time);
 
-        // sleep to make sure the transactions have been executed (submitting them
-        // successfully only means they are accepted for execution). The correct way
-        // would be to poll the api to make sure the transactions have been executed.
-        Thread.sleep(2000);
+        Wait.until(Transactions.executed(transactions, admissionControl));
 
         ImmutableQuery accountStatesQuery = ImmutableQuery.builder()
                 .accountStateQueries(asList(
@@ -136,7 +137,7 @@ public class AsyncTransferExample {
                     logger.info("Sequence number: {}", accountResource.getSequenceNumber());
                 }));
 
-        Thread.sleep(3000); // add sleep to prevent premature closing of channel
         channel.shutdown();
+        Thread.sleep(3000);// add sleep to prevent premature closing of channel
     }
 }

@@ -29,7 +29,11 @@ import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
+import dev.jlibra.example.util.ExampleUtils;
+import dev.jlibra.example.wait.Wait;
+import dev.jlibra.example.wait.condition.Account;
 import dev.jlibra.move.Move;
+import dev.jlibra.serialization.ByteArray;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -69,7 +73,7 @@ public class KeyRotationExample {
         AccountAddress addressOriginal = AccountAddress.fromPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
         ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
-        Thread.sleep(500);
+        Wait.until(Account.exists(admissionControl, addressOriginal));
 
         /*
          * Get the account state to verify that the account exists and the coins were
@@ -101,7 +105,7 @@ public class KeyRotationExample {
          * but the authentication key has changed.
          */
         ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
-        Thread.sleep(500);
+        Wait.until(Account.containsAtLeast(15, addressOriginal, admissionControl));
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the account");
         getAccountState(addressOriginal, admissionControl);
@@ -137,6 +141,9 @@ public class KeyRotationExample {
         logger.info("Result: {}", result);
         logger.info("This succeeded because now the updated keys were used.");
         Thread.sleep(500);
+        Wait.until(
+                Account.authenticationKeyEquals(ByteArray.from(AccountAddress.fromPublicKey(publicKeyNew2).toArray()),
+                        addressOriginal, admissionControl));
 
         /*
          * Get the account state to verify that the authentication key was changed.

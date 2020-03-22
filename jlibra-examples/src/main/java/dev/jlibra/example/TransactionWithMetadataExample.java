@@ -29,6 +29,10 @@ import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.admissioncontrol.transaction.result.SubmitTransactionResult;
+import dev.jlibra.example.util.ExampleUtils;
+import dev.jlibra.example.wait.Wait;
+import dev.jlibra.example.wait.condition.Account;
+import dev.jlibra.example.wait.condition.Transactions;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteArray;
 import io.grpc.ManagedChannel;
@@ -67,11 +71,6 @@ public class TransactionWithMetadataExample {
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
         AccountAddress target = AccountAddress.fromPublicKey(publicKeyTarget);
 
-        // sleep for 1 sec to make sure the minted money is available in the account.
-        // Sometimes the faucet api is working slowly and you might need to increase the
-        // time.
-        Thread.sleep(1000);
-
         logger.info("Sending from {} to {}", source, target);
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
@@ -79,6 +78,7 @@ public class TransactionWithMetadataExample {
                 .build();
 
         AdmissionControl admissionControl = new AdmissionControl(channel);
+        Wait.until(Account.exists(admissionControl, source));
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(1_000_000);
@@ -89,7 +89,7 @@ public class TransactionWithMetadataExample {
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(0)
-                .maxGasAmount(140000)
+                .maxGasAmount(400000)
                 .gasUnitPrice(0)
                 .senderAccount(AccountAddress.fromPublicKey(publicKeySource))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
@@ -109,7 +109,7 @@ public class TransactionWithMetadataExample {
 
         logger.info("Transaction sent. Result: {}", result);
 
-        Thread.sleep(2000);
+        Wait.until(Transactions.executed(asList(transaction), admissionControl));
 
         logger.info("Read the transaction information..");
 
@@ -118,6 +118,7 @@ public class TransactionWithMetadataExample {
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
                                 .accountAddress(source)
                                 .sequenceNumber(0)
+                                .fetchEvents(true)
                                 .build()))
                 .build());
 
