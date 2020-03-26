@@ -6,6 +6,8 @@ A Java library for building applications on [Libra](https://libra.org/)
 
 ![Overview](docs/img/jlibra.png)
 
+**The Libra Testnet has been deployed with new breaking changes. https://community.libra.org/t/testnet-push-announcement-for-3-25/2663**
+
 The API for creating transactions and querying the database of Libra uses [gRPC](https://grpc.io/) - a high performance remote procedure call system utilizing [HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/) for transport and [Protocol Buffers](https://developers.google.com/protocol-buffers/) for data serialization. 
 
 gRPC is designed to be usable from several platforms, but using the gRPC api directly from an application would not be optimal and would result in lots of boiler plate code - and that's where JLibra shows it's power for Java application developers.
