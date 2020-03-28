@@ -14,6 +14,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.AuthenticationKey;
 import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountTransactionBySequenceNumber;
@@ -61,7 +62,7 @@ public class TransactionWithMetadataExample {
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
         AccountAddress source = AccountAddress.fromPublicKey(publicKeySource);
-        ExampleUtils.mint(source, 10L * 1_000_000L);
+        ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeySource), 10L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();

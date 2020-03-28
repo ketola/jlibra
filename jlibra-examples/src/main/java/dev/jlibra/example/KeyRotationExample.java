@@ -14,6 +14,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.AuthenticationKey;
 import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
@@ -23,8 +24,10 @@ import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticator;
 import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
+import dev.jlibra.admissioncontrol.transaction.StructTag;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
@@ -68,7 +71,7 @@ public class KeyRotationExample {
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
         AccountAddress addressOriginal = AccountAddress.fromPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
-        ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
+        ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeyOriginal), 10L * 1_000_000L);
         Thread.sleep(500);
 
         /*
@@ -77,7 +80,7 @@ public class KeyRotationExample {
          */
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the new account");
-        getAccountState(addressOriginal, admissionControl);
+        // getAccountState(addressOriginal, admissionControl);
         logger.info(
                 "-----------------------------------------------------------------------------------------------\n");
         /*
@@ -100,7 +103,7 @@ public class KeyRotationExample {
          * Add some coins to the account to verify that the address is still the same
          * but the authentication key has changed.
          */
-        ExampleUtils.mint(addressOriginal, 10L * 1_000_000L);
+        ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeyOriginal), 10L * 1_000_000L);
         Thread.sleep(500);
         logger.info("-----------------------------------------------------------------------------------------------");
         logger.info("Get the account state for the account");
@@ -160,6 +163,7 @@ public class KeyRotationExample {
                 .maxGasAmount(140000)
                 .gasUnitPrice(0)
                 .senderAccount(address)
+                .gasSpecifier(new StructTag())
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.rotateAuthenticationKeyAsBytes())
@@ -168,9 +172,13 @@ public class KeyRotationExample {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(PublicKey.fromPublicKey(publicKey))
+                .authenticator(ImmutableTransactionAuthenticator.builder()
+                        .publicKey(PublicKey.fromPublicKey(publicKey))
+                        .signature(Signature.signTransaction(transaction, privateKey))
+                        .build())
+
                 .transaction(transaction)
-                .signature(Signature.signTransaction(transaction, privateKey))
+
                 .build();
 
         return admissionControl.submitTransaction(signedTransaction);

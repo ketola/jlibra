@@ -3,7 +3,6 @@ package dev.jlibra.admissioncontrol.transaction;
 import org.immutables.value.Value;
 
 import admission_control.AdmissionControlOuterClass.SubmitTransactionRequest;
-import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.lcs.LCS;
 import dev.jlibra.serialization.lcs.LCSSerializer;
 
@@ -15,10 +14,7 @@ public abstract class SignedTransaction {
     public abstract Transaction getTransaction();
 
     @LCS.Field(1)
-    public abstract ByteSequence getPublicKey();
-
-    @LCS.Field(2)
-    public abstract Signature getSignature();
+    public abstract TransactionAuthenticator getAuthenticator();
 
     public SubmitTransactionRequest toGrpcObject() {
         types.TransactionOuterClass.SignedTransaction signedTransaction = types.TransactionOuterClass.SignedTransaction

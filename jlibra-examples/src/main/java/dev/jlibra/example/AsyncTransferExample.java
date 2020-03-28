@@ -17,6 +17,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.AuthenticationKey;
 import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.AdmissionControl;
 import dev.jlibra.admissioncontrol.query.ImmutableGetAccountState;
@@ -57,7 +58,7 @@ public class AsyncTransferExample {
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
         AccountAddress source = AccountAddress.fromPublicKey(publicKeySource);
-        ExampleUtils.mint(source, 20L * 1_000_000L);
+        ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeySource), 20L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();

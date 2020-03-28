@@ -14,6 +14,7 @@ import org.immutables.value.Value;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.serialization.Serializer;
 import dev.jlibra.serialization.lcs.LCS;
 import dev.jlibra.serialization.lcs.type.TransactionPayload;
 
@@ -22,22 +23,25 @@ import dev.jlibra.serialization.lcs.type.TransactionPayload;
 public interface Transaction {
 
     @LCS.Field(value = 0, fixedLength = true)
-    public abstract AccountAddress getSenderAccount();
+    AccountAddress getSenderAccount();
 
     @LCS.Field(1)
-    public abstract long getSequenceNumber();
+    long getSequenceNumber();
 
     @LCS.Field(2)
-    public abstract Script getPayload();
+    Script getPayload();
 
     @LCS.Field(3)
-    public abstract long getMaxGasAmount();
+    long getMaxGasAmount();
 
     @LCS.Field(4)
-    public abstract long getGasUnitPrice();
+    long getGasUnitPrice();
 
     @LCS.Field(5)
-    public abstract long getExpirationTime();
+    StructTag getGasSpecifier();
+
+    @LCS.Field(6)
+    long getExpirationTime();
 
     public static Transaction fromGrpcObject(types.TransactionOuterClass.Transaction grpcTransaction) {
         byte[] bytes = grpcTransaction.getTransaction().toByteArray();
@@ -79,7 +83,7 @@ public interface Transaction {
         long expirationTime = readLong(in, 8);
 
         return ImmutableTransaction.builder()
-                .senderAccount(AccountAddress.fromByteArray(senderAccount))
+                // .senderAccount(AccountAddress.fromByteArray(senderAccount))
                 .sequenceNumber(sequenceNumber)
                 .payload(ImmutableScript.builder()
                         .code(code)
@@ -89,6 +93,21 @@ public interface Transaction {
                 .gasUnitPrice(gasUnitPrice)
                 .maxGasAmount(maxGasAmount)
                 .build();
+    }
+
+    public static final int STRUCT_TAG_TYPE_PARAMS_LENGTH = 0;
+    public static final String STRUCT_TAG_MODULE = "T";
+    public static final String STRUCT_TAG_ADDRESS = "LBR";
+    public static final String STRUCT_TAG_ACCOUNT_ADDRESS = "0000000000000000000000000000000000000000000000000000000000000000";
+    public static final byte RESOURCE_TAG = 1;
+
+    public static void ss() {
+        ByteArray serializedStructTag = Serializer.builder()
+                .appendFixedLength(ByteArray.from(STRUCT_TAG_ACCOUNT_ADDRESS))
+                .appendString(STRUCT_TAG_ADDRESS)
+                .appendString(STRUCT_TAG_MODULE)
+                .appendInt(STRUCT_TAG_TYPE_PARAMS_LENGTH)
+                .toByteArray();
     }
 
 }

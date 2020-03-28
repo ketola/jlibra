@@ -16,8 +16,13 @@ public class AccountAddress implements ByteSequence {
     }
 
     public static AccountAddress fromPublicKey(PublicKey publicKey) {
+        ByteArray encoded = ByteArray.from(publicKey.getEncoded());
+        ByteArray pubkey = KeyUtils.stripPublicKeyPrefix(encoded);
+        ByteArray hash = Hash.ofInput(pubkey).hash();
+        ByteArray subseq = hash.subseq(16,
+                16);
         return new AccountAddress(
-                Hash.ofInput(KeyUtils.stripPublicKeyPrefix(ByteArray.from(publicKey.getEncoded()))).hash());
+                subseq);
     }
 
     public static AccountAddress fromByteArray(ByteArray bytes) {

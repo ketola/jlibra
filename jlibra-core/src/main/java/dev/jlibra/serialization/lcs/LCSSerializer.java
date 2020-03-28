@@ -45,6 +45,12 @@ public class LCSSerializer {
             } else if (returnType.equals(long.class)) {
                 long value = (long) invokeMethod(serializable, m);
                 s = s.appendLong(value);
+            } else if (returnType.equals(int.class)) {
+                int value = (int) invokeMethod(serializable, m);
+                s = s.appendLong(value);
+            } else if (returnType.equals(String.class)) {
+                String value = (String) invokeMethod(serializable, m);
+                s = s.appendString(value);
             } else if (ByteSequence.class.isAssignableFrom(returnType)) {
                 if (m.getAnnotation(LCS.Field.class).fixedLength()) {
                     s = s.appendFixedLength((ByteSequence) invokeMethod(serializable, m));

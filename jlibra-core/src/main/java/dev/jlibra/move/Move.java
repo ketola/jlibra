@@ -15,11 +15,11 @@ public class Move {
     }
 
     public static ByteSequence peerToPeerTransferAsBytes() {
-        return readMoveScriptBytes("/move/peer_to_peer_transfer.mv");
+        return readMoveScriptBytes("/move/peer_to_peer.mv");
     }
 
     public static ByteSequence peerToPeerTransferWithMetadataAsBytes() {
-        return readMoveScriptBytes("/move/peer_to_peer_transfer_with_metadata.mv");
+        return readMoveScriptBytes("/move/peer_to_peer_with_metadata.mv");
     }
 
     private static ByteSequence readMoveScriptBytes(String fileName) {

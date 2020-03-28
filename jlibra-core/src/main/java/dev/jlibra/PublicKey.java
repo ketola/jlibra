@@ -7,6 +7,8 @@ import dev.jlibra.serialization.ByteSequence;
 
 public class PublicKey implements ByteSequence {
 
+    public static int PUBLIC_KEY_LENGTH = 32;
+
     private ByteArray bytes;
 
     private PublicKey(ByteArray bytes) {
