@@ -1,9 +1,5 @@
 package dev.jlibra;
 
-import java.security.PublicKey;
-
-import com.google.protobuf.ByteString;
-
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
@@ -15,9 +11,9 @@ public class AccountAddress implements ByteSequence {
         this.bytes = bytes;
     }
 
-    public static AccountAddress fromPublicKey(PublicKey publicKey) {
+    public static AccountAddress fromAuthenticationKey(AuthenticationKey authenticationKey) {
         return new AccountAddress(
-                Hash.ofInput(KeyUtils.stripPublicKeyPrefix(ByteArray.from(publicKey.getEncoded()))).hash());
+                authenticationKey.toByteArray().subseq(16, 16));
     }
 
     public static AccountAddress fromByteArray(ByteArray bytes) {
@@ -31,11 +27,6 @@ public class AccountAddress implements ByteSequence {
     @Override
     public byte[] toArray() {
         return bytes.toArray();
-    }
-
-    @Override
-    public ByteString toByteString() {
-        return bytes.toByteString();
     }
 
     @Override

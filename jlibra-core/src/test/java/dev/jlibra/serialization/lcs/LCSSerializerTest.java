@@ -24,21 +24,21 @@ public class LCSSerializerTest {
                 .maxGasAmount(2)
                 .payload(ImmutableScript.builder()
                         .code(
-                                ByteArray.from("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"))
+                                ByteArray.from("00"))
                         .arguments(
                                 asList(new AccountAddressArgument(AccountAddress.fromByteArray(ByteArray.from(
                                         "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d")))))
                         .build())
                 .senderAccount(AccountAddress.fromByteArray(
                         ByteArray
-                                .from("8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d")))
+                                .from("4e03aec69589026b4a095c9cd2e53ca6")))
                 .sequenceNumber(3)
                 .build();
 
         ByteSequence bytes = LCSSerializer.create().serialize(transaction, Transaction.class);
 
         assertThat(bytes.toString(), Matchers.is(
-                "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d030000000000000002000000200000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d01000000010000008f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d020000000000000001000000000000000100000000000000"));
+                "4e03aec69589026b4a095c9cd2e53ca60300000000000000020100010600000000000000000000000000000000034c425201540001018f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d020000000000000001000000000000000100000000000000"));
 
     }
 

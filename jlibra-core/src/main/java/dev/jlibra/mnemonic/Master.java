@@ -1,13 +1,10 @@
 package dev.jlibra.mnemonic;
 
-import javax.annotation.concurrent.Immutable;
-
 import dev.jlibra.LibraRuntimeException;
 
 /**
  * Master is a set of raw bytes that are used for child key derivation
  */
-@Immutable
 public class Master {
 
     private byte[] data;

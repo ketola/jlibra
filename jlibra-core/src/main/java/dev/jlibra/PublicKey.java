@@ -1,11 +1,11 @@
 package dev.jlibra;
 
-import com.google.protobuf.ByteString;
-
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
 public class PublicKey implements ByteSequence {
+
+    public static int PUBLIC_KEY_LENGTH = 32;
 
     private ByteArray bytes;
 
@@ -25,10 +25,4 @@ public class PublicKey implements ByteSequence {
     public byte[] toArray() {
         return bytes.toArray();
     }
-
-    @Override
-    public ByteString toByteString() {
-        return bytes.toByteString();
-    }
-
 }

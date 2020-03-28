@@ -1,16 +1,13 @@
 package dev.jlibra.example;
 
-import static java.util.Arrays.asList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dev.jlibra.admissioncontrol.AdmissionControl;
-import dev.jlibra.admissioncontrol.query.ImmutableGetTransactions;
-import dev.jlibra.admissioncontrol.query.ImmutableQuery;
-import dev.jlibra.admissioncontrol.query.UpdateToLatestLedgerResult;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import dev.jlibra.client.LibraJsonRpcClient;
+import dev.jlibra.client.LibraJsonRpcClientBuilder;
+import dev.jlibra.client.views.Transaction;
 
 /**
  * The GetTransactions query allows you to query transaction based on the
@@ -23,41 +20,18 @@ public class GetTransactionsExample {
     private static final Logger logger = LogManager.getLogger(GetTransactionsExample.class);
 
     public static void main(String[] args) {
-        long start = 14980115;
-        long limit = 1;
+        long start = 15134650;
+        long limit = 20;
         boolean fetchEvent = true;
 
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
-                .usePlaintext()
+        LibraJsonRpcClient client = LibraJsonRpcClientBuilder.builder()
+                .withUrl("http://client.testnet.libra.org/")
                 .build();
 
-        AdmissionControl admissionControl = new AdmissionControl(channel);
+        List<Transaction> transactions = client.getTransactions(start, limit, fetchEvent);
 
-        UpdateToLatestLedgerResult result = admissionControl.updateToLatestLedger(ImmutableQuery.builder()
-                .transactionsQueries(
-                        asList(ImmutableGetTransactions.builder()
-                                .startVersion(start)
-                                .limit(limit)
-                                .fetchEvents(fetchEvent)
-                                .build()))
-                .build());
-
-        result.getTransactionsQueryResults().forEach(txList -> {
-            logger.info("Transactions: ");
-            txList.getTransactions().forEach(tx -> {
-                logger.info(tx);
-            });
-
-            logger.info("Events: ");
-            txList.getEvents()
-                    .forEach(e -> logger.info("{}: Sequence number: {},key:{} Amount: {}, Metadata: {}",
-                            e.getAccountAddress(),
-                            e.getSequenceNumber(),
-                            e.getKey(),
-                            e.getAmount(),
-                            e.getMetadata().orElse(null)));
+        transactions.forEach(t -> {
+            logger.info(t);
         });
-
-        channel.shutdown();
     }
 }
