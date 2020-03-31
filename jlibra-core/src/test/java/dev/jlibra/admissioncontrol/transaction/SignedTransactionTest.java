@@ -45,15 +45,18 @@ public class SignedTransactionTest {
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                .publicKey(PUBLIC_KEY_HEX)
-                .signature(Signature.signTransaction(transaction, KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX)))
+                .authenticator(ImmutableTransactionAuthenticator.builder()
+                        .publicKey(PUBLIC_KEY_HEX)
+                        .signature(Signature.signTransaction(transaction,
+                                KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY_HEX)))
+                        .build())
                 .transaction(transaction)
                 .build();
 
         SubmitTransactionRequest request = signedTransaction.toGrpcObject();
 
         assertThat(Hex.toHexString(request.getTransaction().getTxnBytes().toByteArray()), is(
-                "0101000000000000000200000001000000010200000000000000e8030000000000000100000001701700000000000001000000000000000100000000000000200000000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021400000003bd4006c7af91bd529000c0c726b901a7afe0659206618a6f6d13784a1674bafc8a3bcebc888c52724af66d457c7135a478d176682f2424e9f01ff92e341480d"));
+                "0101000000000000000200000001000000010200000000000000e8030000000000000100000001701700000000000001000000000000000600000000000000000000000000000000000000030000004c4252010000005400000000010000000000000000000000200000000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021400000002dd9560ac445cf744080d3d53d76533ac317b427085b07992ca8211c9655a64290f1577d3f599a247b3ef82a5a826864683343eda1054e981060661ce4aac70f"));
     }
 
 }

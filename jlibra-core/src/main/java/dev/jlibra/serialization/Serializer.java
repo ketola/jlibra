@@ -42,8 +42,18 @@ public class Serializer {
         return append(intToByteArray(i));
     }
 
+    public Serializer appendShort(short i) {
+        return append(shortToByteArray(i));
+    }
+
     public Serializer appendByte(byte i) {
         return append(new byte[] { i });
+    }
+
+    private static byte[] shortToByteArray(short i) {
+        return ByteBuffer.allocate(Short.BYTES)
+                .order(LITTLE_ENDIAN).putShort(i)
+                .order(LITTLE_ENDIAN).array();
     }
 
     private static byte[] intToByteArray(int i) {

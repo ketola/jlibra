@@ -38,7 +38,9 @@ public interface Transaction {
     long getGasUnitPrice();
 
     @LCS.Field(5)
-    StructTag getGasSpecifier();
+    default LbrTypeTag getGasSpecifier() {
+        return new LbrTypeTag();
+    }
 
     @LCS.Field(6)
     long getExpirationTime();

@@ -25,20 +25,24 @@ public class MintExample {
     private static final Logger logger = LogManager.getLogger(MintExample.class);
 
     public static void main(String[] args) {
-        String authenticationKey = "784c1cf1a888d057f39a7db399949468a8fc5a96a1b219f4f4b7e2ac54a84d1800";
+        System.out.println("dsa");
+        String authenticationKey = "97784bdb5fde351a3fa8e400265989a34e03aec69589026b4a095c9cd2e53ca6";
         long amountInMicroLibras = 10L * 1_000_000L;
 
-        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
-                .queryString("amount", amountInMicroLibras)
-                .queryString("auth_key", authenticationKey)
-                .asString();
+        for (int i = 0; i <= 1; i++) {
+            HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
+                    .queryString("amount", amountInMicroLibras)
+                    .queryString("auth_key", authenticationKey)
+                    .asString();
 
-        if (response.getStatus() != 200) {
-            throw new IllegalStateException(
-                    format("Error in minting %d Libra for authentication key %s", amountInMicroLibras,
-                            authenticationKey));
+            if (response.getStatus() != 200) {
+                throw new IllegalStateException(
+                        format("Error in minting %d Libra for authentication key %s", amountInMicroLibras,
+                                authenticationKey));
+
+            }
+            logger.info(i + " " + response.getBody());
         }
 
-        logger.info(response.getBody());
     }
 }

@@ -27,7 +27,7 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticator;
 import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.StructTag;
+import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.result.LibraTransactionException;
 import dev.jlibra.admissioncontrol.transaction.result.LibraVirtualMachineException;
@@ -69,7 +69,7 @@ public class KeyRotationExample {
         KeyPair keyPairOriginal = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeyOriginal = (BCEdDSAPrivateKey) keyPairOriginal.getPrivate();
         BCEdDSAPublicKey publicKeyOriginal = (BCEdDSAPublicKey) keyPairOriginal.getPublic();
-        AccountAddress addressOriginal = AccountAddress.fromPublicKey(publicKeyOriginal);
+        AccountAddress addressOriginal = null;// AccountAddress.fromPublicKey(publicKeyOriginal);
         logger.info("Account address: {}", addressOriginal.toString());
         ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeyOriginal), 10L * 1_000_000L);
         Thread.sleep(500);
@@ -156,14 +156,15 @@ public class KeyRotationExample {
             BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, AdmissionControl admissionControl) throws LibraTransactionException {
 
-        ByteArrayArgument newPublicKeyArgument = new ByteArrayArgument(AccountAddress.fromPublicKey(publicKeyNew));
+        ByteArrayArgument newPublicKeyArgument = null;// new
+                                                      // ByteArrayArgument(AccountAddress.fromPublicKey(publicKeyNew));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(140000)
                 .gasUnitPrice(0)
                 .senderAccount(address)
-                .gasSpecifier(new StructTag())
+                .gasSpecifier(new LbrTypeTag())
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.rotateAuthenticationKeyAsBytes())

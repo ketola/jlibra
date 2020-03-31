@@ -17,6 +17,7 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraRuntimeException;
 
@@ -41,6 +42,6 @@ public class ExtendedPrivKey {
     }
 
     public AccountAddress getAddress() {
-        return AccountAddress.fromPublicKey(publicKey);
+        return AccountAddress.fromAuthenticationKey(AuthenticationKey.fromPublicKey(publicKey));
     }
 }

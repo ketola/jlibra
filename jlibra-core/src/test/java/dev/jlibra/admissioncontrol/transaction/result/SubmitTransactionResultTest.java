@@ -12,8 +12,7 @@ import admission_control.AdmissionControlOuterClass.AdmissionControlStatusCode;
 import admission_control.AdmissionControlOuterClass.SubmitTransactionResponse;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
-import mempool_status.MempoolStatus.MempoolAddTransactionStatus;
-import mempool_status.MempoolStatus.MempoolAddTransactionStatusCode;
+import types.MempoolStatusOuterClass.MempoolStatus;
 import types.VmErrors.VMStatus;
 
 public class SubmitTransactionResultTest {
@@ -52,11 +51,12 @@ public class SubmitTransactionResultTest {
     @Test
     public void testMempoolException() throws Exception {
         exception.expect(LibraMempoolException.class);
-        exception.expectMessage("Submit transaction failed with mempool status InsufficientBalance (1)");
+        exception.expectMessage("Submit transaction failed with mempool status 1, message: InsufficientBalance");
 
         SubmitTransactionResponse response = SubmitTransactionResponse.newBuilder()
-                .setMempoolStatus(MempoolAddTransactionStatus.newBuilder()
-                        .setCode(MempoolAddTransactionStatusCode.InsufficientBalance)
+                .setMempoolStatus(MempoolStatus.newBuilder()
+                        .setCode(1)
+                        .setMessage("InsufficientBalance")
                         .build())
                 .build();
 

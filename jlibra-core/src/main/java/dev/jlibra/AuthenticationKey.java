@@ -1,6 +1,6 @@
 package dev.jlibra;
 
-import java.security.PublicKey;
+import static dev.jlibra.PublicKey.PUBLIC_KEY_LENGTH;
 
 import com.google.protobuf.ByteString;
 
@@ -9,6 +9,8 @@ import dev.jlibra.serialization.ByteSequence;
 
 public class AuthenticationKey implements ByteSequence {
 
+    private static final byte SIGNATURE_SCHEME_ED25519 = 0;
+
     private ByteArray bytes;
 
     private AuthenticationKey(ByteArray bytes) {
@@ -16,8 +18,18 @@ public class AuthenticationKey implements ByteSequence {
     }
 
     public static AuthenticationKey fromPublicKey(PublicKey publicKey) {
-        return new AuthenticationKey(
-                Hash.ofInput(KeyUtils.stripPublicKeyPrefix(ByteArray.from(publicKey.getEncoded()))).hash());
+        byte[] pkBytes = publicKey.toArray();
+        byte[] signatureSchemeId = new byte[] { SIGNATURE_SCHEME_ED25519 };
+        byte[] pkBytesWithSignatureSchemeId = new byte[PUBLIC_KEY_LENGTH + 1];
+
+        System.arraycopy(pkBytes, 0, pkBytesWithSignatureSchemeId, 0, PUBLIC_KEY_LENGTH);
+        System.arraycopy(signatureSchemeId, 0, pkBytesWithSignatureSchemeId, PUBLIC_KEY_LENGTH, 1);
+
+        return new AuthenticationKey(Hash.ofInput(ByteArray.from(pkBytesWithSignatureSchemeId)).hash());
+    }
+
+    public static AuthenticationKey fromPublicKey(java.security.PublicKey javaPublicKey) {
+        return fromPublicKey(PublicKey.fromPublicKey(javaPublicKey));
     }
 
     public static AuthenticationKey fromByteArray(ByteArray bytes) {
