@@ -14,6 +14,7 @@ import org.immutables.value.Value;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.serialization.Deserialization;
 import dev.jlibra.serialization.Serializer;
 import dev.jlibra.serialization.lcs.LCS;
 import dev.jlibra.serialization.lcs.type.TransactionPayload;
@@ -51,7 +52,7 @@ public interface Transaction {
         InputStream in = new ByteArrayInputStream(bytes);
         int structPrefix = readInt(in, 4);
 
-        ByteArray senderAccount = readByteArray(in, 32);
+        ByteArray senderAccount = readByteArray(in, 16);
         long sequenceNumber = readLong(in, 8);
         int payloadType = readInt(in, 4);
 
@@ -69,7 +70,7 @@ public interface Transaction {
                 long value = readLong(in, 8);
                 arguments.add(new U64Argument(value));
             } else if (argumentType == AccountAddressArgument.PREFIX) {
-                ByteArray value = readByteArray(in, 32);
+                ByteArray value = readByteArray(in, 16);
                 arguments.add(new AccountAddressArgument(AccountAddress.fromByteArray(value)));
             } else if (argumentType == ByteArrayArgument.PREFIX) {
                 int length = readInt(in, 4);
@@ -82,10 +83,13 @@ public interface Transaction {
 
         long maxGasAmount = readLong(in, 8);
         long gasUnitPrice = readLong(in, 8);
+
+        ByteArray gasSpecifier = Deserialization.readByteArray(in, 36);
+
         long expirationTime = readLong(in, 8);
 
         return ImmutableTransaction.builder()
-                // .senderAccount(AccountAddress.fromByteArray(senderAccount))
+                .senderAccount(AccountAddress.fromByteArray(senderAccount))
                 .sequenceNumber(sequenceNumber)
                 .payload(ImmutableScript.builder()
                         .code(code)

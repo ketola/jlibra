@@ -32,7 +32,7 @@ public abstract class UpdateToLatestLedgerResult {
         for (ResponseItem item : grpcObject.getResponseItemsList()) {
             AccountStateWithProof accountStateWithProof = item.getGetAccountStateResponse().getAccountStateWithProof();
             if (accountStateWithProof.hasBlob()) {
-                accountStates.addAll(AccountResource.fromGrpcObject(accountStateWithProof));
+                accountStates.add(AccountResource.fromGrpcObject(accountStateWithProof));
             }
 
             types.TransactionOuterClass.TransactionWithProof transactionWithProof = item

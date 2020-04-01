@@ -29,9 +29,10 @@ public interface Event {
 
     static Event fromGrpcObject(types.Events.Event event) {
         byte[] eventData = event.getEventData().toByteArray();
+        System.out.println(ByteArray.from(eventData));
         try (DataInputStream eventDataStream = new DataInputStream(new ByteArrayInputStream(eventData))) {
             long amount = Deserialization.readLong(eventDataStream, 8);
-            ByteArray address = Deserialization.readByteArray(eventDataStream, 32);
+            ByteArray address = Deserialization.readByteArray(eventDataStream, 16);
 
             Builder builder = ImmutableEvent.builder()
                     .accountAddress(AccountAddress.fromByteArray(address))

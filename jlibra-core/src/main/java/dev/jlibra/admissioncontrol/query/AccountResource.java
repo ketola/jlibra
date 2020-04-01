@@ -3,18 +3,17 @@ package dev.jlibra.admissioncontrol.query;
 import static dev.jlibra.serialization.Deserialization.readBoolean;
 import static dev.jlibra.serialization.Deserialization.readByteArray;
 import static dev.jlibra.serialization.Deserialization.readInt;
-import static dev.jlibra.serialization.Deserialization.readLong;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.immutables.value.Value;
 
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.Deserialization;
 import types.AccountStateBlobOuterClass.AccountStateWithProof;
 
 @Value.Immutable
@@ -37,9 +36,16 @@ public interface AccountResource {
     static AccountResource deserialize(ByteSequence byteSequence) {
         try (DataInputStream accountDataStream = new DataInputStream(
                 new ByteArrayInputStream(byteSequence.toArray()))) {
-            int addressLength = readInt(accountDataStream, 4);
-            ByteSequence address = readByteArray(accountDataStream, addressLength);
-            long balance = readLong(accountDataStream, 8);
+
+            // The AccountResource / BalanceResource are in map
+            int numberOfItems = readInt(accountDataStream, 4);
+            int keyLength = readInt(accountDataStream, 4);
+            ByteSequence keyValue = readByteArray(accountDataStream, keyLength);
+            int valLength = readInt(accountDataStream, 4);
+
+            int authKeyLength = readInt(accountDataStream, 4);
+            ByteSequence authKey = readByteArray(accountDataStream, authKeyLength);
+
             boolean delegatedKeyRotationCapability = readBoolean(accountDataStream);
             boolean delegatedWithdrawalCapability = readBoolean(accountDataStream);
 
@@ -58,10 +64,18 @@ public interface AccountResource {
                     .key(readByteArray(accountDataStream, readInt(accountDataStream, 4)))
                     .count(sentEventsCount)
                     .build();
+            long sequenceNumber = Deserialization.readLong(accountDataStream, 8);
+            long eventGenerator = Deserialization.readLong(accountDataStream, 8);
+
+            // next item in map, the balance resource
+            keyLength = readInt(accountDataStream, 4);
+            keyValue = readByteArray(accountDataStream, keyLength);
+            valLength = readInt(accountDataStream, 4);
+            long balance = Deserialization.readLong(accountDataStream, 8);
 
             return ImmutableAccountResource.builder()
-                    .authenticationKey(address)
-                    .sequenceNumber(readInt(accountDataStream, 4))
+                    .authenticationKey(authKey)
+                    .sequenceNumber((int) sequenceNumber)
                     .balanceInMicroLibras(balance)
                     .delegatedWithdrawalCapability(delegatedWithdrawalCapability)
                     .delegatedKeyRotationCapability(delegatedKeyRotationCapability)
@@ -73,22 +87,12 @@ public interface AccountResource {
         }
     }
 
-    static List<AccountResource> fromGrpcObject(AccountStateWithProof accountStateWithProof) {
-        List<AccountResource> accountResources = new ArrayList<>();
+    static AccountResource fromGrpcObject(AccountStateWithProof accountStateWithProof) {
+        byte[] byteArray = accountStateWithProof.getBlob().getBlob().toByteArray();
 
-        DataInputStream in = new DataInputStream(
-                new ByteArrayInputStream(accountStateWithProof.getBlob().getBlob().toByteArray()));
-        int dataSize = readInt(in, 4);
-
-        for (int i = 0; i < dataSize; i++) {
-            int keyLength = readInt(in, 4);
-            ByteSequence keyValue = readByteArray(in, keyLength);
-            int valLength = readInt(in, 4);
-            ByteSequence val = readByteArray(in, valLength);
-            accountResources.add(AccountResource.deserialize(val));
-        }
-
-        return accountResources;
+        ByteArray from = ByteArray.from(byteArray);
+        System.out.println(from);
+        return AccountResource.deserialize(from);
     }
 
 }

@@ -12,7 +12,7 @@ public class TransactionTest {
 
     @Test
     public void testFromGrpcObject() {
-        String transactionBytes = "0101000000000000000200000001000000010200000000000000e8030000000000000100000001701700000000000001000000000000000600000000000000000000000000000000000000030000004c4252010000005400000000010000000000000000000000200000000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021400000002dd9560ac445cf744080d3d53d76533ac317b427085b07992ca8211c9655a64290f1577d3f599a247b3ef82a5a826864683343eda1054e981060661ce4aac70f";
+        String transactionBytes = "000000004e03aec69589026b4a095c9cd2e53ca6000000000000000002000000cd000000a11ceb0b010008014f000000060000000255000000040000000359000000060000000c5f000000110000000d700000000b000000057b0000002f00000004aa0000001000000007ba0000001300000000000001000201030200020400000501020003050a02030101020003050a0203000303050a02030301080000063c53454c463e034c42520c4c696272614163636f756e7401540f7061795f66726f6d5f73656e646572046d61696e00000000000000000000000000000000010000ffff030005000a000b010a021200010203000000010000000990455b46e5eee5145e4de4be27ce73020000001000000070bd2e16ef97a72d681151ddc9ffa3bf0000000040420f0000000000203005000000000000000000000000000600000000000000000000000000000000000000030000004c4252010000005400000000645a835e00000000000000002000000081baa2b679aa2c8fb75dbe2f9164eef0265be7bb6c20c81c95a788997d927e3f4000000042c4d66b5f2deecbf380c6dca863ef8200f40b8a91e3fb0b4f1fdde91ec833bd78308ef91dd23035614873ca981694da1646671ddd7cfcad1018da948058450d";
         types.TransactionOuterClass.Transaction t = types.TransactionOuterClass.Transaction.newBuilder()
                 .setTransaction(ByteString.copyFrom(Hex.decode(transactionBytes)))
                 .build();
@@ -20,18 +20,18 @@ public class TransactionTest {
         Transaction transaction = Transaction.fromGrpcObject(t);
 
         assertThat(transaction.getSenderAccount().toString(),
-                is("d5586b1c04555911fb3c0ab6f60261ad242b3eb4d0eddd2ba22c02174d6173c4"));
-        assertThat(transaction.getSequenceNumber(), is(3L));
-        assertThat(transaction.getPayload().getCode().toArray().length, is(184));
-        assertThat(transaction.getPayload().getArguments().size(), is(2));
+                is("4e03aec69589026b4a095c9cd2e53ca6"));
+        assertThat(transaction.getSequenceNumber(), is(0L));
+        assertThat(transaction.getPayload().getCode().toArray().length, is(205));
+        assertThat(transaction.getPayload().getArguments().size(), is(3));
         assertThat(
                 ((AccountAddressArgument) transaction.getPayload().getArguments().get(0)).getValue()
                         .toString(),
-                is("8b8dda4052b55bb475f5e69a160013508ca20e3766fb33b6a7e0325611fdeb22"));
-        assertThat(((U64Argument) transaction.getPayload().getArguments().get(1)).getValue(), is(1_000_000L));
-        assertThat(transaction.getExpirationTime(), is(1577527101L));
+                is("0990455b46e5eee5145e4de4be27ce73"));
+        assertThat(((U64Argument) transaction.getPayload().getArguments().get(2)).getValue(), is(1_000_000L));
+        assertThat(transaction.getExpirationTime(), is(1585666660L));
         assertThat(transaction.getGasUnitPrice(), is(0L));
-        assertThat(transaction.getMaxGasAmount(), is(140_000L));
+        assertThat(transaction.getMaxGasAmount(), is(340_000L));
 
     }
 
