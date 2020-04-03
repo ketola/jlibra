@@ -18,7 +18,7 @@ public class GetEventsByEventAccessPathExample {
     private static final Logger logger = LogManager.getLogger(GetEventsByEventAccessPathExample.class);
 
     public static void main(String[] args) {
-        String address = "0703a61585597d9b56a46a658464738dff58222b4393d32dd9899bedb58666e9";
+        String address = "4e03aec69589026b4a095c9cd2e53ca6";
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("ac.testnet.libra.org", 8000)
                 .usePlaintext()

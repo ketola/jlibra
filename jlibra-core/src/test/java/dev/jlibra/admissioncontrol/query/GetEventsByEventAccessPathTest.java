@@ -30,7 +30,7 @@ public class GetEventsByEventAccessPathTest {
         assertThat(request.getLimit(), is(10L));
         assertThat(request.getStartEventSeqNum(), is(1L));
         assertThat(Hex.toHexString(request.getAccessPath().getPath().toByteArray()), is(
-                "0116608f05d24742a043e6fd12d3b32735f6bfcba287bea92b28a175cd4f3eee322f73656e745f6576656e74735f636f756e742f"));
+                "019332949da81c9a7b3e66a75c06e192584740a89bf9302a6e519e0eacc24061d02f73656e745f6576656e74735f636f756e742f"));
     }
 
 }

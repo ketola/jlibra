@@ -26,7 +26,7 @@ public class LCSSerializer {
 
         LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
         if (enumAnnotation != null) {
-            s = s.appendInt(enumAnnotation.value());
+            s = s.appendIntAsLeb128(enumAnnotation.value());
         }
 
         List<Method> methods = Stream.of(type.getMethods())
@@ -60,7 +60,7 @@ public class LCSSerializer {
             } else if (returnType.equals(List.class)) {
                 List<?> list = (List<?>) invokeMethod(serializable,
                         m);
-                s = s.appendInt(list.size());
+                s = s.appendIntAsLeb128(list.size());
                 for (Object e : list) {
                     s = s.appendFixedLength(serialize(e, e.getClass()));
                 }

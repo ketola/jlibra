@@ -4,8 +4,13 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Serializer {
+
+    private final static int MASK_DATA = 0x7f;
+    private final static int MASK_CONTINUE = 0x80;
 
     private byte[] bytes;
 
@@ -22,7 +27,7 @@ public class Serializer {
     }
 
     private Serializer appendByteArray(byte[] byteArray) {
-        return append(intToByteArray(byteArray.length))
+        return append(intToLeb128ByteArray(byteArray.length))
                 .append(byteArray);
     }
 
@@ -40,6 +45,10 @@ public class Serializer {
 
     public Serializer appendInt(int i) {
         return append(intToByteArray(i));
+    }
+
+    public Serializer appendIntAsLeb128(int i) {
+        return append(intToLeb128ByteArray(i));
     }
 
     public Serializer appendShort(short i) {
@@ -66,6 +75,27 @@ public class Serializer {
         return ByteBuffer.allocate(Long.BYTES)
                 .order(LITTLE_ENDIAN).putLong(l)
                 .order(LITTLE_ENDIAN).array();
+    }
+
+    /**
+     * https://github.com/zcd/libosu/blob/master/src/main/java/com/zerocooldown/libosu/util/Uleb128.java
+     */
+    private static byte[] intToLeb128ByteArray(int i) {
+        List<Byte> bytes = new ArrayList<>();
+        do {
+            byte b = (byte) (i & MASK_DATA);
+            i >>= 7;
+            if (i != 0) {
+                b |= MASK_CONTINUE;
+            }
+            bytes.add(b);
+        } while (i != 0);
+
+        byte[] ret = new byte[bytes.size()];
+        for (int j = 0; j < bytes.size(); j++) {
+            ret[j] = bytes.get(j);
+        }
+        return ret;
     }
 
     private Serializer append(byte[] b) {

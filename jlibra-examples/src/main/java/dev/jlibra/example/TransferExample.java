@@ -80,7 +80,6 @@ public class TransferExample {
                         .code(Move.peerToPeerTransferAsBytes())
                         .addArguments(addressArgument, authkeyPrefixArgument, amountArgument)
                         .build())
-                // .gasSpecifier(new StructTag())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

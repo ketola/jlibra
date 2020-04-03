@@ -24,6 +24,8 @@ import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticator;
+import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
@@ -59,12 +61,14 @@ public class TransactionWithMetadataExample {
         KeyPair keyPairSource = kpGen.generateKeyPair();
         BCEdDSAPrivateKey privateKeySource = (BCEdDSAPrivateKey) keyPairSource.getPrivate();
         BCEdDSAPublicKey publicKeySource = (BCEdDSAPublicKey) keyPairSource.getPublic();
-        AccountAddress source = null; // AccountAddress.fromPublicKey(publicKeySource);
+        AuthenticationKey authenticationKeySource = AuthenticationKey.fromPublicKey(publicKeySource);
+        AccountAddress source = AccountAddress.fromAuthenticationKey(authenticationKeySource);
         ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeySource), 10L * 1_000_000L);
 
         KeyPair keyPairTarget = kpGen.generateKeyPair();
         BCEdDSAPublicKey publicKeyTarget = (BCEdDSAPublicKey) keyPairTarget.getPublic();
-        AccountAddress target = null; // AccountAddress.fromPublicKey(publicKeyTarget);
+        AuthenticationKey authenticationKeyTarget = AuthenticationKey.fromPublicKey(publicKeyTarget);
+        AccountAddress target = AccountAddress.fromAuthenticationKey(authenticationKeyTarget);
 
         // sleep for 1 sec to make sure the minted money is available in the account.
         // Sometimes the faucet api is working slowly and you might need to increase the
@@ -81,27 +85,31 @@ public class TransactionWithMetadataExample {
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(1_000_000);
+        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(
+                authenticationKeyTarget.toByteArray().subseq(0, 16));
         AccountAddressArgument addressArgument = new AccountAddressArgument(target);
         ByteArrayArgument metadata = new ByteArrayArgument(
                 ByteArray
-                        .from("Logic will get you from A to Z; imagination will get you everywhere.".getBytes(UTF_8)));
+                        .from("Logic will get you from A to Z.".getBytes(UTF_8)));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(0)
-                .maxGasAmount(140000)
-                .gasUnitPrice(0)
-                // .senderAccount(AccountAddress.fromPublicKey(publicKeySource))
+                .maxGasAmount(240000)
+                .gasUnitPrice(1)
+                .senderAccount(source)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadataAsBytes())
-                        .addArguments(addressArgument, amountArgument, metadata)
+                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument, metadata)
                         .build())
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
-                // .publicKey(PublicKey.fromPublicKey(publicKeySource))
+                .authenticator(ImmutableTransactionAuthenticator.builder()
+                        .publicKey(dev.jlibra.PublicKey.fromPublicKey(publicKeySource))
+                        .signature(Signature.signTransaction(transaction, privateKeySource))
+                        .build())
                 .transaction(transaction)
-                // .signature(Signature.signTransaction(transaction, privateKeySource))
                 .build();
 
         SubmitTransactionResult result = admissionControl.submitTransaction(signedTransaction);
@@ -117,6 +125,7 @@ public class TransactionWithMetadataExample {
                         asList(ImmutableGetAccountTransactionBySequenceNumber.builder()
                                 .accountAddress(source)
                                 .sequenceNumber(0)
+                                .fetchEvents(true)
                                 .build()))
                 .build());
 
