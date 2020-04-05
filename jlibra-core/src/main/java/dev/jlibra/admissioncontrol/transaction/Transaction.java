@@ -20,31 +20,29 @@ import dev.jlibra.serialization.lcs.LCS;
 import dev.jlibra.serialization.lcs.type.TransactionPayload;
 
 @Value.Immutable
-@LCS.Structure
+@LCS.Structure(builderClass = ImmutableTransaction.class)
 public interface Transaction {
 
     @LCS.Field(value = 0, fixedLength = true)
-    AccountAddress getSenderAccount();
+    AccountAddress senderAccount();
 
     @LCS.Field(1)
-    long getSequenceNumber();
+    long sequenceNumber();
 
     @LCS.Field(2)
-    Script getPayload();
+    dev.jlibra.admissioncontrol.transaction.TransactionPayload payload();
 
     @LCS.Field(3)
-    long getMaxGasAmount();
+    long maxGasAmount();
 
     @LCS.Field(4)
-    long getGasUnitPrice();
+    long gasUnitPrice();
 
     @LCS.Field(5)
-    default LbrTypeTag getGasSpecifier() {
-        return new LbrTypeTag();
-    }
+    TypeTag gasSpecifier();
 
     @LCS.Field(6)
-    long getExpirationTime();
+    long expirationTime();
 
     public static Transaction fromGrpcObject(types.TransactionOuterClass.Transaction grpcTransaction) {
         byte[] bytes = grpcTransaction.getTransaction().toByteArray();
@@ -71,7 +69,10 @@ public interface Transaction {
                 arguments.add(new U64Argument(value));
             } else if (argumentType == AccountAddressArgument.PREFIX) {
                 ByteArray value = readByteArray(in, 16);
-                arguments.add(new AccountAddressArgument(AccountAddress.fromByteArray(value)));
+                arguments.add(
+                        ImmutableAccountAddressArgument.builder()
+                                .value(AccountAddress.fromByteArray(value))
+                                .build());
             } else if (argumentType == ByteArrayArgument.PREFIX) {
                 int length = readInt(in, 4);
                 ByteArray value = readByteArray(in, length);
@@ -98,6 +99,7 @@ public interface Transaction {
                 .expirationTime(expirationTime)
                 .gasUnitPrice(gasUnitPrice)
                 .maxGasAmount(maxGasAmount)
+                .gasSpecifier(LbrTypeTag.build())
                 .build();
     }
 

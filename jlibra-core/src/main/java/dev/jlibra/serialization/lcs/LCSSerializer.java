@@ -11,6 +11,7 @@ import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS.ExternallyTaggedEnumeration;
 
 public class LCSSerializer {
 
@@ -24,9 +25,18 @@ public class LCSSerializer {
     public ByteArray serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 
-        LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
+        LCS.ExternallyTaggedEnumeration enumAnnotation = findEnumAnnotation(type);
+
         if (enumAnnotation != null) {
-            s = s.appendIntAsLeb128(enumAnnotation.value());
+            int tag = -1;
+            for (Class enumType : enumAnnotation.types()) {
+                tag++;
+                if (enumType.isInstance(serializable)) {
+                    type = enumType;
+                    break;
+                }
+            }
+            s = s.appendIntAsLeb128(tag);
         }
 
         List<Method> methods = Stream.of(type.getMethods())
@@ -62,13 +72,43 @@ public class LCSSerializer {
                         m);
                 s = s.appendIntAsLeb128(list.size());
                 for (Object e : list) {
-                    s = s.appendFixedLength(serialize(e, e.getClass()));
+                    s = s.appendFixedLength(serialize(e, findAnnotatedClass(e.getClass())));
                 }
             } else {
                 throw new LibraRuntimeException("Return type " + returnType + " is not recognized for serialization.");
             }
         }
         return s.toByteArray();
+    }
+
+    private ExternallyTaggedEnumeration findEnumAnnotation(Class<?> type) {
+        ExternallyTaggedEnumeration annotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
+        if (annotation != null) {
+            return annotation;
+        } else {
+            for (Class c : type.getInterfaces()) {
+                annotation = (ExternallyTaggedEnumeration) c.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
+                if (annotation != null) {
+                    return annotation;
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+    private Class findAnnotatedClass(Class e) {
+        if (e.getClass().getAnnotation(LCS.Structure.class) != null) {
+            return e;
+        }
+
+        for (Class c : e.getInterfaces()) {
+            if (c.getAnnotation(LCS.Structure.class) != null) {
+                return c;
+            }
+        }
+        return e;
     }
 
     private Object invokeMethod(Object serializable, Method m) {

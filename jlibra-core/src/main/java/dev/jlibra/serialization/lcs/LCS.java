@@ -7,6 +7,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import dev.jlibra.serialization.lcs.type.LibraEnum;
+import dev.jlibra.serialization.lcs.type.TransactionPayload;
+
 /**
  * Contains annotations to instruct the serialization of the java types to byte
  * arrays using the Libra Canonical Serialization.
@@ -51,6 +54,10 @@ public class LCS {
          * @return
          */
         int value();
+
+        Class<? extends LibraEnum> libraEnum() default TransactionPayload.class;
+
+        Class<?>[] types() default TransactionPayload.class;
     }
 
     /**
@@ -60,6 +67,7 @@ public class LCS {
     @Target(TYPE)
     @Retention(RUNTIME)
     public @interface Structure {
+        Class<?> builderClass() default Object.class;
     }
 
 }

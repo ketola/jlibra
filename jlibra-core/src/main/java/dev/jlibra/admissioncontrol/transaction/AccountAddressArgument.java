@@ -1,22 +1,17 @@
 package dev.jlibra.admissioncontrol.transaction;
 
+import org.immutables.value.Value;
+
 import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.lcs.LCS;
 
-@LCS.ExternallyTaggedEnumeration(dev.jlibra.serialization.lcs.type.TransactionArgument.Address)
-public class AccountAddressArgument implements TransactionArgument {
+@Value.Immutable
+@LCS.Structure(builderClass = ImmutableAccountAddressArgument.class)
+public interface AccountAddressArgument extends TransactionArgument {
 
     public static final int PREFIX = 1;
 
-    private AccountAddress value;
-
-    public AccountAddressArgument(AccountAddress address) {
-        this.value = address;
-    }
-
     @LCS.Field(value = 0, fixedLength = true)
-    public AccountAddress getValue() {
-        return value;
-    }
+    AccountAddress value();
 
 }

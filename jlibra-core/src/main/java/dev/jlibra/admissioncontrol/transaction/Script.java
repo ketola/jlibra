@@ -4,17 +4,16 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.lcs.LCS;
-import dev.jlibra.serialization.lcs.type.TransactionPayload;
 
 @Value.Immutable
-@LCS.ExternallyTaggedEnumeration(TransactionPayload.Script)
-public interface Script {
+@LCS.Structure(builderClass = ImmutableScript.class)
+public interface Script extends dev.jlibra.admissioncontrol.transaction.TransactionPayload {
 
     @LCS.Field(0)
-    ByteSequence getCode();
+    ByteArray code();
 
     @LCS.Field(1)
-    List<TransactionArgument> getArguments();
+    List<TransactionArgument> arguments();
 }

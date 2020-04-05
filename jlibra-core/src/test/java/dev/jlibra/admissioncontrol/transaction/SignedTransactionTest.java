@@ -34,12 +34,14 @@ public class SignedTransactionTest {
                 .gasUnitPrice(1)
                 .sequenceNumber(1)
                 .expirationTime(1L)
+                .gasSpecifier(LbrTypeTag.build())
                 .senderAccount(
                         AccountAddress.fromByteArray(ByteArray.from(new byte[] { 1 })))
                 .payload(ImmutableScript.builder()
                         .addArguments(new U64Argument(1000),
-                                new AccountAddressArgument(
-                                        AccountAddress.fromByteArray(ByteArray.from(new byte[] { 1 }))))
+                                ImmutableAccountAddressArgument.builder()
+                                        .value(AccountAddress.fromByteArray(ByteArray.from(new byte[] { 1 })))
+                                        .build())
                         .code(ByteArray.from(new byte[] { 1 }))
                         .build())
                 .build();

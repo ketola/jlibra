@@ -19,19 +19,19 @@ public class TransactionTest {
 
         Transaction transaction = Transaction.fromGrpcObject(t);
 
-        assertThat(transaction.getSenderAccount().toString(),
+        assertThat(transaction.senderAccount().toString(),
                 is("4e03aec69589026b4a095c9cd2e53ca6"));
-        assertThat(transaction.getSequenceNumber(), is(0L));
-        assertThat(transaction.getPayload().getCode().toArray().length, is(205));
-        assertThat(transaction.getPayload().getArguments().size(), is(3));
+        assertThat(transaction.sequenceNumber(), is(0L));
+        assertThat(((Script) transaction.payload()).code().toArray().length, is(205));
+        assertThat(((Script) transaction.payload()).arguments().size(), is(3));
         assertThat(
-                ((AccountAddressArgument) transaction.getPayload().getArguments().get(0)).getValue()
+                ((AccountAddressArgument) ((Script) transaction.payload()).arguments().get(0)).value()
                         .toString(),
                 is("0990455b46e5eee5145e4de4be27ce73"));
-        assertThat(((U64Argument) transaction.getPayload().getArguments().get(2)).getValue(), is(1_000_000L));
-        assertThat(transaction.getExpirationTime(), is(1585666660L));
-        assertThat(transaction.getGasUnitPrice(), is(0L));
-        assertThat(transaction.getMaxGasAmount(), is(340_000L));
+        assertThat(((U64Argument) ((Script) transaction.payload()).arguments().get(2)).getValue(), is(1_000_000L));
+        assertThat(transaction.expirationTime(), is(1585666660L));
+        assertThat(transaction.gasUnitPrice(), is(0L));
+        assertThat(transaction.maxGasAmount(), is(340_000L));
 
     }
 
