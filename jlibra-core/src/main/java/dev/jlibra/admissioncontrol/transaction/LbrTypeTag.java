@@ -6,7 +6,7 @@ import java.util.List;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.lcs.LCS;
 
-public class LbrTypeTag implements dev.jlibra.admissioncontrol.transaction.TypeTag {
+public class LbrTypeTag implements TypeTag {
 
     @LCS.Field(value = 0, fixedLength = true)
     public AccountAddress getAddress() {
