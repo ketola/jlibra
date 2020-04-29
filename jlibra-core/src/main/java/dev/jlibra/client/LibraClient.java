@@ -57,7 +57,7 @@ public class LibraClient {
         return libraJsonRpcClient.getStateProof(knownVersion);
     }
 
-    public void submit(dev.jlibra.admissioncontrol.transaction.SignedTransaction signedTransaction) {
+    public void submit(SignedTransaction signedTransaction) {
         libraJsonRpcClient
                 .submit(Hex.toHexString(
                         LCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()));
