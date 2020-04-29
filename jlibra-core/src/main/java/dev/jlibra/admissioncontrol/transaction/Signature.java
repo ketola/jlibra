@@ -42,18 +42,21 @@ public interface Signature {
                 .build();
     }
 
+    /**
+     * This methods adds signature to an multig signature.
+     * 
+     * @param the         multisig signature where the signature is added
+     * @param index       the index of the public key in the multig account that was
+     *                    used in the signature
+     * @param transaction transaction to sign
+     * @param privateKey  private key to use for signature
+     * @return
+     */
     public static Signature addSignatureToMultiSignature(Signature signature, int index, Transaction transaction,
             PrivateKey privateKey) {
         Signature signatureToAdd = signTransaction(transaction, privateKey);
 
-        byte[] bitmap = signature.getSignature()
-                .subseq(signature.getSignature().toArray().length - BITMAP_LENGTH,
-                        BITMAP_LENGTH)
-                .toArray();
-
-        int bucket = index / 8;
-        int bucket_pos = index - (bucket * 8);
-        bitmap[bucket] |= 128 >> bucket_pos;
+        byte[] bitmap = createMultisigBitMap(signatureToAdd, index);
 
         byte[] signatureBytes = new byte[signature.getSignature().toArray().length - BITMAP_LENGTH
                 + SIGNATURE_LENGTH];
@@ -75,6 +78,33 @@ public interface Signature {
         return ImmutableSignature.builder()
                 .signature(ByteArray.from(signatureAndBitmap))
                 .build();
+    }
+
+    /**
+     * bitmap returned by this method is used to mark which signatures of the
+     * multisig account are present in the multisig signature. Not all of the
+     * signatures are needed if the threshold is smaller than the amount of keys in
+     * the account, but to be able to check the signature, the multisig signature
+     * must contain the information of what keys were used.
+     * 
+     * example: if 1st and 5th signature are present, the returned bitmap contains
+     * bits 10000100..
+     * 
+     * @param signature
+     * @param signatureIndex
+     * @return
+     */
+    static byte[] createMultisigBitMap(Signature signature, int signatureIndex) {
+        byte[] bitmap = signature.getSignature()
+                .subseq(signature.getSignature().toArray().length - BITMAP_LENGTH,
+                        BITMAP_LENGTH)
+                .toArray();
+
+        int bucket = signatureIndex / 8;
+        int bucketPos = signatureIndex - (bucket * 8);
+        bitmap[bucket] |= 128 >> bucketPos;
+
+        return bitmap;
     }
 
     public static Signature newMultisignature() {
