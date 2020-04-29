@@ -3,8 +3,7 @@ package dev.jlibra.example;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dev.jlibra.client.LibraJsonRpcClient;
-import dev.jlibra.client.LibraJsonRpcClientBuilder;
+import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Transaction;
 
 public class GetAccountTransactionBySequenceNumberExample {
@@ -15,7 +14,7 @@ public class GetAccountTransactionBySequenceNumberExample {
         String address = "4fa2be7ad55936c5702e8b7e3fdedb05";
         int sequenceNumber = 0;
 
-        LibraJsonRpcClient client = LibraJsonRpcClientBuilder.builder()
+        LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")
                 .build();
 

@@ -5,8 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dev.jlibra.client.LibraJsonRpcClient;
-import dev.jlibra.client.LibraJsonRpcClientBuilder;
+import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Transaction;
 
 /**
@@ -24,7 +23,7 @@ public class GetTransactionsExample {
         long limit = 20;
         boolean fetchEvent = true;
 
-        LibraJsonRpcClient client = LibraJsonRpcClientBuilder.builder()
+        LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")
                 .build();
 

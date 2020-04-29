@@ -7,7 +7,6 @@ import java.time.Instant;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
@@ -22,11 +21,9 @@ import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
-import dev.jlibra.client.LibraJsonRpcClient;
-import dev.jlibra.client.LibraJsonRpcClientBuilder;
+import dev.jlibra.client.LibraClient;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteArray;
-import dev.jlibra.serialization.lcs.LCSSerializer;
 
 public class TransferExample {
 
@@ -52,7 +49,7 @@ public class TransferExample {
         logger.info("Sending from {} to {}", AccountAddress.fromAuthenticationKey(authenticationKey),
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        LibraJsonRpcClient client = LibraJsonRpcClientBuilder.builder()
+        LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")
                 .build();
 
@@ -88,8 +85,7 @@ public class TransferExample {
                 .transaction(transaction)
                 .build();
 
-        client.submit(Hex
-                .toHexString(LCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()));
+        client.submit(signedTransaction);
     }
 
 }
