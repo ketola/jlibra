@@ -78,9 +78,16 @@ public class Serializer {
     }
 
     /**
+     * The uleb 128 encoding is a way of efficiently storing integers. For an
+     * explanation, see: https://en.wikipedia.org/wiki/LEB128 Thanks to libosu
+     * project for the implementation used here:
      * https://github.com/zcd/libosu/blob/master/src/main/java/com/zerocooldown/libosu/util/Uleb128.java
      */
     private static byte[] intToLeb128ByteArray(int i) {
+        if (i < 0) {
+            throw new IllegalArgumentException("The value to serialize cannot be negative");
+        }
+
         List<Byte> bytes = new ArrayList<>();
         do {
             byte b = (byte) (i & MASK_DATA);
