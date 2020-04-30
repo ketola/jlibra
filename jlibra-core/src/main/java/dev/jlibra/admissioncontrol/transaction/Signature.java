@@ -56,7 +56,11 @@ public interface Signature {
             PrivateKey privateKey) {
         Signature signatureToAdd = signTransaction(transaction, privateKey);
 
-        byte[] bitmap = createMultisigBitMap(signatureToAdd, index);
+        byte[] bitmap = signature.getSignature()
+                .subseq(signature.getSignature().toArray().length - BITMAP_LENGTH,
+                        BITMAP_LENGTH)
+                .toArray();
+        bitmap = markSigningKeyToBitmap(bitmap, index);
 
         byte[] signatureBytes = new byte[signature.getSignature().toArray().length - BITMAP_LENGTH
                 + SIGNATURE_LENGTH];
@@ -88,22 +92,16 @@ public interface Signature {
      * must contain the information of what keys were used.
      * 
      * example: if 1st and 5th signature are present, the returned bitmap contains
-     * bits 10000100..
+     * bits 10001000..
      * 
      * @param signature
      * @param signatureIndex
      * @return
      */
-    static byte[] createMultisigBitMap(Signature signature, int signatureIndex) {
-        byte[] bitmap = signature.getSignature()
-                .subseq(signature.getSignature().toArray().length - BITMAP_LENGTH,
-                        BITMAP_LENGTH)
-                .toArray();
-
+    static byte[] markSigningKeyToBitmap(byte[] bitmap, int signatureIndex) {
         int bucket = signatureIndex / 8;
         int bucketPos = signatureIndex - (bucket * 8);
         bitmap[bucket] |= 128 >> bucketPos;
-
         return bitmap;
     }
 
