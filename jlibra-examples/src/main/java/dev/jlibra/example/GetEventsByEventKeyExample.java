@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Event;
 
-public class GetEventsByEventKeyJsonRpcExample {
-    private static final Logger logger = LogManager.getLogger(GetEventsByEventKeyJsonRpcExample.class);
+public class GetEventsByEventKeyExample {
+    private static final Logger logger = LogManager.getLogger(GetEventsByEventKeyExample.class);
 
     public static void main(String[] args) {
         String eventKey = "0000000000000000b3f7e8e38f8c8393f281a2f0792a2849";

@@ -4,13 +4,9 @@
  
 A Java library for building applications on [Libra](https://libra.org/)
 
-![Overview](docs/img/jlibra.png)
+The API for creating transactions and querying the database of Libra uses [json-rpc](https://www.jsonrpc.org/specification) - a simple remote procedure call protocol utilizing JSON for encoding data. 
 
-**The Libra Testnet has been deployed with new breaking changes. https://community.libra.org/t/testnet-push-announcement-for-3-25/2663**
-
-The API for creating transactions and querying the database of Libra uses [gRPC](https://grpc.io/) - a high performance remote procedure call system utilizing [HTTP/2](https://developers.google.com/web/fundamentals/performance/http2/) for transport and [Protocol Buffers](https://developers.google.com/protocol-buffers/) for data serialization. 
-
-gRPC is designed to be usable from several platforms, but using the gRPC api directly from an application would not be optimal and would result in lots of boiler plate code - and that's where JLibra shows it's power for Java application developers.
+Though sending new transactions to the Libra network requires a another type of serialization - the Libra Canonical Serialization. JLibra implements both of these and provides a simple api for Java applications to integrate to Libra.
 
 JLibra simplifies integration to Libra but does not hide any features of the Libra api, this makes it possible to implement anything supported by Libra with Java. 
 
@@ -28,15 +24,13 @@ JLibra simplifies integration to Libra but does not hide any features of the Lib
 
 Start sample Main classes in `dev.jlibra.example` package for examples (for a complete example with creating accounts to moving coins between them check the [how to](https://github.com/ketola/jlibra/blob/master/docs/HOWTO.md))
 
-[`AsyncTransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/AsyncTransferExample.java)
-
 [`GenerateKeysExample`](jlibra-examples/src/main/java/dev/jlibra/example/GenerateKeysExample.java)
 
 [`GetAccountStateExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java)
 
 [`GetAccountTransactionBySequenceNumberExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionBySequenceNumberExample.java)
 
-[`GetEventsByEventAccessPathExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetEventsByEventAccessPathExample.java)
+[`GetEventsByEventKeyExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetEventsByEventKeyExample.java)
 
 [`GetTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetTransactionsExample.java)
 
@@ -47,8 +41,6 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 [`TransactionWithMetadataExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransactionWithMetadataExample.java)
 
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
-
-[`KeyRotationExample`](jlibra-examples/src/main/java/dev/jlibra/example/KeyRotationExample.java)
 
 ## Use JLibra in your project
 
@@ -75,9 +67,7 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 
 **Transaction is not executed, but without errors (no events, no transaction in librabrowser.io)**
 
-1.   The execution of the example main classes might terminate before the actual action is performed. 
- *   To prevent this, add `Thread.sleep(2000)` after the last statement of the example.   
-2.   You might have specified too few gas.  
+1.   You might have specified too few gas.  
  *   Try increasing `maxGasAmount`. 
    
 ### Contributors
