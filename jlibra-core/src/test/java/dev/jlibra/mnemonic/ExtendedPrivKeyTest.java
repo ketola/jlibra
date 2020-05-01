@@ -36,7 +36,7 @@ public class ExtendedPrivKeyTest {
     @Test
     public void getAddress() {
         assertEquals(
-                "9263e21488ea4742c54de0d961c94743a01a974c6f095d8710f83044f0408ae7",
+                "5551702ff5dbf7485255e0816708b8a2",
                 childPrivate0.getAddress().toString());
     }
 

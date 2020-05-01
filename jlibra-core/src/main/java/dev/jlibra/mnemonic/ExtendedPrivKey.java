@@ -6,8 +6,6 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-import javax.annotation.concurrent.Immutable;
-
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -17,10 +15,10 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import dev.jlibra.AccountAddress;
+import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.LibraRuntimeException;
 
-@Immutable
 public class ExtendedPrivKey {
 
     public final PrivateKey privateKey;
@@ -41,6 +39,6 @@ public class ExtendedPrivKey {
     }
 
     public AccountAddress getAddress() {
-        return AccountAddress.fromPublicKey(publicKey);
+        return AccountAddress.fromAuthenticationKey(AuthenticationKey.fromPublicKey(publicKey));
     }
 }

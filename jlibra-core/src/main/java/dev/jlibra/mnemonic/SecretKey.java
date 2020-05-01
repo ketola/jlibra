@@ -1,11 +1,8 @@
 package dev.jlibra.mnemonic;
 
-import javax.annotation.concurrent.Immutable;
-
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteSequence;
 
-@Immutable
 public class SecretKey {
 
     private final ByteSequence byteSequence;

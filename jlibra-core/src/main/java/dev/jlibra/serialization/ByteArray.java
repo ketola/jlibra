@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import org.bouncycastle.util.encoders.Hex;
 
-import com.google.protobuf.ByteString;
-
 public class ByteArray implements ByteSequence {
 
     private final byte[] value;
@@ -39,10 +37,6 @@ public class ByteArray implements ByteSequence {
         byte[] result = new byte[value.length];
         System.arraycopy(value, 0, result, 0, value.length);
         return result;
-    }
-
-    public ByteString toByteString() {
-        return ByteString.copyFrom(value);
     }
 
     @Override

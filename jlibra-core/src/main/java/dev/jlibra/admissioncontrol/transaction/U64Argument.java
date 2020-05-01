@@ -2,7 +2,6 @@ package dev.jlibra.admissioncontrol.transaction;
 
 import dev.jlibra.serialization.lcs.LCS;
 
-@LCS.ExternallyTaggedEnumeration(dev.jlibra.serialization.lcs.type.TransactionArgument.U64)
 public class U64Argument implements TransactionArgument {
 
     private long value;

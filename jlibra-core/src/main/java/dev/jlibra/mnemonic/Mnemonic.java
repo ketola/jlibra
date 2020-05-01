@@ -8,12 +8,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.concurrent.Immutable;
-
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteSequence;
 
-@Immutable
 public class Mnemonic {
 
     public static final List<String> WORDS = Collections.unmodifiableList(asList(

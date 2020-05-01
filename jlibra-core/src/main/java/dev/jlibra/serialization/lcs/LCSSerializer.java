@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -11,6 +13,7 @@ import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
+import dev.jlibra.serialization.lcs.LCS.ExternallyTaggedEnumeration;
 
 public class LCSSerializer {
 
@@ -26,7 +29,14 @@ public class LCSSerializer {
 
         LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
         if (enumAnnotation != null) {
-            s = s.appendInt(enumAnnotation.value());
+            List<Class<?>> classes = Arrays.asList(enumAnnotation.classes());
+            Class enumMemberType = classes.stream()
+                    .filter(c -> serializable.getClass().equals(c) || c.isAssignableFrom(serializable.getClass()))
+                    .findFirst()
+                    .orElseThrow(() -> new LibraRuntimeException(
+                            "Enum membership not found for " + serializable.getClass()));
+            s = s.appendIntAsLeb128(classes.indexOf(enumMemberType));
+            type = enumMemberType;
         }
 
         List<Method> methods = Stream.of(type.getMethods())
@@ -38,13 +48,19 @@ public class LCSSerializer {
         for (Method m : methods) {
             Class<?> returnType = m.getReturnType();
             if (returnType.getAnnotation(LCS.Structure.class) != null
-                    || returnType.getAnnotation(LCS.ExternallyTaggedEnumeration.class) != null) {
+                    || returnType.getAnnotation(ExternallyTaggedEnumeration.class) != null) {
                 Object l = invokeMethod(serializable, m);
                 ByteSequence value = serialize(l, returnType);
                 s = s.appendFixedLength(value);
             } else if (returnType.equals(long.class)) {
                 long value = (long) invokeMethod(serializable, m);
                 s = s.appendLong(value);
+            } else if (returnType.equals(int.class)) {
+                int value = (int) invokeMethod(serializable, m);
+                s = s.appendLong(value);
+            } else if (returnType.equals(String.class)) {
+                String value = (String) invokeMethod(serializable, m);
+                s = s.appendString(value);
             } else if (ByteSequence.class.isAssignableFrom(returnType)) {
                 if (m.getAnnotation(LCS.Field.class).fixedLength()) {
                     s = s.appendFixedLength((ByteSequence) invokeMethod(serializable, m));
@@ -54,9 +70,10 @@ public class LCSSerializer {
             } else if (returnType.equals(List.class)) {
                 List<?> list = (List<?>) invokeMethod(serializable,
                         m);
-                s = s.appendInt(list.size());
+                s = s.appendIntAsLeb128(list.size());
                 for (Object e : list) {
-                    s = s.appendFixedLength(serialize(e, e.getClass()));
+                    s = s.appendFixedLength(serialize(e,
+                            (Class) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0]));
                 }
             } else {
                 throw new LibraRuntimeException("Return type " + returnType + " is not recognized for serialization.");

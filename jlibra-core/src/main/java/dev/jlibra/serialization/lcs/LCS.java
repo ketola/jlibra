@@ -45,12 +45,7 @@ public class LCS {
     @Target(TYPE)
     @Retention(RUNTIME)
     public @interface ExternallyTaggedEnumeration {
-        /**
-         * Returns the variant index of the enumeration.
-         * 
-         * @return
-         */
-        int value();
+        Class<?>[] classes();
     }
 
     /**
