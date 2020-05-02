@@ -3,6 +3,7 @@ package dev.jlibra.example;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Transaction;
 
@@ -18,7 +19,7 @@ public class GetAccountTransactionBySequenceNumberExample {
                 .withUrl("http://client.testnet.libra.org/")
                 .build();
 
-        Transaction t = client.getAccountTransaction(address, sequenceNumber, true);
+        Transaction t = client.getAccountTransaction(AccountAddress.fromHexString(address), sequenceNumber, true);
 
         logger.info(t);
     }

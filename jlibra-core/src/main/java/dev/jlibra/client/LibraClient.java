@@ -8,6 +8,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.github.arteam.simplejsonrpc.client.JsonRpcClient;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.client.views.Account;
@@ -29,9 +30,9 @@ public class LibraClient {
         return new LibraClientBuilder();
     }
 
-    public Account getAccountState(String address) {
+    public Account getAccountState(AccountAddress accountAddress) {
         try {
-            return libraJsonRpcClient.getAccountState(address);
+            return libraJsonRpcClient.getAccountState(Hex.toHexString(accountAddress.toArray()));
         } catch (Exception e) {
             throw new LibraRuntimeException("getAccountState failed", e);
         }
@@ -54,11 +55,12 @@ public class LibraClient {
         }
     }
 
-    public Transaction getAccountTransaction(String address,
+    public Transaction getAccountTransaction(AccountAddress accountAddress,
             long sequenceNumber,
             boolean includeEvents) {
         try {
-            return libraJsonRpcClient.getAccountTransaction(address, sequenceNumber, includeEvents);
+            return libraJsonRpcClient.getAccountTransaction(Hex.toHexString(accountAddress.toArray()), sequenceNumber,
+                    includeEvents);
         } catch (Exception e) {
             throw new LibraRuntimeException("getAccountTransaction failed", e);
         }
