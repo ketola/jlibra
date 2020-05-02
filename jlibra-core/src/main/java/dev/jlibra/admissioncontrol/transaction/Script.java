@@ -1,6 +1,5 @@
 package dev.jlibra.admissioncontrol.transaction;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.immutables.value.Value;
@@ -15,9 +14,7 @@ public interface Script extends TransactionPayload {
     ByteSequence getCode();
 
     @LCS.Field(1)
-    default List<TypeTag> getTypeArguments() {
-        return Arrays.asList(new LbrTypeTag());
-    }
+    List<TypeTag> getTypeArguments();
 
     @LCS.Field(2)
     List<TransactionArgument> getArguments();
