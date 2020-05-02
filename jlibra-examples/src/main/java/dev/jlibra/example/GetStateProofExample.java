@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.StateProof;
 
-public class GetStateProofJsonRpcExample {
-    private static final Logger logger = LogManager.getLogger(GetStateProofJsonRpcExample.class);
+public class GetStateProofExample {
+    private static final Logger logger = LogManager.getLogger(GetStateProofExample.class);
 
     public static void main(String[] args) {
         LibraClient client = LibraClient.builder()
