@@ -1,4 +1,4 @@
-package dev.jlibra.example;
+package dev.jlibra.example.util;
 
 import static java.lang.String.format;
 

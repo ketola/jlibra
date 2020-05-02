@@ -36,6 +36,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`ImportAccountMnemonicExample`](jlibra-examples/src/main/java/dev/jlibra/example/ImportAccountMnemonicExample.java)
 
+[`KeyRotationExample`](jlibra-examples/src/main/java/dev/jlibra/example/KeyRotationExample.java)
+
 [`MintExample`](jlibra-examples/src/main/java/dev/jlibra/example/MintExample.java)
 
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
