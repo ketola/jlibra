@@ -33,16 +33,19 @@ public class TransferExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
-                "3051020101300506032b657004220420d1036d8905daf0ef40f349f76885c290475e818798c2b58a74c34d94e6e8c29481210081baa2b679aa2c8fb75dbe2f9164eef0265be7bb6c20c81c95a788997d927e3f"));
+                "3051020101300506032b657004220420a758d7ef769f2dd20e083bc49b36f68adba445297e0995387e1e9b820c91dbd28121004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04"));
         PublicKey publicKey = KeyUtils.publicKeyFromByteSequence(ByteArray.from(
-                "302a300506032b657003210081baa2b679aa2c8fb75dbe2f9164eef0265be7bb6c20c81c95a788997d927e3f"));
+                "302a300506032b65700321004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04"));
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromPublicKey(publicKey);
+
+        // If the account already exists, then the authentication key of the target
+        // account is not required and the account address would be enough
         AuthenticationKey authenticationKeyTarget = AuthenticationKey
-                .fromHexString("c0c19d6b1d48371ea28f0cdc5f74bba7b3f7e8e38f8c8393f281a2f0792a2849");
+                .fromHexString("9b3a24c010b6ca4c1e4eed60d831135653264c0043231f492911c3698dacff5a");
 
         long amount = 1;
-        int sequenceNumber = 5;
+        int sequenceNumber = 3;
 
         logger.info("Source account authentication key: {}", authenticationKey);
 
@@ -62,13 +65,12 @@ public class TransferExample {
         // provide the auth key prefix parameter. You can leave it as an empty byte
         // array if
         // the account exists.
-        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(
-                authenticationKeyTarget.toByteArray().subseq(0, 16));
+        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(ByteArray.from(new byte[0]));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(240000)
-                .gasUnitPrice(0)
+                .maxGasAmount(640000)
+                .gasUnitPrice(1)
                 .senderAccount(AccountAddress.fromAuthenticationKey(authenticationKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
