@@ -3,6 +3,8 @@ package dev.jlibra.serialization.lcs;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -10,6 +12,7 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
+import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
@@ -23,6 +26,7 @@ public class LCSSerializerTest {
                 .gasUnitPrice(1)
                 .maxGasAmount(2)
                 .payload(ImmutableScript.builder()
+                        .addAllTypeArguments(Arrays.asList(new LbrTypeTag()))
                         .code(
                                 ByteArray.from("00"))
                         .arguments(
