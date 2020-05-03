@@ -53,6 +53,10 @@ public class AuthenticationKey implements ByteSequence {
         return ByteArray.from(bytes.toArray());
     }
 
+    public ByteArray prefix() {
+        return bytes.subseq(0, 16);
+    }
+
     @Override
     public byte[] toArray() {
         return bytes.toArray();
