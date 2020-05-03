@@ -4,6 +4,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
 import java.time.Instant;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +18,7 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticatorEd25519;
+import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
 import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
@@ -42,10 +44,10 @@ public class TransferExample {
         // If the account already exists, then the authentication key of the target
         // account is not required and the account address would be enough
         AuthenticationKey authenticationKeyTarget = AuthenticationKey
-                .fromHexString("9b3a24c010b6ca4c1e4eed60d831135653264c0043231f492911c3698dacff5a");
+                .fromHexString("acb53e7a4b1e0cd77a4c08043191a2308a0461f91654bb308638907907e348cc");
 
         long amount = 1;
-        int sequenceNumber = 3;
+        int sequenceNumber = 11;
 
         logger.info("Source account authentication key: {}", authenticationKey);
 
@@ -65,7 +67,7 @@ public class TransferExample {
         // provide the auth key prefix parameter. You can leave it as an empty byte
         // array if
         // the account exists.
-        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(ByteArray.from(new byte[0]));
+        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(authenticationKey.prefix());
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -74,6 +76,7 @@ public class TransferExample {
                 .senderAccount(AccountAddress.fromAuthenticationKey(authenticationKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
+                        .typeArguments(Arrays.asList(new LbrTypeTag()))
                         .code(Move.peerToPeerTransferAsBytes())
                         .addArguments(addressArgument, authkeyPrefixArgument, amountArgument)
                         .build())
