@@ -2,9 +2,9 @@ package dev.jlibra.example;
 
 import java.security.Security;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.jlibra.mnemonic.ChildNumber;
 import dev.jlibra.mnemonic.ExtendedPrivKey;
@@ -14,7 +14,7 @@ import dev.jlibra.mnemonic.Seed;
 
 public class ImportAccountMnemonicExample {
 
-    private static final Logger logger = LogManager.getLogger(ImportAccountMnemonicExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(ImportAccountMnemonicExample.class);
 
     public static void main(String[] args) {
         Security.addProvider(new BouncyCastleProvider());

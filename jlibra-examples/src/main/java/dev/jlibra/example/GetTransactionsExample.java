@@ -2,8 +2,8 @@ package dev.jlibra.example;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Transaction;
@@ -16,7 +16,7 @@ import dev.jlibra.client.views.Transaction;
  */
 public class GetTransactionsExample {
 
-    private static final Logger logger = LogManager.getLogger(GetTransactionsExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetTransactionsExample.class);
 
     public static void main(String[] args) {
         long start = 15134650;
@@ -30,7 +30,7 @@ public class GetTransactionsExample {
         List<Transaction> transactions = client.getTransactions(start, limit, fetchEvent);
 
         transactions.forEach(t -> {
-            logger.info(t);
+            logger.info("Transaction: {}", t);
         });
     }
 }
