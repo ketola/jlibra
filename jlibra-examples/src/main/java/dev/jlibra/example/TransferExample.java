@@ -67,7 +67,7 @@ public class TransferExample {
         // provide the auth key prefix parameter. You can leave it as an empty byte
         // array if
         // the account exists.
-        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(authenticationKey.prefix());
+        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(authenticationKeyTarget.prefix());
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
