@@ -43,7 +43,7 @@ public interface Signature {
     }
 
     /**
-     * This methods adds signature to an multig signature.
+     * This methods adds a signature to a multig signature.
      * 
      * @param the         multisig signature where the signature is added
      * @param index       the index of the public key in the multig account that was
@@ -106,6 +106,10 @@ public interface Signature {
     }
 
     public static Signature newMultisignature() {
+        // new multisignature initially only contains the bytes required for the bitmap,
+        // the
+        // actual signatures have to be added by using addSignatureToMultiSignature
+        // method
         return ImmutableSignature.builder()
                 .signature(ByteArray.from(new byte[4]))
                 .build();
