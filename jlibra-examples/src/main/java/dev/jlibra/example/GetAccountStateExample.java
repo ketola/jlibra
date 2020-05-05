@@ -2,8 +2,8 @@ package dev.jlibra.example;
 
 import java.math.BigDecimal;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.client.LibraClient;
@@ -11,10 +11,10 @@ import dev.jlibra.client.views.Account;
 
 public class GetAccountStateExample {
 
-    private static final Logger logger = LogManager.getLogger(GetAccountStateExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "2ab3189806488e73014e2e429e45c143";
+        String address = "8a0461f91654bb308638907907e348cc";
 
         LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")

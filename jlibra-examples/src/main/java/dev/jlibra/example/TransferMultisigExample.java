@@ -5,8 +5,8 @@ import java.security.Security;
 import java.time.Instant;
 import java.util.Arrays;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
@@ -29,7 +29,7 @@ import dev.jlibra.serialization.ByteArray;
 
 public class TransferMultisigExample {
 
-    private static final Logger logger = LogManager.getLogger(TransferMultisigExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(TransferMultisigExample.class);
 
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());

@@ -2,8 +2,8 @@ package dev.jlibra.example;
 
 import static java.lang.String.format;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -22,10 +22,10 @@ import kong.unirest.Unirest;
  */
 public class MintExample {
 
-    private static final Logger logger = LogManager.getLogger(MintExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(MintExample.class);
 
     public static void main(String[] args) {
-        String authenticationKey = "c0c19d6b1d48371ea28f0cdc5f74bba7b3f7e8e38f8c8393f281a2f0792a2849";
+        String authenticationKey = "57cc5b453426e3d8e212c7d25e128014ee25121cec7f67d0eb8b7ecbff27e742";
         long amountInMicroLibras = 10L * 1_000_000L;
 
         HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
@@ -35,8 +35,9 @@ public class MintExample {
 
         if (response.getStatus() != 200) {
             throw new IllegalStateException(
-                    format("Error in minting %d Libra for authentication key %s", amountInMicroLibras,
-                            authenticationKey));
+                    format("Error in minting %d Libra for authentication key %s. Response: %d, message: %s",
+                            amountInMicroLibras,
+                            authenticationKey, response.getStatus(), response.getStatusText()));
 
         }
         logger.info(response.getBody());

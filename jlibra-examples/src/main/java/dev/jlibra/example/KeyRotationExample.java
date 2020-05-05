@@ -10,10 +10,10 @@ import java.security.Security;
 import java.time.Instant;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
@@ -34,7 +34,7 @@ import dev.jlibra.poller.Wait;
 
 public class KeyRotationExample {
 
-    private static final Logger logger = LogManager.getLogger(KeyRotationExample.class);
+    private static final Logger logger = LoggerFactory.getLogger(KeyRotationExample.class);
 
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());

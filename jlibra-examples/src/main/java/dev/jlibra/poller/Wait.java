@@ -2,14 +2,14 @@ package dev.jlibra.poller;
 
 import java.time.Duration;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
 public class Wait {
-    private static final Logger logger = LogManager.getLogger(Wait.class);
+    private static final Logger logger = LoggerFactory.getLogger(Wait.class);
 
     public static void until(WaitCondition waitCondition) {
         RetryPolicy<Boolean> retryPolicy = new RetryPolicy<Boolean>()
