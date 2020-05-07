@@ -19,6 +19,7 @@ import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
 import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
 import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticatorMultiEd25519;
+import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
 import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
@@ -51,7 +52,7 @@ public class TransferMultisigExample {
                 Arrays.asList(publicKey1, publicKey2), 2);
 
         // Arguments for the peer to peer transaction
-        U64Argument amountArgument = new U64Argument(1 * 1000000);
+        U64Argument amountArgument = new U64Argument(2 * 1_000_000);
         AccountAddressArgument addressArgument = new AccountAddressArgument(
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
@@ -70,7 +71,7 @@ public class TransferMultisigExample {
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         Transaction transaction = ImmutableTransaction.builder()
-                .sequenceNumber(1)
+                .sequenceNumber(3)
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
                 .senderAccount(
@@ -78,6 +79,7 @@ public class TransferMultisigExample {
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferAsBytes())
+                        .typeArguments(Arrays.asList(new LbrTypeTag()))
                         .addArguments(addressArgument, authkeyPrefixArgument, amountArgument)
                         .build())
                 .build();
