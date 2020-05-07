@@ -15,14 +15,14 @@ public class MultiSignaturePublicKey implements ByteSequence {
         this.bytes = bytes;
     }
 
-    public static MultiSignaturePublicKey create(List<PublicKey> publicKeys, byte threshold) {
+    public static MultiSignaturePublicKey create(List<PublicKey> publicKeys, int threshold) {
         byte[] multiSigPublicKeyBytes = new byte[publicKeys.size() * PUBLIC_KEY_LENGTH + 1];
         int counter = 0;
         for (PublicKey pk : publicKeys) {
             byte[] pkBytes = pk.toArray();
             System.arraycopy(pkBytes, 0, multiSigPublicKeyBytes, counter++ * PUBLIC_KEY_LENGTH, PUBLIC_KEY_LENGTH);
         }
-        multiSigPublicKeyBytes[multiSigPublicKeyBytes.length - 1] = threshold;
+        multiSigPublicKeyBytes[multiSigPublicKeyBytes.length - 1] = (byte) threshold;
         return new MultiSignaturePublicKey(ByteArray.from(multiSigPublicKeyBytes));
     }
 

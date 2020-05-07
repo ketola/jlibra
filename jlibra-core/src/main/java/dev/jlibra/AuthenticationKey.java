@@ -5,6 +5,10 @@ import static dev.jlibra.PublicKey.PUBLIC_KEY_LENGTH;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
+/**
+ * Authentication key is a hash of the public key and the signature scheme used
+ * by the account.
+ */
 public class AuthenticationKey implements ByteSequence {
 
     private static final byte SIGNATURE_SCHEME_ED25519 = 0;
@@ -53,6 +57,12 @@ public class AuthenticationKey implements ByteSequence {
         return ByteArray.from(bytes.toArray());
     }
 
+    /**
+     * Authentication prefix is required when creating new accounts from
+     * transactions.
+     * 
+     * @return
+     */
     public ByteArray prefix() {
         return bytes.subseq(0, 16);
     }

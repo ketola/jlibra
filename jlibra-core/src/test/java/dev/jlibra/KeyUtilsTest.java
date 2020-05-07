@@ -5,10 +5,8 @@ import static org.junit.Assert.assertThat;
 
 import java.security.KeyFactory;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,12 +29,6 @@ public class KeyUtilsTest {
     public void testPrivateKeyFromHexString() throws Exception {
         PrivateKey privateKey = getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(PRIVATE_KEY.toArray()));
         assertThat(privateKey, equalTo(KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY)));
-    }
-
-    @Test
-    public void testPublicKeyFromHexString() throws Exception {
-        PublicKey publicKey = getKeyFactory().generatePublic(new X509EncodedKeySpec(PUBLIC_KEY.toArray()));
-        assertThat(publicKey, equalTo(KeyUtils.publicKeyFromByteSequence(PUBLIC_KEY)));
     }
 
     private static KeyFactory getKeyFactory() throws Exception {

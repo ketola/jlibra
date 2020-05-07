@@ -36,20 +36,19 @@ public class TransferMultisigExample {
 
         PrivateKey privateKey1 = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
                 "3051020101300506032b6570042204209340bab58bdd0f293dae15a41f8e390eac94cd0f7270120fae25a6c1c9d80a6b81210085c582f99e99edca5417802e108f4cd47c362d352992d616ef30608ee3675955"));
-        java.security.PublicKey publicKey1 = KeyUtils.publicKeyFromByteSequence(ByteArray.from(
-                "302a300506032b657003210085c582f99e99edca5417802e108f4cd47c362d352992d616ef30608ee3675955"));
+        PublicKey publicKey1 = PublicKey.fromHexString(
+                "302a300506032b657003210085c582f99e99edca5417802e108f4cd47c362d352992d616ef30608ee3675955");
 
         PrivateKey privateKey2 = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
                 "3051020101300506032b6570042204200f38bbd64e621c6444abfc3c9b07d6d45e1b52ea9f06eb1740d60c412ddd2b388121003f277edec12f11e182cec2f8eecd7411ba636e9d6e4c8e66ff07e289e9cd3dae"));
-        java.security.PublicKey publicKey2 = KeyUtils.publicKeyFromByteSequence(ByteArray.from(
-                "302a300506032b65700321003f277edec12f11e182cec2f8eecd7411ba636e9d6e4c8e66ff07e289e9cd3dae"));
+        PublicKey publicKey2 = PublicKey.fromHexString(
+                "302a300506032b65700321003f277edec12f11e182cec2f8eecd7411ba636e9d6e4c8e66ff07e289e9cd3dae");
 
         AuthenticationKey authenticationKeyTarget = AuthenticationKey
                 .fromHexString("c0c19d6b1d48371ea28f0cdc5f74bba7b3f7e8e38f8c8393f281a2f0792a2849");
 
         MultiSignaturePublicKey multiPubKey = MultiSignaturePublicKey.create(
-                Arrays.asList(PublicKey.fromPublicKey(publicKey1), PublicKey.fromPublicKey(publicKey2)),
-                (byte) 2);
+                Arrays.asList(publicKey1, publicKey2), 2);
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(1 * 1000000);
@@ -71,9 +70,9 @@ public class TransferMultisigExample {
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         Transaction transaction = ImmutableTransaction.builder()
-                .sequenceNumber(0)
-                .maxGasAmount(240000)
-                .gasUnitPrice(0)
+                .sequenceNumber(1)
+                .maxGasAmount(640000)
+                .gasUnitPrice(1)
                 .senderAccount(
                         senderAddress)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
