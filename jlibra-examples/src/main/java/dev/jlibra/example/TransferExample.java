@@ -1,7 +1,6 @@
 package dev.jlibra.example;
 
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.Security;
 import java.time.Instant;
 import java.util.Arrays;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
+import dev.jlibra.PublicKey;
 import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
 import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
 import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
@@ -36,8 +36,8 @@ public class TransferExample {
 
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
                 "3051020101300506032b657004220420a758d7ef769f2dd20e083bc49b36f68adba445297e0995387e1e9b820c91dbd28121004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04"));
-        PublicKey publicKey = KeyUtils.publicKeyFromByteSequence(ByteArray.from(
-                "302a300506032b65700321004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04"));
+        PublicKey publicKey = PublicKey.fromHexString(
+                "302a300506032b65700321004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04");
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromPublicKey(publicKey);
 
@@ -84,7 +84,7 @@ public class TransferExample {
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
                 .authenticator(ImmutableTransactionAuthenticatorEd25519.builder()
-                        .publicKey(dev.jlibra.PublicKey.fromPublicKey(publicKey))
+                        .publicKey(publicKey)
                         .signature(Signature.signTransaction(transaction, privateKey))
                         .build())
                 .transaction(transaction)
