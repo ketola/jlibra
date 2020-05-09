@@ -23,7 +23,8 @@ public class MultiSignaturePublicKey implements ByteSequence {
      * Creates a new MultiSignaturePublicKey
      * 
      * @param publicKeys List of {@link PublicKey} 's of the account
-     * @param threshold  number of keys to sign a transaction for the account
+     * @param threshold  number of keys required to sign a transaction for the
+     *                   account
      * @return
      */
     public static MultiSignaturePublicKey create(List<PublicKey> publicKeys, int threshold) {
