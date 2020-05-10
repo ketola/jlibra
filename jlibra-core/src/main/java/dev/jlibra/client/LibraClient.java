@@ -93,7 +93,7 @@ public class LibraClient {
         } catch (JsonRpcException e) {
             throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
-            throw new LibraRuntimeException("submit failed", e);
+            throw new LibraRuntimeException("getStateProof failed", e);
         }
     }
 
