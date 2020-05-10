@@ -7,6 +7,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.bouncycastle.util.encoders.Hex;
 
 import com.github.arteam.simplejsonrpc.client.JsonRpcClient;
+import com.github.arteam.simplejsonrpc.client.exception.JsonRpcException;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
@@ -33,6 +34,8 @@ public class LibraClient {
     public Account getAccountState(AccountAddress accountAddress) {
         try {
             return libraJsonRpcClient.getAccountState(Hex.toHexString(accountAddress.toArray()));
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getAccountState failed", e);
         }
@@ -41,6 +44,8 @@ public class LibraClient {
     public BlockMetadata getMetadata() {
         try {
             return libraJsonRpcClient.getMetadata();
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getMetadata failed", e);
         }
@@ -50,6 +55,8 @@ public class LibraClient {
             boolean includeEvents) {
         try {
             return libraJsonRpcClient.getTransactions(version, limit, includeEvents);
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getTransactions failed", e);
         }
@@ -61,6 +68,8 @@ public class LibraClient {
         try {
             return libraJsonRpcClient.getAccountTransaction(Hex.toHexString(accountAddress.toArray()), sequenceNumber,
                     includeEvents);
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getAccountTransaction failed", e);
         }
@@ -71,6 +80,8 @@ public class LibraClient {
             long limit) {
         try {
             return libraJsonRpcClient.getEvents(eventKey, start, limit);
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getEvents failed", e);
         }
@@ -79,6 +90,8 @@ public class LibraClient {
     public StateProof getStateProof(long knownVersion) {
         try {
             return libraJsonRpcClient.getStateProof(knownVersion);
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("submit failed", e);
         }
@@ -89,6 +102,8 @@ public class LibraClient {
             libraJsonRpcClient
                     .submit(Hex.toHexString(
                             LCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()));
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("submit failed", e);
         }
