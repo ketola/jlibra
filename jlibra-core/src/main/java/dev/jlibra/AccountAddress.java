@@ -3,6 +3,11 @@ package dev.jlibra;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
+/**
+ * Account address is used to identify the target and source accounts in
+ * transactions. Account address is calculated from a {@link AuthenticationKey}
+ * by taking the last 16 bytes of the authentication key.
+ */
 public class AccountAddress implements ByteSequence {
 
     private ByteArray bytes;
