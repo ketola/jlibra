@@ -4,9 +4,7 @@
  
 A Java library for building applications on [Libra](https://libra.org/)
 
-The API for creating transactions and querying the database of Libra uses [json-rpc](https://www.jsonrpc.org/specification) - a simple remote procedure call protocol utilizing JSON for encoding data. 
-
-Though sending new transactions to the Libra network requires a another type of serialization - the Libra Canonical Serialization. JLibra implements both of these and provides a simple api for Java applications to integrate to Libra.
+The API for creating transactions and querying the database of Libra uses [json-rpc](https://www.jsonrpc.org/specification) - a simple remote procedure call protocol utilizing JSON for encoding data. Sending new transactions to the Libra network requires also another type of serialization - the Libra Canonical Serialization. JLibra implements both of these and provides a simple api for Java applications to integrate to Libra.
 
 JLibra simplifies integration to Libra but does not hide any features of the Libra api, this makes it possible to implement anything supported by Libra with Java. 
 
