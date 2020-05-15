@@ -27,13 +27,11 @@
       <groupId>dev.jlibra</groupId>
       <artifactId>jlibra-poller</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>dev.jlibra</groupId>
       <artifactId>jlibra-core</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -48,7 +46,6 @@
     <dependency>
       <groupId>com.konghq</groupId>
       <artifactId>unirest-java</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

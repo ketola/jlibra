@@ -42,9 +42,9 @@ import dev.jlibra.client.views.Account;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 
-public class MultisigTransaction {
+public class MultisigTransactionTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(MultisigTransaction.class);
+    private static final Logger logger = LoggerFactory.getLogger(MultisigTransactionTest.class);
 
     @Before
     public void setUp() {
