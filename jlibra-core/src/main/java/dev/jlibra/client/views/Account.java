@@ -1,5 +1,7 @@
 package dev.jlibra.client.views;
 
+import java.util.List;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,8 +14,8 @@ public interface Account {
     @JsonProperty("authentication_key")
     String authenticationKey();
 
-    @JsonProperty("balance")
-    Amount balance();
+    @JsonProperty("balances")
+    List<Amount> balances();
 
     @JsonProperty("delegated_key_rotation_capability")
     Boolean delegatedKeyRotationCapability();

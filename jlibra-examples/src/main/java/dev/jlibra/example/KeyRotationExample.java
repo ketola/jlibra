@@ -170,6 +170,6 @@ public class KeyRotationExample {
         logger.info(
                 "Account authentication key: {}, Balance (Libras): {}",
                 account.authenticationKey(),
-                new BigDecimal(account.balance().amount()).divide(BigDecimal.valueOf(1000000)));
+                new BigDecimal(account.balances().get(0).amount()).divide(BigDecimal.valueOf(1000000)));
     }
 }

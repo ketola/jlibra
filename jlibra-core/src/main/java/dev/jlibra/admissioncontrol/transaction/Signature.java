@@ -30,7 +30,7 @@ public interface Signature {
             java.security.Signature sgr = java.security.Signature.getInstance("Ed25519", "BC");
             sgr.initSign(privateKey);
             sgr.update(Hash.ofInput(transactionBytes)
-                    .hash(ByteArray.from("RawTransaction::libra_types::transaction@@$$LIBRA$$@@".getBytes()))
+                    .hash(ByteArray.from("libra_types::transaction::RawTransaction@@$$LIBRA$$@@".getBytes()))
                     .toArray());
             signature = sgr.sign();
         } catch (Exception e) {
@@ -72,7 +72,9 @@ public interface Signature {
             System.arraycopy(existingSignature, 0, signatureBytes, 0, existingSignature.length);
         }
 
-        System.arraycopy(signatureToAdd.getSignature().toArray(), 0, signatureBytes, index * SIGNATURE_LENGTH,
+        int signatureIndex = signatureBytes.length / SIGNATURE_LENGTH - 1;
+        System.arraycopy(signatureToAdd.getSignature().toArray(), 0, signatureBytes,
+                signatureIndex * SIGNATURE_LENGTH,
                 SIGNATURE_LENGTH);
         byte[] signatureAndBitmap = new byte[signatureBytes.length + BITMAP_LENGTH];
         System.arraycopy(signatureBytes, 0, signatureAndBitmap, 0, signatureBytes.length);
