@@ -1,4 +1,4 @@
-package dev.jlibra.client.faucet;
+package dev.jlibra.faucet;
 
 import static org.apache.http.HttpHeaders.USER_AGENT;
 

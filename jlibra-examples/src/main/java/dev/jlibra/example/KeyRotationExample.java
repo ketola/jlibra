@@ -27,8 +27,8 @@ import dev.jlibra.admissioncontrol.transaction.Signature;
 import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.client.LibraClient;
-import dev.jlibra.client.faucet.Faucet;
 import dev.jlibra.client.views.Account;
+import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 

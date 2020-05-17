@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.client.LibraClient;
-import dev.jlibra.client.faucet.Faucet;
 import dev.jlibra.client.views.Account;
+import dev.jlibra.faucet.Faucet;
 
 /**
  * Calls the faucet service http endpoint with parameters authentication key and
