@@ -38,6 +38,7 @@ import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.faucet.Faucet;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
@@ -53,9 +54,11 @@ public class MultisigTransactionTest {
 
     @Test
     public void testMultisigTransaction() {
-
         LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")
+                .build();
+
+        Faucet faucet = Faucet.builder()
                 .build();
 
         // source account, multisig account with 32 keypairs, 30 threshold
@@ -66,7 +69,7 @@ public class MultisigTransactionTest {
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey);
         AccountAddress accountAddress = AccountAddress.fromAuthenticationKey(authenticationKey);
-        IntegrationTestUtils.mint(authenticationKey, 10 * 1_000_000);
+        faucet.mint(authenticationKey, 10 * 1_000_000);
         Wait.until(accountExists(accountAddress, client));
 
         // target account

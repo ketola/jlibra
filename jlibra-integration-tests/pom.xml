@@ -43,10 +43,6 @@
       <artifactId>hamcrest-library</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.konghq</groupId>
-      <artifactId>unirest-java</artifactId>
-    </dependency>
   </dependencies>
 
   <build>

@@ -1,12 +1,13 @@
 package dev.jlibra.example;
 
-import static java.lang.String.format;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
+import dev.jlibra.AccountAddress;
+import dev.jlibra.AuthenticationKey;
+import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.faucet.Faucet;
+import dev.jlibra.client.views.Account;
 
 /**
  * Calls the faucet service http endpoint with parameters authentication key and
@@ -25,22 +26,18 @@ public class MintExample {
     private static final Logger logger = LoggerFactory.getLogger(MintExample.class);
 
     public static void main(String[] args) {
-        String authenticationKey = "57cc5b453426e3d8e212c7d25e128014ee25121cec7f67d0eb8b7ecbff27e742";
-        long amountInMicroLibras = 10L * 1_000_000L;
+        AuthenticationKey authenticationKey = AuthenticationKey
+                .fromHexString("f792ee6e15298b234bfcef1d6d00c6c6fc4c85260cdccd2ee25f217da715e5dc");
 
-        HttpResponse<String> response = Unirest.post("http://faucet.testnet.libra.org")
-                .queryString("amount", amountInMicroLibras)
-                .queryString("auth_key", authenticationKey)
-                .asString();
+        Faucet faucet = Faucet.builder().build();
+        faucet.mint(authenticationKey, 10L * 1_000_000L);
 
-        if (response.getStatus() != 200) {
-            throw new IllegalStateException(
-                    format("Error in minting %d Libra for authentication key %s. Response: %d, message: %s",
-                            amountInMicroLibras,
-                            authenticationKey, response.getStatus(), response.getStatusText()));
+        LibraClient client = LibraClient.builder()
+                .withUrl("http://client.testnet.libra.org/")
+                .build();
 
-        }
-        logger.info(response.getBody());
-
+        Account account = client.getAccountState(AccountAddress.fromAuthenticationKey(authenticationKey));
+        logger.info("Balance: {} {}", account.balances().get(0).amount() / 1_000_000,
+                account.balances().get(0).currency());
     }
 }
