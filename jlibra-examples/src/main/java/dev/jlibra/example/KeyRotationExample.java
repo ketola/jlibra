@@ -28,7 +28,7 @@ import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
 import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
-import dev.jlibra.example.util.ExampleUtils;
+import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 
@@ -41,6 +41,8 @@ public class KeyRotationExample {
         LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")
                 .build();
+
+        Faucet faucet = Faucet.builder().build();
 
         /*
          * Create a key pair, calculate the libra address and add some coins to the
@@ -55,7 +57,8 @@ public class KeyRotationExample {
 
         logger.info("Account address: {}", addressOriginal.toString());
         logger.info("Authentication key: {}", authenticationKeyOriginal.toString());
-        ExampleUtils.mint(AuthenticationKey.fromPublicKey(publicKeyOriginal), 10L * 1_000_000L);
+
+        faucet.mint(authenticationKeyOriginal, 10L * 1_000_000L);
 
         Wait.until(accountExists(addressOriginal, client));
 
