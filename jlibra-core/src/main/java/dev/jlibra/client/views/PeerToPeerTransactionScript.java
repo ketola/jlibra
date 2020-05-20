@@ -18,6 +18,9 @@ public interface PeerToPeerTransactionScript extends Script {
     @JsonProperty("metadata")
     String metadata();
 
+    @JsonProperty("metadata_signature")
+    String metadataSignature();
+
     @JsonProperty("receiver")
     String receiver();
 }

@@ -41,6 +41,9 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`TransferExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferExample.java)
 
+[`TransferWithMetadataExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferWithMetadataExample.java)
+
+
 ## Use JLibra in your project
 
 Versions of JLibra are deployed to the [Central Maven repository](https://search.maven.org/), you can add JLibra as a dependency to your project:
