@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction;
 
 import org.immutables.value.Value;
 
@@ -25,6 +25,9 @@ public interface Transaction {
     long getGasUnitPrice();
 
     @LCS.Field(5)
+    String getGasCurrencyCode();
+
+    @LCS.Field(6)
     long getExpirationTime();
 
 }

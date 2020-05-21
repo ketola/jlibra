@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction;
 
 import dev.jlibra.serialization.lcs.LCS.ExternallyTaggedEnumeration;
 

@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,12 @@ public class LbrTypeTag implements TypeTag {
     }
 
     @LCS.Field(value = 1)
-    public String getName() {
+    public String getModule() {
         return "LBR";
     }
 
     @LCS.Field(value = 2)
-    public String getModule() {
+    public String getName() {
         return "T";
     }
 

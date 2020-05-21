@@ -12,20 +12,20 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
-import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticatorEd25519;
-import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
-import dev.jlibra.admissioncontrol.transaction.Signature;
-import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.transaction.ImmutableScript;
+import dev.jlibra.transaction.ImmutableSignedTransaction;
+import dev.jlibra.transaction.ImmutableTransaction;
+import dev.jlibra.transaction.ImmutableTransactionAuthenticatorEd25519;
+import dev.jlibra.transaction.LbrTypeTag;
+import dev.jlibra.transaction.Signature;
+import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Transaction;
+import dev.jlibra.transaction.argument.AccountAddressArgument;
+import dev.jlibra.transaction.argument.U64Argument;
+import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class TransferExample {
 
@@ -47,7 +47,7 @@ public class TransferExample {
                 .fromHexString("acb53e7a4b1e0cd77a4c08043191a2308a0461f91654bb308638907907e348cc");
 
         long amount = 1;
-        int sequenceNumber = 11;
+        int sequenceNumber = 0;
 
         logger.info("Source account authentication key: {}", authenticationKey);
 
@@ -67,12 +67,13 @@ public class TransferExample {
         // provide the auth key prefix parameter. You can leave it as an empty byte
         // array if
         // the account exists.
-        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(authenticationKeyTarget.prefix());
+        U8VectorArgument authkeyPrefixArgument = new U8VectorArgument(authenticationKeyTarget.prefix());
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
+                .gasCurrencyCode("LBR")
                 .senderAccount(AccountAddress.fromAuthenticationKey(authenticationKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()

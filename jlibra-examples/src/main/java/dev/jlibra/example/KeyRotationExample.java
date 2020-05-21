@@ -18,19 +18,19 @@ import org.slf4j.LoggerFactory;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticatorEd25519;
-import dev.jlibra.admissioncontrol.transaction.Signature;
-import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
+import dev.jlibra.transaction.ImmutableScript;
+import dev.jlibra.transaction.ImmutableSignedTransaction;
+import dev.jlibra.transaction.ImmutableTransaction;
+import dev.jlibra.transaction.ImmutableTransactionAuthenticatorEd25519;
+import dev.jlibra.transaction.Signature;
+import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Transaction;
+import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class KeyRotationExample {
 
@@ -140,12 +140,13 @@ public class KeyRotationExample {
             BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, LibraClient client) {
 
-        ByteArrayArgument newAuthenticationKeyArgument = new ByteArrayArgument(
+        U8VectorArgument newAuthenticationKeyArgument = new U8VectorArgument(
                 AuthenticationKey.fromPublicKey(publicKeyNew));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(640000)
+                .gasCurrencyCode("LBR")
                 .gasUnitPrice(1)
                 .senderAccount(address)
                 .expirationTime(Instant.now().getEpochSecond() + 60)

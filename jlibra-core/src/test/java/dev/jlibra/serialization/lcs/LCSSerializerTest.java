@@ -9,13 +9,13 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.transaction.ImmutableScript;
+import dev.jlibra.transaction.ImmutableTransaction;
+import dev.jlibra.transaction.LbrTypeTag;
+import dev.jlibra.transaction.Transaction;
+import dev.jlibra.transaction.argument.AccountAddressArgument;
 
 public class LCSSerializerTest {
 

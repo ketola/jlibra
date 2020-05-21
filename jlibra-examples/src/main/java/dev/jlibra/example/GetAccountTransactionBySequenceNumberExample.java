@@ -12,7 +12,7 @@ public class GetAccountTransactionBySequenceNumberExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountTransactionBySequenceNumberExample.class);
 
     public static void main(String[] args) {
-        String address = "4fa2be7ad55936c5702e8b7e3fdedb05";
+        String address = "2ab3189806488e73014e2e429e45c143";
         int sequenceNumber = 0;
 
         LibraClient client = LibraClient.builder()
