@@ -1,13 +1,13 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction.argument;
 
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.lcs.LCS;
 
-public class ByteArrayArgument implements TransactionArgument {
+public class U8VectorArgument implements TransactionArgument {
 
     private ByteSequence bytes;
 
-    public ByteArrayArgument(ByteSequence bytes) {
+    public U8VectorArgument(ByteSequence bytes) {
         this.bytes = bytes;
     }
 

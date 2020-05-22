@@ -27,7 +27,7 @@ public class MintExample {
 
     public static void main(String[] args) {
         AuthenticationKey authenticationKey = AuthenticationKey
-                .fromHexString("f792ee6e15298b234bfcef1d6d00c6c6fc4c85260cdccd2ee25f217da715e5dc");
+                .fromHexString("83114168d1c4912ddfac857421cdcfa54fa2be7ad55936c5702e8b7e3fdedb05");
 
         Faucet faucet = Faucet.builder().build();
         faucet.mint(authenticationKey, 10L * 1_000_000L);

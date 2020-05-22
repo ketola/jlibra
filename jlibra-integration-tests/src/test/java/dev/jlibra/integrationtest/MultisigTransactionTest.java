@@ -26,22 +26,22 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.MultiSignaturePublicKey;
 import dev.jlibra.PublicKey;
-import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticatorMultiEd25519;
-import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
-import dev.jlibra.admissioncontrol.transaction.Signature;
-import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
+import dev.jlibra.transaction.ImmutableScript;
+import dev.jlibra.transaction.ImmutableSignedTransaction;
+import dev.jlibra.transaction.ImmutableTransaction;
+import dev.jlibra.transaction.ImmutableTransactionAuthenticatorMultiEd25519;
+import dev.jlibra.transaction.LbrTypeTag;
+import dev.jlibra.transaction.Signature;
+import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Transaction;
+import dev.jlibra.transaction.argument.AccountAddressArgument;
+import dev.jlibra.transaction.argument.U64Argument;
+import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class MultisigTransactionTest {
 
@@ -83,7 +83,7 @@ public class MultisigTransactionTest {
         AccountAddressArgument addressArgument = new AccountAddressArgument(
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(
+        U8VectorArgument authkeyPrefixArgument = new U8VectorArgument(
                 authenticationKeyTarget.toByteArray().subseq(0, 16));
 
         logger.info("Sender auth key {}, sender address {}", authenticationKey, accountAddress);
@@ -94,6 +94,7 @@ public class MultisigTransactionTest {
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(2_000_000)
+                .gasCurrencyCode("LBR")
                 .gasUnitPrice(1)
                 .senderAccount(accountAddress)
                 .expirationTime(Instant.now().getEpochSecond() + 60)

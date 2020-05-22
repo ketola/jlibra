@@ -8,6 +8,16 @@ import org.junit.Test;
 public class SerializerTest {
 
     @Test
+    public void testSerializeByte() {
+        assertThat(Serializer.builder().appendByte((byte) 1).toByteArray().toString(), is("01"));
+    }
+
+    @Test
+    public void testSerializeShort() {
+        assertThat(Serializer.builder().appendShort((short) 4660).toByteArray().toString(), is("3412"));
+    }
+
+    @Test
     public void testSerializeInt() {
         assertThat(Serializer.builder().appendInt(32).toByteArray().toString(), is("20000000"));
         assertThat(Serializer.builder().appendInt(305419896).toByteArray().toString(), is("78563412"));
@@ -19,6 +29,14 @@ public class SerializerTest {
     public void testSerializeLong() {
         assertThat(Serializer.builder().appendLong(1311768467750121216L).toByteArray().toString().toUpperCase(),
                 is("00EFCDAB78563412"));
+    }
+
+    @Test
+    public void testSerializeULEB128() {
+        assertThat(Serializer.builder().appendIntAsLeb128(0).toByteArray().toString(), is("00"));
+        assertThat(Serializer.builder().appendIntAsLeb128(10).toByteArray().toString(), is("0a"));
+        assertThat(Serializer.builder().appendIntAsLeb128(100).toByteArray().toString(), is("64"));
+        assertThat(Serializer.builder().appendIntAsLeb128(1000).toByteArray().toString(), is("e807"));
     }
 
     @Test

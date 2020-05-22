@@ -14,7 +14,7 @@ public class GetAccountStateExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "0cb6b167f553151f5ae7ab5364629dc4";
+        String address = "2ab3189806488e73014e2e429e45c143";
 
         LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")

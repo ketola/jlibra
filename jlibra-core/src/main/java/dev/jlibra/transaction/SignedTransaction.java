@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction;
 
 import org.immutables.value.Value;
 

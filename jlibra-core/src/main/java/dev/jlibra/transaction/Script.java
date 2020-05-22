@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.transaction.argument.TransactionArgument;
 
 @Value.Immutable
 public interface Script extends TransactionPayload {

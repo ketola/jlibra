@@ -16,17 +16,6 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
-import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ByteArrayArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableSignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransactionAuthenticatorEd25519;
-import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
-import dev.jlibra.admissioncontrol.transaction.Signature;
-import dev.jlibra.admissioncontrol.transaction.SignedTransaction;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
-import dev.jlibra.admissioncontrol.transaction.U64Argument;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.PeerToPeerTransactionScript;
@@ -34,6 +23,17 @@ import dev.jlibra.client.views.UserTransaction;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.transaction.ImmutableScript;
+import dev.jlibra.transaction.ImmutableSignedTransaction;
+import dev.jlibra.transaction.ImmutableTransaction;
+import dev.jlibra.transaction.ImmutableTransactionAuthenticatorEd25519;
+import dev.jlibra.transaction.LbrTypeTag;
+import dev.jlibra.transaction.Signature;
+import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Transaction;
+import dev.jlibra.transaction.argument.AccountAddressArgument;
+import dev.jlibra.transaction.argument.U64Argument;
+import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class TransferWithMetadataExample {
 
@@ -73,22 +73,23 @@ public class TransferWithMetadataExample {
         U64Argument amountArgument = new U64Argument(amount * 1000000);
         AccountAddressArgument addressArgument = new AccountAddressArgument(
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
-        ByteArrayArgument metadataArgument = new ByteArrayArgument(
+        U8VectorArgument metadataArgument = new U8VectorArgument(
                 ByteArray.from("This is the metadata, you can put anything here!".getBytes(UTF_8)));
         // signature can be used for approved transactions, we are not doing that and
         // can set the signature as an empty byte array
-        ByteArrayArgument signatureArgument = new ByteArrayArgument(
+        U8VectorArgument signatureArgument = new U8VectorArgument(
                 ByteArray.from(new byte[0]));
 
         // When you are sending money to an account that does not exist, you need to
         // provide the auth key prefix parameter. You can leave it as an empty byte
         // array if
         // the account exists.
-        ByteArrayArgument authkeyPrefixArgument = new ByteArrayArgument(authenticationKeyTarget.prefix());
+        U8VectorArgument authkeyPrefixArgument = new U8VectorArgument(authenticationKeyTarget.prefix());
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(1640000)
+                .gasCurrencyCode("LBR")
                 .gasUnitPrice(1)
                 .senderAccount(sourceAccount)
                 .expirationTime(Instant.now().getEpochSecond() + 60)

@@ -9,13 +9,13 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.admissioncontrol.transaction.AccountAddressArgument;
-import dev.jlibra.admissioncontrol.transaction.ImmutableScript;
-import dev.jlibra.admissioncontrol.transaction.ImmutableTransaction;
-import dev.jlibra.admissioncontrol.transaction.LbrTypeTag;
-import dev.jlibra.admissioncontrol.transaction.Transaction;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.transaction.ImmutableScript;
+import dev.jlibra.transaction.ImmutableTransaction;
+import dev.jlibra.transaction.LbrTypeTag;
+import dev.jlibra.transaction.Transaction;
+import dev.jlibra.transaction.argument.AccountAddressArgument;
 
 public class LCSSerializerTest {
 
@@ -25,6 +25,7 @@ public class LCSSerializerTest {
                 .expirationTime(1L)
                 .gasUnitPrice(1)
                 .maxGasAmount(2)
+                .gasCurrencyCode("LBR")
                 .payload(ImmutableScript.builder()
                         .addAllTypeArguments(Arrays.asList(new LbrTypeTag()))
                         .code(
@@ -42,7 +43,7 @@ public class LCSSerializerTest {
         ByteSequence bytes = LCSSerializer.create().serialize(transaction, Transaction.class);
 
         assertThat(bytes.toString(), Matchers.is(
-                "4e03aec69589026b4a095c9cd2e53ca60300000000000000020100010600000000000000000000000000000000034c425201540001018f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d020000000000000001000000000000000100000000000000"));
+                "4e03aec69589026b4a095c9cd2e53ca60300000000000000020100010700000000000000000000000000000000034c425201540001038f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d02000000000000000100000000000000034c42520100000000000000"));
 
     }
 

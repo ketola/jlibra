@@ -1,4 +1,4 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction.argument;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.lcs.LCS;

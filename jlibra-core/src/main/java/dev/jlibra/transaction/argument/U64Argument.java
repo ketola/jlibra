@@ -1,12 +1,10 @@
-package dev.jlibra.admissioncontrol.transaction;
+package dev.jlibra.transaction.argument;
 
 import dev.jlibra.serialization.lcs.LCS;
 
 public class U64Argument implements TransactionArgument {
 
     private long value;
-
-    public static final int PREFIX = 0;
 
     public U64Argument(long value) {
         this.value = value;
