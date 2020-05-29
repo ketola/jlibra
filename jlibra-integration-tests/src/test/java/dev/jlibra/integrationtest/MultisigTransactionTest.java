@@ -69,7 +69,7 @@ public class MultisigTransactionTest {
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey);
         AccountAddress accountAddress = AccountAddress.fromAuthenticationKey(authenticationKey);
-        faucet.mint(authenticationKey, 10 * 1_000_000);
+        faucet.mint(authenticationKey, 10 * 1_000_000, "LBR");
         Wait.until(accountExists(accountAddress, client));
 
         // target account

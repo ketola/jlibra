@@ -30,7 +30,7 @@ public class MintExample {
                 .fromHexString("83114168d1c4912ddfac857421cdcfa54fa2be7ad55936c5702e8b7e3fdedb05");
 
         Faucet faucet = Faucet.builder().build();
-        faucet.mint(authenticationKey, 10L * 1_000_000L);
+        faucet.mint(authenticationKey, 10L * 1_000_000L, "LBR");
 
         LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")

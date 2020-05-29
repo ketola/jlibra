@@ -58,7 +58,7 @@ public class KeyRotationExample {
         logger.info("Account address: {}", addressOriginal.toString());
         logger.info("Authentication key: {}", authenticationKeyOriginal.toString());
 
-        faucet.mint(authenticationKeyOriginal, 10L * 1_000_000L);
+        faucet.mint(authenticationKeyOriginal, 10L * 1_000_000L, "LBR");
 
         Wait.until(accountExists(addressOriginal, client));
 
