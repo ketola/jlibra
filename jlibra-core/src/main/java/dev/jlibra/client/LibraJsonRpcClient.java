@@ -13,6 +13,7 @@ import com.github.arteam.simplejsonrpc.core.annotation.JsonRpcService;
 
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
+import dev.jlibra.client.views.CurrencyInfo;
 import dev.jlibra.client.views.Event;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.Transaction;
@@ -45,7 +46,9 @@ public interface LibraJsonRpcClient {
     @JsonRpcMethod("get_state_proof")
     StateProof getStateProof(@JsonRpcParam("know_version") long knownVersion);
 
+    @JsonRpcMethod("currencies_info")
+    List<CurrencyInfo> currenciesInfo();
+
     @JsonRpcMethod("submit")
     void submit(@JsonRpcParam("payload") String payload);
-
 }

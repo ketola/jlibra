@@ -13,6 +13,7 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
+import dev.jlibra.client.views.CurrencyInfo;
 import dev.jlibra.client.views.Event;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.Transaction;
@@ -94,6 +95,16 @@ public class LibraClient {
             throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getStateProof failed", e);
+        }
+    }
+
+    public List<CurrencyInfo> currenciesInfo() {
+        try {
+            return libraJsonRpcClient.currenciesInfo();
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
+        } catch (Exception e) {
+            throw new LibraRuntimeException("currenciesInfo failed", e);
         }
     }
 
