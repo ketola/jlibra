@@ -27,11 +27,12 @@ public class Faucet {
         this.url = url;
     }
 
-    public void mint(AuthenticationKey authenticationKey, long amountInMicroLibras) {
+    public void mint(AuthenticationKey authenticationKey, long amountInMicroLibras, String currencyCode) {
         try {
             URIBuilder builder = new URIBuilder(url)
                     .setParameter("amount", Long.toString(amountInMicroLibras))
-                    .setParameter("auth_key", authenticationKey.toString());
+                    .setParameter("auth_key", authenticationKey.toString())
+                    .setParameter("currency_code", currencyCode);
             HttpPost httpPost = new HttpPost(builder.build().toString());
             httpPost.addHeader(new BasicHeader(USER_AGENT, "JLibra"));
             httpPost.setEntity(new StringEntity(""));

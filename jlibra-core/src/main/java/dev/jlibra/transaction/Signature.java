@@ -30,7 +30,7 @@ public interface Signature {
             java.security.Signature sgr = java.security.Signature.getInstance("Ed25519", "BC");
             sgr.initSign(privateKey);
             sgr.update(Hash.ofInput(transactionBytes)
-                    .hash(ByteArray.from("libra_types::transaction::RawTransaction@@$$LIBRA$$@@".getBytes()))
+                    .hash(ByteArray.from("LIBRA::RawTransaction".getBytes()))
                     .toArray());
             signature = sgr.sign();
         } catch (Exception e) {
