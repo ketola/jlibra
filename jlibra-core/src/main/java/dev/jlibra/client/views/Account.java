@@ -7,6 +7,8 @@ import org.immutables.value.Value;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import dev.jlibra.client.views.role.AccountRole;
+
 @Value.Immutable
 @JsonDeserialize(as = ImmutableAccount.class)
 public interface Account {
@@ -31,5 +33,8 @@ public interface Account {
 
     @JsonProperty("sequence_number")
     Long sequenceNumber();
+
+    @JsonProperty("role")
+    AccountRole role();
 
 }
