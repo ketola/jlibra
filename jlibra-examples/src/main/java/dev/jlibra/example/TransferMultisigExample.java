@@ -1,5 +1,7 @@
 package dev.jlibra.example;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.security.PrivateKey;
 import java.security.Security;
 import java.time.Instant;
@@ -56,22 +58,21 @@ public class TransferMultisigExample {
         AccountAddressArgument addressArgument = new AccountAddressArgument(
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        // When you are sending money to an account that does not exist, you need to
-        // provide the auth key prefix parameter. You can leave it as an empty byte
-        // array if
-        // the account exists.
-        U8VectorArgument authkeyPrefixArgument = new U8VectorArgument(
-                authenticationKeyTarget.toByteArray().subseq(0, 16));
-
         AuthenticationKey authenticationKey = AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey);
         AccountAddress senderAddress = AccountAddress.fromAuthenticationKey(authenticationKey);
+        U8VectorArgument metadataArgument = new U8VectorArgument(
+                ByteArray.from("This is the metadata, you can put anything here!".getBytes(UTF_8)));
+        // signature can be used for approved transactions, we are not doing that and
+        // can set the signature as an empty byte array
+        U8VectorArgument signatureArgument = new U8VectorArgument(
+                ByteArray.from(new byte[0]));
 
         logger.info("Sender auth key {}, sender address {}", authenticationKey, senderAddress);
-        logger.info("Receiver auth key {}, sender address {}", authenticationKeyTarget,
+        logger.info("Receiver auth key {}, receiver address {}", authenticationKeyTarget,
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         Transaction transaction = ImmutableTransaction.builder()
-                .sequenceNumber(3)
+                .sequenceNumber(0)
                 .maxGasAmount(640000)
                 .gasCurrencyCode("LBR")
                 .gasUnitPrice(1)
@@ -79,9 +80,9 @@ public class TransferMultisigExample {
                         senderAddress)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(Move.peerToPeerTransferAsBytes())
+                        .code(Move.peerToPeerTransferWithMetadata())
                         .typeArguments(Arrays.asList(new LbrTypeTag()))
-                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument)
+                        .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
                 .build();
 

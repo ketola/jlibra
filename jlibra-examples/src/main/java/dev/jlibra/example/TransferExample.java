@@ -1,5 +1,7 @@
 package dev.jlibra.example;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.security.PrivateKey;
 import java.security.Security;
 import java.time.Instant;
@@ -63,11 +65,12 @@ public class TransferExample {
         AccountAddressArgument addressArgument = new AccountAddressArgument(
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        // When you are sending money to an account that does not exist, you need to
-        // provide the auth key prefix parameter. You can leave it as an empty byte
-        // array if
-        // the account exists.
-        U8VectorArgument authkeyPrefixArgument = new U8VectorArgument(authenticationKeyTarget.prefix());
+        U8VectorArgument metadataArgument = new U8VectorArgument(
+                ByteArray.from("This is the metadata, you can put anything here!".getBytes(UTF_8)));
+        // signature can be used for approved transactions, we are not doing that and
+        // can set the signature as an empty byte array
+        U8VectorArgument signatureArgument = new U8VectorArgument(
+                ByteArray.from(new byte[0]));
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
@@ -78,8 +81,8 @@ public class TransferExample {
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(Arrays.asList(new LbrTypeTag()))
-                        .code(Move.peerToPeerTransferAsBytes())
-                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument)
+                        .code(Move.peerToPeerTransferWithMetadata())
+                        .addArguments(addressArgument, amountArgument)
                         .build())
                 .build();
 
