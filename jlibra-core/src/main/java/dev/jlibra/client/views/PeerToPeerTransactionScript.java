@@ -23,4 +23,7 @@ public interface PeerToPeerTransactionScript extends Script {
 
     @JsonProperty("receiver")
     String receiver();
+
+    @JsonProperty("currency")
+    String currency();
 }
