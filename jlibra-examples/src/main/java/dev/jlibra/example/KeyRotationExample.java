@@ -152,7 +152,7 @@ public class KeyRotationExample {
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(new ArrayList<>())
-                        .code(Move.rotateAuthenticationKeyAsBytes())
+                        .code(Move.rotateAuthenticationKey())
                         .addArguments(newAuthenticationKeyArgument)
                         .build())
                 .build();

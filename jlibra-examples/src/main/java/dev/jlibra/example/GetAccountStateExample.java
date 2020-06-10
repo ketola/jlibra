@@ -1,7 +1,5 @@
 package dev.jlibra.example;
 
-import java.math.BigDecimal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +12,7 @@ public class GetAccountStateExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "2ab3189806488e73014e2e429e45c143";
+        String address = "d895681232b817442754b1dc3f80ecf7";
 
         LibraClient client = LibraClient.builder()
                 .withUrl("http://client.testnet.libra.org/")
@@ -22,15 +20,6 @@ public class GetAccountStateExample {
 
         Account accountView = client.getAccountState(AccountAddress.fromHexString(address));
 
-        logger.info("Authentication key: {}", accountView.authenticationKey());
-        logger.info("Received events key: {}", accountView.receivedEventsKey());
-        logger.info("Sent events key: {}", accountView.sentEventsKey());
-        logger.info("Balance (micro): {}", accountView.balances().get(0).amount());
-        logger.info("Balance: {}", new BigDecimal(accountView.balances().get(0).amount())
-                .divide(BigDecimal.valueOf(1_000_000)));
-        logger.info("Currency: {}", accountView.balances().get(0).currency());
-        logger.info("Sequence number: {}", accountView.sequenceNumber());
-        logger.info("Delegated withdrawal capability: {}", accountView.delegatedWithdrawalCapability());
-        logger.info("Delegated key rotation capability: {}", accountView.delegatedKeyRotationCapability());
+        logger.info("Account: {}", accountView);
     }
 }

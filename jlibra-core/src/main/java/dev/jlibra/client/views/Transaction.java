@@ -15,6 +15,10 @@ public interface Transaction {
     @JsonProperty("gas_used")
     Long gasUsed();
 
+    @JsonProperty("hash")
+    String hash();
+
+    @JsonProperty("version")
     Long version();
 
     @JsonProperty("vm_status")
@@ -23,5 +27,6 @@ public interface Transaction {
     @JsonProperty("events")
     List<Event> events();
 
+    @JsonProperty("transaction")
     TransactionData transaction();
 }

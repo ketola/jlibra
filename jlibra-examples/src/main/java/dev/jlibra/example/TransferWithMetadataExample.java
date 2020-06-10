@@ -95,7 +95,7 @@ public class TransferWithMetadataExample {
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(Arrays.asList(new LbrTypeTag()))
-                        .code(Move.peerToPeerTransferWithMetadataAsBytes())
+                        .code(Move.peerToPeerTransferWithMetadata())
                         .addArguments(addressArgument, authkeyPrefixArgument, amountArgument, metadataArgument,
                                 signatureArgument)
                         .build())

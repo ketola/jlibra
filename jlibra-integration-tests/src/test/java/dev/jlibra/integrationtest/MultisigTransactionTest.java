@@ -2,6 +2,7 @@ package dev.jlibra.integrationtest;
 
 import static dev.jlibra.poller.Conditions.accountExists;
 import static dev.jlibra.poller.Conditions.transactionFound;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -31,6 +32,7 @@ import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
+import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -85,6 +87,10 @@ public class MultisigTransactionTest {
 
         U8VectorArgument authkeyPrefixArgument = new U8VectorArgument(
                 authenticationKeyTarget.toByteArray().subseq(0, 16));
+        U8VectorArgument metadataArgument = new U8VectorArgument(
+                ByteArray.from("This is the metadata, you can put anything here!".getBytes(UTF_8)));
+        U8VectorArgument signatureArgument = new U8VectorArgument(
+                ByteArray.from(new byte[0]));
 
         logger.info("Sender auth key {}, sender address {}", authenticationKey, accountAddress);
         logger.info("Receiver auth key {}, sender address {}", authenticationKeyTarget,
@@ -99,9 +105,10 @@ public class MultisigTransactionTest {
                 .senderAccount(accountAddress)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .code(Move.peerToPeerTransferAsBytes())
+                        .code(Move.peerToPeerTransferWithMetadata())
                         .typeArguments(Arrays.asList(new LbrTypeTag()))
-                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument)
+                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument, metadataArgument,
+                                signatureArgument)
                         .build())
                 .build();
 
