@@ -17,6 +17,7 @@ public interface Event {
     @JsonProperty("transaction_version")
     Long transactionVersion();
 
+    @JsonProperty("data")
     EventData data();
 
 }

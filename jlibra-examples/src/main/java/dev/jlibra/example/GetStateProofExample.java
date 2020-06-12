@@ -14,7 +14,7 @@ public class GetStateProofExample {
                 .withUrl("http://client.testnet.libra.org/")
                 .build();
 
-        StateProof stateProof = client.getStateProof(11252608);
+        StateProof stateProof = client.getStateProof(324);
 
         logger.info("State proof: {}", stateProof);
     }

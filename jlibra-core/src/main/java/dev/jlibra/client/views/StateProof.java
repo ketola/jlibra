@@ -15,7 +15,7 @@ public interface StateProof {
     @JsonProperty("ledger_info_with_signatures")
     String ledgerInfoWithSignatures();
 
-    @JsonProperty("validator_change_proof")
-    String validatorChangeProof();
+    @JsonProperty("epoch_change_proof")
+    String epochChangeProof();
 
 }
