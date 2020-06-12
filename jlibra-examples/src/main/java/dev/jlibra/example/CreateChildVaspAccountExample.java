@@ -33,6 +33,7 @@ import dev.jlibra.transaction.SignedTransaction;
 import dev.jlibra.transaction.Transaction;
 import dev.jlibra.transaction.argument.AccountAddressArgument;
 import dev.jlibra.transaction.argument.BoolArgument;
+import dev.jlibra.transaction.argument.U64Argument;
 import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class CreateChildVaspAccountExample {
@@ -82,6 +83,7 @@ public class CreateChildVaspAccountExample {
         AccountAddressArgument childAccountArgument = new AccountAddressArgument(childVaspAccountAddress);
         U8VectorArgument authKeyPrefixArgument = new U8VectorArgument(childVaspAccountAuthKey.prefix());
         BoolArgument createAllCurrenciesArgument = new BoolArgument(true);
+        U64Argument initialBalanceArgument = new U64Argument(1_000_000);
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(parentVaspSequenceNumber)
@@ -93,7 +95,8 @@ public class CreateChildVaspAccountExample {
                 .payload(ImmutableScript.builder()
                         .typeArguments(Arrays.asList(new LbrTypeTag()))
                         .code(Move.createChildVaspAccount())
-                        .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument)
+                        .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
+                                initialBalanceArgument)
                         .build())
                 .build();
 
