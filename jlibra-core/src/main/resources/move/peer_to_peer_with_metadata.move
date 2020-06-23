@@ -1,5 +1,5 @@
 script {
-use 0x0::LibraAccount;
+use 0x1::LibraAccount;
 
 fun main<Token>(
     payer: &signer,
@@ -8,6 +8,8 @@ fun main<Token>(
     metadata: vector<u8>,
     metadata_signature: vector<u8>
 ) {
-  LibraAccount::pay_from_with_metadata<Token>(payer, payee, amount, metadata, metadata_signature)
+  let payer_withdrawal_cap = LibraAccount::extract_withdraw_capability(payer);
+  LibraAccount::pay_from_with_metadata<Token>(&payer_withdrawal_cap, payee, amount, metadata, metadata_signature);
+  LibraAccount::restore_withdraw_capability(payer_withdrawal_cap);
 }
 }
