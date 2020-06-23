@@ -10,7 +10,7 @@ public class LbrTypeTag implements TypeTag {
 
     @LCS.Field(value = 0, fixedLength = true)
     public AccountAddress getAddress() {
-        return AccountAddress.fromHexString("00000000000000000000000000000000");
+        return AccountAddress.fromHexString("00000000000000000000000000000001");
     }
 
     @LCS.Field(value = 1)
@@ -20,7 +20,7 @@ public class LbrTypeTag implements TypeTag {
 
     @LCS.Field(value = 2)
     public String getName() {
-        return "T";
+        return "LBR";
     }
 
     @LCS.Field(value = 3)
