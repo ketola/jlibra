@@ -43,17 +43,7 @@ public class LibraJsonRpcTransport implements Transport {
         try (CloseableHttpResponse httpResponse = httpClient.execute(post)) {
             String response = EntityUtils.toString(httpResponse.getEntity(), UTF_8);
             log.debug("Response: {}", response);
-            return workaroundSimpleJsonRpcBug(response);
+            return response;
         }
-    }
-
-    /**
-     * See: https://github.com/ketola/jlibra/issues/99
-     * 
-     * @param response
-     * @return
-     */
-    private String workaroundSimpleJsonRpcBug(String response) {
-        return response.replaceAll("\"data\":.+\"message\"", " \"message\"");
     }
 }

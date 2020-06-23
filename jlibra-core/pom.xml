@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.github.arteam</groupId>
       <artifactId>simple-json-rpc-client</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.jetbrains</groupId>
