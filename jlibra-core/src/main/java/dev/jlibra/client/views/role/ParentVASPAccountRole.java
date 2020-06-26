@@ -22,4 +22,7 @@ public interface ParentVASPAccountRole extends AccountRole {
 
     @JsonProperty("compliance_key")
     String complianceKey();
+
+    @JsonProperty("num_children")
+    Long numChildren();
 }
