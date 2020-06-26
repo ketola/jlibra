@@ -14,9 +14,9 @@ import com.github.arteam.simplejsonrpc.core.annotation.JsonRpcService;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
-import dev.jlibra.client.views.Event;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.Transaction;
+import dev.jlibra.client.views.event.Event;
 
 @JsonRpcService
 @JsonRpcId(SecureRandomStringIdGenerator.class)

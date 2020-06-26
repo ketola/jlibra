@@ -7,6 +7,8 @@ import org.immutables.value.Value;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import dev.jlibra.client.views.event.Event;
+
 @Value.Immutable
 @Value.Style(jdkOnly = true)
 @JsonDeserialize(as = ImmutableTransaction.class)

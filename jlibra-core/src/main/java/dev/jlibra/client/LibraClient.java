@@ -14,9 +14,9 @@ import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
-import dev.jlibra.client.views.Event;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.Transaction;
+import dev.jlibra.client.views.event.Event;
 import dev.jlibra.serialization.lcs.LCSSerializer;
 import dev.jlibra.transaction.SignedTransaction;
 
