@@ -3,8 +3,6 @@ package dev.jlibra.serialization.lcs;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -13,7 +11,7 @@ import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableTransaction;
-import dev.jlibra.transaction.LbrTypeTag;
+import dev.jlibra.transaction.Struct;
 import dev.jlibra.transaction.Transaction;
 import dev.jlibra.transaction.argument.AccountAddressArgument;
 
@@ -27,7 +25,7 @@ public class LCSSerializerTest {
                 .maxGasAmount(2)
                 .gasCurrencyCode("LBR")
                 .payload(ImmutableScript.builder()
-                        .addAllTypeArguments(Arrays.asList(new LbrTypeTag()))
+                        .addAllTypeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .code(
                                 ByteArray.from("00"))
                         .arguments(
