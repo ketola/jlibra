@@ -4,8 +4,8 @@ import static dev.jlibra.poller.Conditions.accountExists;
 import static dev.jlibra.poller.Conditions.transactionFound;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class MultisigTransactionTest {
 
     private LibraClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         client = LibraClient.builder()

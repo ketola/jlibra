@@ -1,14 +1,14 @@
 package dev.jlibra.mnemonic;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.Security;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test data copied from
@@ -18,7 +18,7 @@ public class LibraKeyFactoryTest {
 
     static final String TEST_MNEMONIC = "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal will";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         Security.addProvider(new BouncyCastleProvider());
     }

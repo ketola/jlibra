@@ -1,7 +1,7 @@
 package dev.jlibra;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.security.Security;
@@ -9,8 +9,8 @@ import java.util.Arrays;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class AuthenticationKeyTest {
@@ -20,8 +20,8 @@ public class AuthenticationKeyTest {
 
     private String AUTH_KEY = "14f98e36264b387e688ef7d4b18c718d2684e7f73e5784f08e03a9d7d96955f0";
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         Security.addProvider(new BouncyCastleProvider());
     }
 

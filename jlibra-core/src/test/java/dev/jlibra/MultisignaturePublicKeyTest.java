@@ -1,14 +1,14 @@
 package dev.jlibra;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class MultisignaturePublicKeyTest {
 
@@ -16,8 +16,8 @@ public class MultisignaturePublicKeyTest {
     private static final String PUBKEY2 = "302a300506032b6570032100c9a77a22407913ce2b0f4e360a228fdae8ca14db5055aa97296e828b7546bd36";
     private static final String PUBKEY3 = "302a300506032b6570032100892bd1625b22d4bc1b1700d9f8aa822a7ad97ffa380fdf765aae7ce97a234e6b";
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         Security.addProvider(new BouncyCastleProvider());
     }
 

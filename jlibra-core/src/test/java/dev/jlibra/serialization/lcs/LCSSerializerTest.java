@@ -1,10 +1,10 @@
 package dev.jlibra.serialization.lcs;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.ByteArray;
