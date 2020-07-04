@@ -40,7 +40,4 @@ public interface Account {
     @JsonProperty("is_frozen")
     Boolean isFrozen();
 
-    @JsonProperty("role_id")
-    Long roleId();
-
 }
