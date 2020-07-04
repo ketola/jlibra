@@ -1,13 +1,13 @@
 package dev.jlibra.mnemonic;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import dev.jlibra.serialization.ByteArray;
 
@@ -16,14 +16,14 @@ import dev.jlibra.serialization.ByteArray;
  */
 public class ExtendedPrivKeyTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         Security.addProvider(new BouncyCastleProvider());
     }
 
     private ExtendedPrivKey childPrivate0;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Mnemonic mnemonic = Mnemonic.fromString(
                 "aim layer grit goat orchard daring lady work dice lottery tent virus push heavy hello endless inner bread cliff brick swallow general method walnut");
