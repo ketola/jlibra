@@ -1,6 +1,7 @@
 package dev.jlibra.example;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
 
 import java.security.PrivateKey;
 import java.security.Security;
@@ -22,9 +23,9 @@ import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
 import dev.jlibra.transaction.ImmutableTransactionAuthenticatorMultiEd25519;
-import dev.jlibra.transaction.LbrTypeTag;
 import dev.jlibra.transaction.Signature;
 import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Struct;
 import dev.jlibra.transaction.Transaction;
 import dev.jlibra.transaction.argument.AccountAddressArgument;
 import dev.jlibra.transaction.argument.U64Argument;
@@ -81,7 +82,7 @@ public class TransferMultisigExample {
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadata())
-                        .typeArguments(Arrays.asList(new LbrTypeTag()))
+                        .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
                 .build();

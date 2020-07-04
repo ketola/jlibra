@@ -2,6 +2,7 @@ package dev.jlibra.integrationtest;
 
 import static dev.jlibra.poller.Conditions.accountExists;
 import static dev.jlibra.poller.Conditions.transactionFound;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -13,7 +14,6 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -36,9 +36,9 @@ import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
 import dev.jlibra.transaction.ImmutableTransactionAuthenticatorMultiEd25519;
-import dev.jlibra.transaction.LbrTypeTag;
 import dev.jlibra.transaction.Signature;
 import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Struct;
 import dev.jlibra.transaction.Transaction;
 import dev.jlibra.transaction.argument.AccountAddressArgument;
 import dev.jlibra.transaction.argument.BoolArgument;
@@ -48,6 +48,9 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
 public class MultisigTransactionTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MultisigTransactionTest.class);
+
+    private static final String CURRENCY = "LBR";
+
     private LibraClient client;
 
     @Before
@@ -71,7 +74,7 @@ public class MultisigTransactionTest {
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey);
         AccountAddress accountAddress = AccountAddress.fromAuthenticationKey(authenticationKey);
-        faucet.mint(authenticationKey, 10 * 1_000_000, "LBR");
+        faucet.mint(authenticationKey, 10 * 1_000_000, CURRENCY);
         Wait.until(accountExists(accountAddress, client));
 
         // target account
@@ -99,13 +102,13 @@ public class MultisigTransactionTest {
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(2_000_000)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .gasUnitPrice(1)
                 .senderAccount(accountAddress)
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadata())
-                        .typeArguments(Arrays.asList(new LbrTypeTag()))
+                        .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
                 .build();
@@ -168,12 +171,12 @@ public class MultisigTransactionTest {
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .senderAccount(AccountAddress
                         .fromAuthenticationKey(AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey)))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .typeArguments(Arrays.asList(new LbrTypeTag()))
+                        .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .code(Move.createChildVaspAccount())
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)

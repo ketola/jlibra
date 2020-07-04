@@ -2,6 +2,7 @@ package dev.jlibra.example;
 
 import static dev.jlibra.poller.Conditions.accountExists;
 import static dev.jlibra.poller.Conditions.transactionFound;
+import static java.util.Arrays.asList;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -10,7 +11,6 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,9 +27,9 @@ import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
 import dev.jlibra.transaction.ImmutableTransactionAuthenticatorEd25519;
-import dev.jlibra.transaction.LbrTypeTag;
 import dev.jlibra.transaction.Signature;
 import dev.jlibra.transaction.SignedTransaction;
+import dev.jlibra.transaction.Struct;
 import dev.jlibra.transaction.Transaction;
 import dev.jlibra.transaction.argument.AccountAddressArgument;
 import dev.jlibra.transaction.argument.BoolArgument;
@@ -93,7 +93,7 @@ public class CreateChildVaspAccountExample {
                 .senderAccount(AccountAddress.fromAuthenticationKey(parentVaspAuthKey))
                 .expirationTime(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .typeArguments(Arrays.asList(new LbrTypeTag()))
+                        .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .code(Move.createChildVaspAccount())
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
