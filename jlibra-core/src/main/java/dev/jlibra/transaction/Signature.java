@@ -45,7 +45,7 @@ public interface Signature {
     /**
      * This methods adds a signature to a multig signature.
      * 
-     * @param the         multisig signature where the signature is added
+     * @param signature   the multisig signature where the signature is added
      * @param index       the index of the public key in the multig account that was
      *                    used in the signature
      * @param transaction transaction to sign
@@ -95,10 +95,6 @@ public interface Signature {
      * 
      * example: if 1st and 5th signature are present, the returned bitmap contains
      * bits 10001000..
-     * 
-     * @param signature
-     * @param signatureIndex
-     * @return
      */
     static byte[] markSigningKeyToBitmap(byte[] bitmap, int signatureIndex) {
         int bucket = signatureIndex / 8;
