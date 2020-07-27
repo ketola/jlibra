@@ -24,7 +24,7 @@ public interface Transaction {
     Long version();
 
     @JsonProperty("vm_status")
-    Long vmStatus();
+    String vmStatus();
 
     @JsonProperty("events")
     List<Event> events();

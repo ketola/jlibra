@@ -1,6 +1,6 @@
 package dev.jlibra.example;
 
-import static dev.jlibra.poller.Conditions.accountExists;
+import static dev.jlibra.poller.Conditions.accountHasPositiveBalance;
 import static dev.jlibra.poller.Conditions.transactionFound;
 import static java.util.Arrays.asList;
 
@@ -10,8 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +21,7 @@ import dev.jlibra.client.LibraClient;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
+import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -52,7 +51,7 @@ public class CreateChildVaspAccountExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
         Faucet faucet = Faucet.builder().build();
 
@@ -61,8 +60,9 @@ public class CreateChildVaspAccountExample {
         // In the testnet new VASP accounts can be created by minting money to a new
         // address:
         AuthenticationKey parentVaspAuthKey = AuthenticationKey.fromPublicKey(parentVaspKeyPair.getPublic());
-        faucet.mint(parentVaspAuthKey, 10L * 1_000_000L, "LBR");
-        Wait.until(accountExists(AccountAddress.fromAuthenticationKey(parentVaspAuthKey), client));
+        faucet.mint(parentVaspAuthKey, 100L * 1_000_000L, "LBR");
+        Wait.until(accountHasPositiveBalance(AccountAddress.fromAuthenticationKey(parentVaspAuthKey), client));
+
         int parentVaspSequenceNumber = 0;
         logger.info("Parent vasp authentication key: {} address: {}", parentVaspAuthKey,
                 AccountAddress.fromAuthenticationKey(parentVaspAuthKey));
@@ -82,7 +82,7 @@ public class CreateChildVaspAccountExample {
 
         AccountAddressArgument childAccountArgument = new AccountAddressArgument(childVaspAccountAddress);
         U8VectorArgument authKeyPrefixArgument = new U8VectorArgument(childVaspAccountAuthKey.prefix());
-        BoolArgument createAllCurrenciesArgument = new BoolArgument(true);
+        BoolArgument createAllCurrenciesArgument = new BoolArgument(false);
         U64Argument initialBalanceArgument = new U64Argument(1_000_000);
 
         Transaction transaction = ImmutableTransaction.builder()
@@ -90,14 +90,15 @@ public class CreateChildVaspAccountExample {
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
                 .gasCurrencyCode("LBR")
-                .senderAccount(AccountAddress.fromAuthenticationKey(parentVaspAuthKey))
-                .expirationTime(Instant.now().getEpochSecond() + 60)
+                .sender(AccountAddress.fromAuthenticationKey(parentVaspAuthKey))
+                .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .code(Move.createChildVaspAccount())
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
+                .chainId(ChainId.TESTNET)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
@@ -115,17 +116,16 @@ public class CreateChildVaspAccountExample {
 
         logger.info("----------------------------");
         logger.info("Parent VASP account: {}",
-                client.getAccountState(AccountAddress.fromAuthenticationKey(parentVaspAuthKey)));
+                client.getAccount(AccountAddress.fromAuthenticationKey(parentVaspAuthKey)));
         logger.info("----------------------------");
 
         logger.info("----------------------------");
-        logger.info("Child VASP account: {}", client.getAccountState(childVaspAccountAddress));
+        logger.info("Child VASP account: {}", client.getAccount(childVaspAccountAddress));
         logger.info("----------------------------");
     }
 
     private static KeyPair generateKeyPair() {
         KeyPairGenerator kpGen = getKeyPairGenerator();
-        List<KeyPair> keypairs = new ArrayList<>();
         return kpGen.generateKeyPair();
     }
 

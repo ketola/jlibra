@@ -13,10 +13,10 @@ public class GetEventsByEventKeyExample {
     private static final Logger logger = LoggerFactory.getLogger(GetEventsByEventKeyExample.class);
 
     public static void main(String[] args) {
-        String eventKey = "010000000000000013860faa37dbd43d4cbc5a2f8874b138";
+        String eventKey = "01000000000000007d7aaaee9177d12b60cdf79dc894aeb9";
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
         List<Event> events = client.getEvents(eventKey, 0, 10);
