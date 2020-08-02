@@ -23,8 +23,8 @@ import dev.jlibra.client.views.event.Event;
 @JsonRpcParams(ARRAY)
 public interface LibraJsonRpcClient {
 
-    @JsonRpcMethod("get_account_state")
-    Account getAccountState(@JsonRpcParam("address") String address);
+    @JsonRpcMethod("get_account")
+    Account getAccount(@JsonRpcParam("address") String address);
 
     @JsonRpcMethod("get_metadata")
     BlockMetadata getMetadata();

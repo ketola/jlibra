@@ -23,6 +23,7 @@ import dev.jlibra.client.views.UserTransaction;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -43,7 +44,7 @@ public class TransferWithMetadataExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
@@ -52,9 +53,9 @@ public class TransferWithMetadataExample {
                 "302a300506032b65700321001a9115b2b15e182dc94d8abc15404cb1dbe48211192ecb6c8fca00c369dd1969");
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromPublicKey(publicKey);
-
         AccountAddress sourceAccount = AccountAddress.fromAuthenticationKey(authenticationKey);
-        Account accountState = client.getAccountState(sourceAccount);
+        logger.info("Source account authentication key: {}, address: {}", authenticationKey, sourceAccount);
+        Account accountState = client.getAccount(sourceAccount);
 
         // If the account already exists, then the authentication key of the target
         // account is not required and the account address would be enough
@@ -63,8 +64,6 @@ public class TransferWithMetadataExample {
 
         long amount = 1;
         long sequenceNumber = accountState.sequenceNumber();
-
-        logger.info("Source account authentication key: {}", authenticationKey);
 
         logger.info("Sending from {} to {}", AccountAddress.fromAuthenticationKey(authenticationKey),
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
@@ -91,14 +90,15 @@ public class TransferWithMetadataExample {
                 .maxGasAmount(1640000)
                 .gasCurrencyCode("LBR")
                 .gasUnitPrice(1)
-                .senderAccount(sourceAccount)
-                .expirationTime(Instant.now().getEpochSecond() + 60)
+                .sender(sourceAccount)
+                .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .code(Move.peerToPeerTransferWithMetadata())
                         .addArguments(addressArgument, authkeyPrefixArgument, amountArgument, metadataArgument,
                                 signatureArgument)
                         .build())
+                .chainId(ChainId.TESTNET)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

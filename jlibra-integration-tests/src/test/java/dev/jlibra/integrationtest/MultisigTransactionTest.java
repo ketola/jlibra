@@ -1,6 +1,6 @@
 package dev.jlibra.integrationtest;
 
-import static dev.jlibra.poller.Conditions.accountExists;
+import static dev.jlibra.poller.Conditions.accountHasPositiveBalance;
 import static dev.jlibra.poller.Conditions.transactionFound;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -32,6 +32,7 @@ import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -57,7 +58,7 @@ public class MultisigTransactionTest {
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
     }
 
@@ -75,7 +76,7 @@ public class MultisigTransactionTest {
         AuthenticationKey authenticationKey = AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey);
         AccountAddress accountAddress = AccountAddress.fromAuthenticationKey(authenticationKey);
         faucet.mint(authenticationKey, 10 * 1_000_000, CURRENCY);
-        Wait.until(accountExists(accountAddress, client));
+        Wait.until(accountHasPositiveBalance(accountAddress, client));
 
         // target account
         KeyPair targetAccount = generateKeyPairs(1).get(0);
@@ -104,13 +105,14 @@ public class MultisigTransactionTest {
                 .maxGasAmount(2_000_000)
                 .gasCurrencyCode(CURRENCY)
                 .gasUnitPrice(1)
-                .senderAccount(accountAddress)
-                .expirationTime(Instant.now().getEpochSecond() + 60)
+                .sender(accountAddress)
+                .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadata())
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
+                .chainId(ChainId.TESTNET)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);
@@ -128,7 +130,7 @@ public class MultisigTransactionTest {
         Wait.until(transactionFound(accountAddress, sequenceNumber, client));
 
         Account targetAccountState = client
-                .getAccountState(AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
+                .getAccount(AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         assertThat(targetAccountState.balances().get(0).amount(), is(transferAmount));
     }
@@ -172,15 +174,16 @@ public class MultisigTransactionTest {
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
                 .gasCurrencyCode(CURRENCY)
-                .senderAccount(AccountAddress
+                .sender(AccountAddress
                         .fromAuthenticationKey(AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey)))
-                .expirationTime(Instant.now().getEpochSecond() + 60)
+                .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .code(Move.createChildVaspAccount())
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
+                .chainId(ChainId.TESTNET)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);

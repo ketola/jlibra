@@ -17,6 +17,9 @@ public interface ReceivedPaymentEventData extends EventData {
     @JsonProperty("metadata")
     String metadata();
 
+    @JsonProperty("receiver")
+    String receiver();
+
     @JsonProperty("sender")
     String sender();
 }

@@ -12,13 +12,13 @@ public class GetAccountStateExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "d895681232b817442754b1dc3f80ecf7";
+        String address = "fc4c85260cdccd2ee25f217da715e5dc";
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
-        Account accountView = client.getAccountState(AccountAddress.fromHexString(address));
+        Account accountView = client.getAccount(AccountAddress.fromHexString(address));
 
         logger.info("Account: {}", accountView);
     }

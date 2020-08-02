@@ -1,5 +1,7 @@
 package dev.jlibra.example;
 
+import static dev.jlibra.poller.Conditions.accountHasPositiveBalance;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +10,7 @@ import dev.jlibra.AuthenticationKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
+import dev.jlibra.poller.Wait;
 
 /**
  * Calls the faucet service http endpoint with parameters authentication key and
@@ -27,16 +30,18 @@ public class MintExample {
 
     public static void main(String[] args) {
         AuthenticationKey authenticationKey = AuthenticationKey
-                .fromHexString("83114168d1c4912ddfac857421cdcfa54fa2be7ad55936c5702e8b7e3fdedb05");
+                .fromHexString("efb54d5bd7e280c637eb7772d211be172ab3189806488e73014e2e429e45c143");
 
         Faucet faucet = Faucet.builder().build();
-        faucet.mint(authenticationKey, 10L * 1_000_000L, "LBR");
+        faucet.mint(authenticationKey, 100L * 1_000_000L, "LBR");
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
-        Account account = client.getAccountState(AccountAddress.fromAuthenticationKey(authenticationKey));
+        Wait.until(accountHasPositiveBalance(AccountAddress.fromAuthenticationKey(authenticationKey), client));
+
+        Account account = client.getAccount(AccountAddress.fromAuthenticationKey(authenticationKey));
         logger.info("Balance: {} {}", account.balances().get(0).amount() / 1_000_000,
                 account.balances().get(0).currency());
     }

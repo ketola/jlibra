@@ -9,9 +9,9 @@ import dev.jlibra.serialization.lcs.LCS;
 public interface SignedTransaction {
 
     @LCS.Field(0)
-    public abstract Transaction getTransaction();
+    Transaction getTransaction();
 
     @LCS.Field(1)
-    public abstract Authenticator getAuthenticator();
+    Authenticator getAuthenticator();
 
 }

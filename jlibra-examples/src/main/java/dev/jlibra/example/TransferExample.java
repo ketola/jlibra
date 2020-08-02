@@ -17,6 +17,7 @@ import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -57,7 +58,7 @@ public class TransferExample {
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
         // Arguments for the peer to peer transaction
@@ -77,13 +78,14 @@ public class TransferExample {
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
                 .gasCurrencyCode("LBR")
-                .senderAccount(AccountAddress.fromAuthenticationKey(authenticationKey))
-                .expirationTime(Instant.now().getEpochSecond() + 60)
+                .sender(AccountAddress.fromAuthenticationKey(authenticationKey))
+                .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .code(Move.peerToPeerTransferWithMetadata())
                         .addArguments(addressArgument, amountArgument)
                         .build())
+                .chainId(ChainId.TESTNET)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

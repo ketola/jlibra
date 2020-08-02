@@ -27,7 +27,7 @@ public class Hash {
         byte[] saltDigestAndInput = new byte[saltDigest.length + input.toArray().length];
         System.arraycopy(saltDigest, 0, saltDigestAndInput, 0, saltDigest.length);
         System.arraycopy(input.toArray(), 0, saltDigestAndInput, saltDigest.length, input.toArray().length);
-        return ByteArray.from(digestSHA3.digest(saltDigestAndInput));
+        return ByteArray.from(saltDigestAndInput);
     }
 
 }

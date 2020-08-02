@@ -19,12 +19,12 @@ public class GetTransactionsExample {
     private static final Logger logger = LoggerFactory.getLogger(GetTransactionsExample.class);
 
     public static void main(String[] args) {
-        long start = 15134650;
+        long start = 1461404;
         long limit = 20;
         boolean fetchEvent = true;
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
         List<Transaction> transactions = client.getTransactions(start, limit, fetchEvent);

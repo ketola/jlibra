@@ -32,9 +32,9 @@ public class LibraClient {
         return new LibraClientBuilder();
     }
 
-    public Account getAccountState(AccountAddress accountAddress) {
+    public Account getAccount(AccountAddress accountAddress) {
         try {
-            return libraJsonRpcClient.getAccountState(Hex.toHexString(accountAddress.toArray()));
+            return libraJsonRpcClient.getAccount(Hex.toHexString(accountAddress.toArray()));
         } catch (JsonRpcException e) {
             throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
