@@ -19,6 +19,7 @@ import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.move.Move;
 import dev.jlibra.serialization.ByteArray;
+import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -77,14 +78,14 @@ public class TransferMultisigExample {
                 .maxGasAmount(640000)
                 .gasCurrencyCode("LBR")
                 .gasUnitPrice(1)
-                .senderAccount(
-                        senderAddress)
-                .expirationTime(Instant.now().getEpochSecond() + 60)
+                .sender(senderAddress)
+                .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadata())
                         .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
+                .chainId(ChainId.TESTNET)
                 .build();
 
         Signature signature = Signature.newMultisignature();
@@ -100,7 +101,7 @@ public class TransferMultisigExample {
                 .build();
 
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
         client.submit(signedTransaction);

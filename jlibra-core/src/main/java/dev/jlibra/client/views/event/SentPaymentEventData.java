@@ -20,4 +20,7 @@ public interface SentPaymentEventData extends EventData {
     @JsonProperty("receiver")
     String receiver();
 
+    @JsonProperty("sender")
+    String sender();
+
 }

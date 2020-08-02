@@ -10,7 +10,7 @@ import dev.jlibra.serialization.lcs.LCS;
 public interface Transaction {
 
     @LCS.Field(value = 0, fixedLength = true)
-    AccountAddress getSenderAccount();
+    AccountAddress getSender();
 
     @LCS.Field(1)
     long getSequenceNumber();
@@ -28,6 +28,9 @@ public interface Transaction {
     String getGasCurrencyCode();
 
     @LCS.Field(6)
-    long getExpirationTime();
+    long getExpirationTimestampSecs();
+
+    @LCS.Field(7)
+    ChainId chainId();
 
 }

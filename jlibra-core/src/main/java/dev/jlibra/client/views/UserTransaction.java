@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableUserTransaction.class)
 public interface UserTransaction extends TransactionData {
 
-    @JsonProperty("expiration_time")
-    Long expirationTime();
+    @JsonProperty("expiration_timestamp_secs")
+    Long expirationTimestampSecs();
 
     @JsonProperty("gas_currency")
     String gasUCurrency();
@@ -41,5 +41,8 @@ public interface UserTransaction extends TransactionData {
 
     @JsonProperty("script")
     Script script();
+
+    @JsonProperty("chain_id")
+    Integer chainId();
 
 }

@@ -11,7 +11,7 @@ public class GetStateProofExample {
 
     public static void main(String[] args) {
         LibraClient client = LibraClient.builder()
-                .withUrl("http://client.testnet.libra.org/")
+                .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
         StateProof stateProof = client.getStateProof(324);
