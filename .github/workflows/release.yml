@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    branches: 
+      - 'master'
+  inputs:
+    new_version:
+        description: 'Version number of the new release'
+        required: true
+    next_snapshot_version:
+        description: 'Version number for the next snapshot (-SNAPSHOT will be appended)'
+        required: true
+
+jobs:
+  update_version:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+      env: 
+        maven_deploy_key: ${{ secrets.maven_deploy_key }}
+    
+    - name: Update version
+      run: mvn versions:set -DnewVersion=${{ github.event.inputs.new_version }} -DgenerateBackupPoms=false
+    
+    - name: Deploy to Maven Central
+      run: mvn clean deploy -Prelease,ossrh -Dgpg.passphrase=$maven_deploy_key
+    
+    - name: Set next version
+      run: mvn versions:set -DnewVersion=${{ github.event.next_snapshot_version }} -DgenerateBackupPoms=false
+ 
+   - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        # Required
+        commit_message: Release version ${{ github.event.inputs.new_version }}
+
+        # Optional glob pattern of files which should be added to the commit
+        # See the `pathspec`-documentation for git
+        # - https://git-scm.com/docs/git-add#Documentation/git-add.txt-ltpathspecgt82308203
+        # - https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
+        file_pattern: **/pom.xml
+
+
+        # Optional commit user and author settings
+        commit_user_name: My GitHub Actions Bot
+        commit_user_email: my-github-actions-bot@example.org
+        commit_author: My GitHub Actions Bot <actions@github.com>
+
+        # Optional tag message 
+        # Action will create and push a new tag to the remote repository and the defined branch
+        tagging_message: ${{ github.event.inputs.new_version }}
