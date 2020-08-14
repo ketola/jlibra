@@ -45,4 +45,7 @@ public interface UserTransaction extends TransactionData {
     @JsonProperty("chain_id")
     Integer chainId();
 
+    @JsonProperty("script_bytes")
+    String scriptBytes();
+
 }

@@ -31,4 +31,7 @@ public interface Transaction {
 
     @JsonProperty("transaction")
     TransactionData transaction();
+
+    @JsonProperty("bytes")
+    String bytes();
 }
