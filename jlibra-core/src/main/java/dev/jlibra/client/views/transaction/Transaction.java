@@ -1,4 +1,4 @@
-package dev.jlibra.client.views;
+package dev.jlibra.client.views.transaction;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import dev.jlibra.client.views.event.Event;
+import dev.jlibra.client.views.transaction.vmstatus.VmStatus;
 
 @Value.Immutable
 @Value.Style(jdkOnly = true)
@@ -24,7 +25,7 @@ public interface Transaction {
     Long version();
 
     @JsonProperty("vm_status")
-    String vmStatus();
+    VmStatus vmStatus();
 
     @JsonProperty("events")
     List<Event> events();

@@ -28,6 +28,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`GetAccountStateExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java)
 
+[`GetAccountTransactionsExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionsExample.java)
+
 [`GetAccountTransactionBySequenceNumberExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountTransactionBySequenceNumberExample.java)
 
 [`GetEventsByEventKeyExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetEventsByEventKeyExample.java)
@@ -54,13 +56,13 @@ Maven:
 <dependency>
   <groupId>dev.jlibra</groupId>
   <artifactId>jlibra-core</artifactId>
-  <version>0.9.0</version>
+  <version>0.11.0</version>
 </dependency>
 ```
 
 Gradle:
 
-`compile("dev.jlibra:jlibra-core:0.9.0")`
+`compile("dev.jlibra:jlibra-core:0.11.0")`
 
 ## How-Tos & Step-by-Step Guides
 

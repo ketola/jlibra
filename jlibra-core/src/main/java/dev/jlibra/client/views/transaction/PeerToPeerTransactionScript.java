@@ -1,4 +1,4 @@
-package dev.jlibra.client.views;
+package dev.jlibra.client.views.transaction;
 
 import org.immutables.value.Value;
 

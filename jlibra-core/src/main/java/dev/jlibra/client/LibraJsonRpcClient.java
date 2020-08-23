@@ -15,8 +15,8 @@ import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
 import dev.jlibra.client.views.StateProof;
-import dev.jlibra.client.views.Transaction;
 import dev.jlibra.client.views.event.Event;
+import dev.jlibra.client.views.transaction.Transaction;
 
 @JsonRpcService
 @JsonRpcId(SecureRandomStringIdGenerator.class)
@@ -31,6 +31,12 @@ public interface LibraJsonRpcClient {
 
     @JsonRpcMethod("get_transactions")
     List<Transaction> getTransactions(@JsonRpcParam("version") long version, @JsonRpcParam("limit") long limit,
+            @JsonRpcParam("include_events") boolean includeEvents);
+
+    @JsonRpcMethod("get_account_transactions")
+    List<Transaction> getAccountTransactions(@JsonRpcParam("addresss") String address,
+            @JsonRpcParam("start") long start,
+            @JsonRpcParam("limit") long limit,
             @JsonRpcParam("include_events") boolean includeEvents);
 
     @JsonRpcMethod("get_account_transaction")

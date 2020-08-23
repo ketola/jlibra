@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.jlibra.client.LibraClient;
-import dev.jlibra.client.views.Transaction;
+import dev.jlibra.client.views.transaction.Transaction;
 
 /**
  * The GetTransactions query allows you to query transaction based on the

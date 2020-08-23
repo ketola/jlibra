@@ -1,4 +1,4 @@
-package dev.jlibra.client.views;
+package dev.jlibra.client.views.transaction;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

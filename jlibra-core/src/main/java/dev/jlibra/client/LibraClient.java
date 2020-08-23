@@ -15,8 +15,8 @@ import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
 import dev.jlibra.client.views.StateProof;
-import dev.jlibra.client.views.Transaction;
 import dev.jlibra.client.views.event.Event;
+import dev.jlibra.client.views.transaction.Transaction;
 import dev.jlibra.serialization.lcs.LCSSerializer;
 import dev.jlibra.transaction.SignedTransaction;
 
@@ -73,6 +73,20 @@ public class LibraClient {
             throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
         } catch (Exception e) {
             throw new LibraRuntimeException("getAccountTransaction failed", e);
+        }
+    }
+
+    public List<Transaction> getAccountTransactions(AccountAddress accountAddress,
+            long start,
+            long limit,
+            boolean includeEvents) {
+        try {
+            return libraJsonRpcClient.getAccountTransactions(Hex.toHexString(accountAddress.toArray()), start, limit,
+                    includeEvents);
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
+        } catch (Exception e) {
+            throw new LibraRuntimeException("getAccountTransactions failed", e);
         }
     }
 
