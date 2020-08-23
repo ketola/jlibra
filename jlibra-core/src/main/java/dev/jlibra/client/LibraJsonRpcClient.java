@@ -33,6 +33,12 @@ public interface LibraJsonRpcClient {
     List<Transaction> getTransactions(@JsonRpcParam("version") long version, @JsonRpcParam("limit") long limit,
             @JsonRpcParam("include_events") boolean includeEvents);
 
+    @JsonRpcMethod("get_account_transactions")
+    List<Transaction> getAccountTransactions(@JsonRpcParam("addresss") String address,
+            @JsonRpcParam("start") long start,
+            @JsonRpcParam("limit") long limit,
+            @JsonRpcParam("include_events") boolean includeEvents);
+
     @JsonRpcMethod("get_account_transaction")
     Transaction getAccountTransaction(@JsonRpcParam("addresss") String address,
             @JsonRpcParam("sequence_number") long sequenceNumber,

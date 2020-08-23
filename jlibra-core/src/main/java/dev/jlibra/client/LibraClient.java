@@ -76,6 +76,20 @@ public class LibraClient {
         }
     }
 
+    public List<Transaction> getAccountTransactions(AccountAddress accountAddress,
+            long start,
+            long limit,
+            boolean includeEvents) {
+        try {
+            return libraJsonRpcClient.getAccountTransactions(Hex.toHexString(accountAddress.toArray()), start, limit,
+                    includeEvents);
+        } catch (JsonRpcException e) {
+            throw new LibraServerErrorException(e.getErrorMessage().getCode(), e.getErrorMessage().getMessage());
+        } catch (Exception e) {
+            throw new LibraRuntimeException("getAccountTransactions failed", e);
+        }
+    }
+
     public List<Event> getEvents(String eventKey,
             long start,
             long limit) {
