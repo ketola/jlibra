@@ -50,9 +50,6 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`TransferMultisigExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferMultisigExample.java)
 
-[`TransferWithMetadataExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferWithMetadataExample.java)
-
-
 ## Use JLibra in your project
 
 Versions of JLibra are deployed to the [Central Maven repository](https://search.maven.org/), you can add JLibra as a dependency to your project:
@@ -92,4 +89,3 @@ How-Tos and Step-by-Step Guides are gathered in a [separate document](docs/HOWTO
 *   [java-libra-client](https://github.com/ice09/java-libra-client) 
 *   [jlibra-spring-boot-starter](https://github.com/ice09/jlibra-spring-boot-starter) 
 *   [libra-payment-processor](https://github.com/ice09/libra-payment-processor) 
-

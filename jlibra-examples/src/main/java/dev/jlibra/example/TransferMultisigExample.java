@@ -6,7 +6,6 @@ import static java.util.Arrays.asList;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.time.Instant;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,7 @@ public class TransferMultisigExample {
                 .fromHexString("c0c19d6b1d48371ea28f0cdc5f74bba7b3f7e8e38f8c8393f281a2f0792a2849");
 
         MultiSignaturePublicKey multiPubKey = MultiSignaturePublicKey.create(
-                Arrays.asList(publicKey1, publicKey2), 2);
+                asList(publicKey1, publicKey2), 2);
 
         // Arguments for the peer to peer transaction
         U64Argument amountArgument = new U64Argument(2 * 1_000_000);
