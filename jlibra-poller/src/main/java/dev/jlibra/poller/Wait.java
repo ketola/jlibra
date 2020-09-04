@@ -1,10 +1,13 @@
 package dev.jlibra.poller;
 
+import static java.lang.Boolean.FALSE;
+
 import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.jlibra.LibraRuntimeException;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
@@ -20,7 +23,11 @@ public class Wait {
                 .withMaxDuration(Duration.ofSeconds(10))
                 .handleResult(Boolean.FALSE);
 
-        Failsafe.with(retryPolicy).get(() -> waitCondition.isFulfilled());
+        Boolean result = Failsafe.with(retryPolicy).get((e) -> waitCondition.isFulfilled());
+
+        if (result == FALSE) {
+            throw new LibraRuntimeException("Wait condition was not fulfilled");
+        }
     }
 
 }

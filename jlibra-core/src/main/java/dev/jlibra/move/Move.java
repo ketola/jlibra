@@ -21,6 +21,10 @@ public class Move {
         return readMoveScriptBytes("/move/create_child_vasp_account.mv");
     }
 
+    public static ByteSequence rotateDualAttestationInfo() {
+        return readMoveScriptBytes("/move/rotate_dual_attestation_info.mv");
+    }
+
     private static ByteSequence readMoveScriptBytes(String fileName) {
         try {
             return ByteArray.from(streamToByteArray(Move.class.getResourceAsStream(fileName)));
