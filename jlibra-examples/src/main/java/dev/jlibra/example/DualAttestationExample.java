@@ -23,8 +23,8 @@ import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.transaction.ChainId;
-import dev.jlibra.transaction.DualAttestationSignature;
-import dev.jlibra.transaction.ImmutableDualAttestationSignature;
+import dev.jlibra.transaction.DualAttestation;
+import dev.jlibra.transaction.ImmutableDualAttestation;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableSignedTransaction;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -63,7 +63,7 @@ public class DualAttestationExample {
         PublicKey vasp1PublicKey = PublicKey.fromPublicKey(vasp1KeyPair.getPublic());
         AuthenticationKey authenticationKeyVasp1 = AuthenticationKey.fromPublicKey(vasp1PublicKey);
         AccountAddress accountAddressVasp1 = AccountAddress.fromAuthenticationKey(authenticationKeyVasp1);
-        faucet.mint(authenticationKeyVasp1, 200_000L * 1_000_000L, "LBR");
+        faucet.mint(authenticationKeyVasp1, 300_000L * 1_000_000L, "LBR");
         Wait.until(accountHasPositiveBalance(accountAddressVasp1, client));
         logger.info("Vasp 1 account address: {}, auth key: {}", accountAddressVasp1, authenticationKeyVasp1);
 
@@ -96,14 +96,14 @@ public class DualAttestationExample {
         logger.info("Vasp 2 account base url {}", ((ParentVASPAccountRole) vasp2Account.role()).baseUrl());
         logger.info("-----------------------------------------------------------------------------------------------");
 
-        DualAttestationSignature signature = ImmutableDualAttestationSignature.builder()
+        DualAttestation dualAttestation = ImmutableDualAttestation.builder()
                 .amount(100_000L * 1_000_000L)
                 .metadata(ByteArray.from(metadata))
                 .payerAddress(accountAddressVasp1)
                 .build();
 
         transferFromVaspToVasp(client, vasp1KeyPair, vasp2KeyPair, metadata,
-                signature.sign(vasp2ComplianceKeyPair.getPrivate()), 0);
+                dualAttestation.sign(vasp2ComplianceKeyPair.getPrivate()), 0);
     }
 
     private static void transferFromVaspToVasp(LibraClient client, KeyPair sourceKeyPair, KeyPair targetKeyPair,

@@ -15,7 +15,7 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.serialization.ByteArray;
 
-public class DualAttestationSignatureTest {
+public class DualAttestationTest {
 
     private static final ByteArray PRIVATE_KEY = ByteArray
             .from("3051020101300506032b6570042204206dadf7a252c0e74add2e545a1e3c811f1f4bdd88f8c5e0080e068f4df6d909128121000b29a7adce0897b2d1ec18cc482237463efa173945fa3bd2703023e1a2489021");
@@ -29,7 +29,7 @@ public class DualAttestationSignatureTest {
     public void testDualAttestationSignature() {
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(PRIVATE_KEY);
 
-        DualAttestationSignature s = ImmutableDualAttestationSignature.builder()
+        DualAttestation s = ImmutableDualAttestation.builder()
                 .amount(10_000_000L)
                 .payerAddress(AccountAddress.fromHexString("0c6bd0bf42d298aced9184de984bc6ed"))
                 .metadata(ByteArray.from("metadata".getBytes()))

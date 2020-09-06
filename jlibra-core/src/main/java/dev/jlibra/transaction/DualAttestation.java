@@ -11,7 +11,7 @@ import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.Serializer;
 
 @Value.Immutable
-public interface DualAttestationSignature {
+public interface DualAttestation {
 
     public static final ByteArray DOMAIN_SEPARATOR = ByteArray
             .from("@@$$LIBRA_ATTEST$$@@".getBytes(StandardCharsets.UTF_8));
