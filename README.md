@@ -26,6 +26,8 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`CreateChildVaspAccountExample`](jlibra-examples/src/main/java/dev/jlibra/example/CreateChildVaspAccountExample.java)
 
+[`DualAttestationExample`](jlibra-examples/src/main/java/dev/jlibra/example/DualAttestationExample.java)
+
 [`GenerateKeysExample`](jlibra-examples/src/main/java/dev/jlibra/example/GenerateKeysExample.java)
 
 [`GetAccountStateExample`](jlibra-examples/src/main/java/dev/jlibra/example/GetAccountStateExample.java)
