@@ -25,4 +25,10 @@ public interface ParentVASPAccountRole extends AccountRole {
 
     @JsonProperty("num_children")
     Long numChildren();
+
+    @JsonProperty("base_url_rotation_events_key")
+    String baseUrlRotationEventsKey();
+
+    @JsonProperty("compliance_key_rotation_events_key")
+    String complianceKeyRotationEventsKey();
 }
