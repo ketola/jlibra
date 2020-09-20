@@ -13,6 +13,9 @@ import dev.jlibra.client.views.role.AccountRole;
 @JsonDeserialize(as = ImmutableAccount.class)
 public interface Account {
 
+    @JsonProperty("address")
+    String address();
+
     @JsonProperty("authentication_key")
     String authenticationKey();
 
