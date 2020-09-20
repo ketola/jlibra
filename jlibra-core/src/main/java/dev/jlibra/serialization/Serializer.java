@@ -59,6 +59,10 @@ public class Serializer {
         return append(new byte[] { i });
     }
 
+    public Serializer appendBoolean(boolean i) {
+        return append(new byte[] { (byte) (i ? 1 : 0) });
+    }
+
     private static byte[] shortToByteArray(short i) {
         return ByteBuffer.allocate(Short.BYTES)
                 .order(LITTLE_ENDIAN).putShort(i)

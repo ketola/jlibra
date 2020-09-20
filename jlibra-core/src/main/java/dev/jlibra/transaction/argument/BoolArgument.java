@@ -8,11 +8,11 @@ import dev.jlibra.serialization.lcs.LCS;
 public interface BoolArgument extends TransactionArgument {
 
     @LCS.Field(0)
-    byte value();
+    boolean value();
 
     public static BoolArgument from(boolean value) {
         return ImmutableBoolArgument.builder()
-                .value((byte) (value ? 1 : 0))
+                .value(value)
                 .build();
     }
 
