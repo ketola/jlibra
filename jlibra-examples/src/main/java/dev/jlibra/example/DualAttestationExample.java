@@ -114,13 +114,13 @@ public class DualAttestationExample {
         long transferAmount = 100_000L * 1_000_000L;
 
         // Arguments for the peer to peer transaction
-        U64Argument amountArgument = new U64Argument(transferAmount);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(
-                AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
+        U64Argument amountArgument = U64Argument.from(transferAmount);
+        AccountAddressArgument addressArgument = AccountAddressArgument
+                .from(AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        U8VectorArgument metadataArgument = new U8VectorArgument(
+        U8VectorArgument metadataArgument = U8VectorArgument.from(
                 ByteArray.from(metadata));
-        U8VectorArgument signatureArgument = new U8VectorArgument(
+        U8VectorArgument signatureArgument = U8VectorArgument.from(
                 dualAttestationSignature);
 
         logger.info("Receiver address {}, sender address {}",
@@ -167,8 +167,8 @@ public class DualAttestationExample {
             KeyPair vaspComplianceKeyPair,
             int sequenceNumber) {
 
-        U8VectorArgument newUrlArgument = new U8VectorArgument(ByteArray.from("https://jlibra.dev".getBytes()));
-        U8VectorArgument compliancePublicKey = new U8VectorArgument(
+        U8VectorArgument newUrlArgument = U8VectorArgument.from(ByteArray.from("https://jlibra.dev".getBytes()));
+        U8VectorArgument compliancePublicKey = U8VectorArgument.from(
                 PublicKey.fromPublicKey(vaspComplianceKeyPair.getPublic()));
 
         Transaction transaction = ImmutableTransaction.builder()

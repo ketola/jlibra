@@ -1,5 +1,6 @@
 package dev.jlibra.example;
 
+import static dev.jlibra.poller.Conditions.transactionFound;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 
@@ -7,6 +8,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.time.Instant;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +17,11 @@ import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.views.Account;
+import dev.jlibra.client.views.transaction.PeerToPeerTransactionScript;
+import dev.jlibra.client.views.transaction.UserTransaction;
 import dev.jlibra.move.Move;
+import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
@@ -34,56 +40,63 @@ public class TransferExample {
 
     private static final Logger logger = LoggerFactory.getLogger(TransferExample.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
-        PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
-                "3051020101300506032b657004220420a758d7ef769f2dd20e083bc49b36f68adba445297e0995387e1e9b820c91dbd28121004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04"));
-        PublicKey publicKey = PublicKey.fromHexString(
-                "302a300506032b65700321004106ca3138647f6428b2207b89894ce7e0a2e7cf6353d22f59c22db687508f04");
-
-        AuthenticationKey authenticationKey = AuthenticationKey.fromPublicKey(publicKey);
-
-        // If the account already exists, then the authentication key of the target
-        // account is not required and the account address would be enough
-        AuthenticationKey authenticationKeyTarget = AuthenticationKey
-                .fromHexString("acb53e7a4b1e0cd77a4c08043191a2308a0461f91654bb308638907907e348cc");
-
-        long amount = 1;
-        int sequenceNumber = 0;
-
-        logger.info("Source account authentication key: {}", authenticationKey);
-
-        logger.info("Sending from {} to {}", AccountAddress.fromAuthenticationKey(authenticationKey),
-                AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         LibraClient client = LibraClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
-        // Arguments for the peer to peer transaction
-        U64Argument amountArgument = new U64Argument(amount * 1000000);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(
+        PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
+                "3051020101300506032b6570042204208096fec0a03f968bbece0c717525dded07a4bb123827cf1f8df48920f6def2758121001a9115b2b15e182dc94d8abc15404cb1dbe48211192ecb6c8fca00c369dd1969"));
+        PublicKey publicKey = PublicKey.fromHexString(
+                "302a300506032b65700321001a9115b2b15e182dc94d8abc15404cb1dbe48211192ecb6c8fca00c369dd1969");
+
+        AuthenticationKey authenticationKey = AuthenticationKey.fromPublicKey(publicKey);
+        AccountAddress sourceAccount = AccountAddress.fromAuthenticationKey(authenticationKey);
+        logger.info("Source account authentication key: {}, address: {}", authenticationKey, sourceAccount);
+        Account accountState = client.getAccount(sourceAccount);
+
+        // If the account already exists, then the authentication key of the target
+        // account is not required and the account address would be enough
+        AuthenticationKey authenticationKeyTarget = AuthenticationKey
+                .fromHexString("f792ee6e15298b234bfcef1d6d00c6c6fc4c85260cdccd2ee25f217da715e5dc");
+
+        long amount = 1;
+        long sequenceNumber = accountState.sequenceNumber();
+
+        logger.info("Sending from {} to {}", AccountAddress.fromAuthenticationKey(authenticationKey),
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        U8VectorArgument metadataArgument = new U8VectorArgument(
+        // Arguments for the peer to peer transaction
+        U64Argument amountArgument = U64Argument.from(amount * 1000000);
+        AccountAddressArgument addressArgument = AccountAddressArgument.from(
+                AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
+        U8VectorArgument metadataArgument = U8VectorArgument.from(
                 ByteArray.from("This is the metadata, you can put anything here!".getBytes(UTF_8)));
         // signature can be used for approved transactions, we are not doing that and
         // can set the signature as an empty byte array
-        U8VectorArgument signatureArgument = new U8VectorArgument(
+        U8VectorArgument signatureArgument = U8VectorArgument.from(
                 ByteArray.from(new byte[0]));
+
+        // When you are sending money to an account that does not exist, you need to
+        // provide the auth key prefix parameter. You can leave it as an empty byte
+        // array if
+        // the account exists.
+        U8VectorArgument authkeyPrefixArgument = U8VectorArgument.from(authenticationKeyTarget.prefix());
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
-                .maxGasAmount(640000)
-                .gasUnitPrice(1)
+                .maxGasAmount(1640000)
                 .gasCurrencyCode("LBR")
-                .sender(AccountAddress.fromAuthenticationKey(authenticationKey))
+                .gasUnitPrice(1)
+                .sender(sourceAccount)
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
                         .code(Move.peerToPeerTransferWithMetadata())
-                        .addArguments(addressArgument, amountArgument)
+                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument, metadataArgument,
+                                signatureArgument)
                         .build())
                 .chainId(ChainId.TESTNET)
                 .build();
@@ -97,6 +110,15 @@ public class TransferExample {
                 .build();
 
         client.submit(signedTransaction);
+
+        // get the transaction and read the metadata
+        Wait.until(transactionFound(AccountAddress.fromAuthenticationKey(authenticationKey), sequenceNumber,
+                client));
+        UserTransaction t = (UserTransaction) client.getAccountTransaction(sourceAccount, sequenceNumber, true)
+                .transaction();
+        PeerToPeerTransactionScript script = (PeerToPeerTransactionScript) t.script();
+
+        logger.info("Metadata: {}", new String(Hex.decode(script.metadata())));
     }
 
 }

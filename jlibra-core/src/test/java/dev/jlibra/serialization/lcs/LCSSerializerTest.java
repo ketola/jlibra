@@ -27,11 +27,10 @@ public class LCSSerializerTest {
                 .gasCurrencyCode("LBR")
                 .payload(ImmutableScript.builder()
                         .addAllTypeArguments(asList(Struct.typeTagForCurrency("LBR")))
-                        .code(
-                                ByteArray.from("00"))
+                        .code(ByteArray.from("00"))
                         .arguments(
-                                asList(new AccountAddressArgument(AccountAddress.fromByteArray(ByteArray.from(
-                                        "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d")))))
+                                asList(AccountAddressArgument.from(AccountAddress.fromHexString(
+                                        "8f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d"))))
                         .build())
                 .sender(AccountAddress.fromByteArray(
                         ByteArray

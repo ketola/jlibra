@@ -56,17 +56,17 @@ public class TransferMultisigExample {
                 Arrays.asList(publicKey1, publicKey2), 2);
 
         // Arguments for the peer to peer transaction
-        U64Argument amountArgument = new U64Argument(2 * 1_000_000);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(
-                AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
+        U64Argument amountArgument = U64Argument.from(2 * 1_000_000);
+        AccountAddressArgument addressArgument = AccountAddressArgument
+                .from(AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromMultiSignaturePublicKey(multiPubKey);
         AccountAddress senderAddress = AccountAddress.fromAuthenticationKey(authenticationKey);
-        U8VectorArgument metadataArgument = new U8VectorArgument(
+        U8VectorArgument metadataArgument = U8VectorArgument.from(
                 ByteArray.from("This is the metadata, you can put anything here!".getBytes(UTF_8)));
         // signature can be used for approved transactions, we are not doing that and
         // can set the signature as an empty byte array
-        U8VectorArgument signatureArgument = new U8VectorArgument(
+        U8VectorArgument signatureArgument = U8VectorArgument.from(
                 ByteArray.from(new byte[0]));
 
         logger.info("Sender auth key {}, sender address {}", authenticationKey, senderAddress);

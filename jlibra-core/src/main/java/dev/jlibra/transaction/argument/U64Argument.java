@@ -1,18 +1,19 @@
 package dev.jlibra.transaction.argument;
 
+import org.immutables.value.Value;
+
 import dev.jlibra.serialization.lcs.LCS;
 
-public class U64Argument implements TransactionArgument {
-
-    private long value;
-
-    public U64Argument(long value) {
-        this.value = value;
-    }
+@Value.Immutable
+public interface U64Argument extends TransactionArgument {
 
     @LCS.Field(0)
-    public long getValue() {
-        return value;
+    long value();
+
+    public static U64Argument from(long value) {
+        return ImmutableU64Argument.builder()
+                .value(value)
+                .build();
     }
 
 }

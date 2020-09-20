@@ -80,10 +80,10 @@ public class CreateChildVaspAccountExample {
 
         logger.info("Child vasp authentication key: {} address: {}", childVaspAccountAuthKey, childVaspAccountAddress);
 
-        AccountAddressArgument childAccountArgument = new AccountAddressArgument(childVaspAccountAddress);
-        U8VectorArgument authKeyPrefixArgument = new U8VectorArgument(childVaspAccountAuthKey.prefix());
-        BoolArgument createAllCurrenciesArgument = new BoolArgument(false);
-        U64Argument initialBalanceArgument = new U64Argument(1_000_000);
+        AccountAddressArgument childAccountArgument = AccountAddressArgument.from(childVaspAccountAddress);
+        U8VectorArgument authKeyPrefixArgument = U8VectorArgument.from(childVaspAccountAuthKey.prefix());
+        BoolArgument createAllCurrenciesArgument = BoolArgument.from(false);
+        U64Argument initialBalanceArgument = U64Argument.from(1_000_000);
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(parentVaspSequenceNumber)

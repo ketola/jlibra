@@ -86,13 +86,13 @@ public class MultisigTransactionTest {
 
         long transferAmount = 2_000_000;
         // Arguments for the peer to peer transaction
-        U64Argument amountArgument = new U64Argument(transferAmount);
-        AccountAddressArgument addressArgument = new AccountAddressArgument(
+        U64Argument amountArgument = U64Argument.from(transferAmount);
+        AccountAddressArgument addressArgument = AccountAddressArgument.from(
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
-        U8VectorArgument metadataArgument = new U8VectorArgument(
+        U8VectorArgument metadataArgument = U8VectorArgument.from(
                 ByteArray.from(new byte[0]));
-        U8VectorArgument signatureArgument = new U8VectorArgument(
+        U8VectorArgument signatureArgument = U8VectorArgument.from(
                 ByteArray.from(new byte[0]));
 
         logger.info("Sender auth key {}, sender address {}", authenticationKey, accountAddress);
@@ -163,10 +163,10 @@ public class MultisigTransactionTest {
 
         logger.info("Child vasp authentication key: {} address: {}", childVaspAccountAuthKey, childVaspAccountAddress);
 
-        AccountAddressArgument childAccountArgument = new AccountAddressArgument(childVaspAccountAddress);
-        U8VectorArgument authKeyPrefixArgument = new U8VectorArgument(childVaspAccountAuthKey.prefix());
-        BoolArgument createAllCurrenciesArgument = new BoolArgument(false);
-        U64Argument initialBalanceArgument = new U64Argument(0);
+        AccountAddressArgument childAccountArgument = AccountAddressArgument.from(childVaspAccountAddress);
+        U8VectorArgument authKeyPrefixArgument = U8VectorArgument.from(childVaspAccountAuthKey.prefix());
+        BoolArgument createAllCurrenciesArgument = BoolArgument.from(false);
+        U64Argument initialBalanceArgument = U64Argument.from(0);
 
         int sequenceNumber = 0;
         Transaction transaction = ImmutableTransaction.builder()
