@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
+import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.faucet.Faucet;
@@ -133,7 +134,7 @@ public class CreateChildVaspAccountExample {
         try {
             return KeyPairGenerator.getInstance("Ed25519", "BC");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new RuntimeException(e);
+            throw new LibraRuntimeException("generate key pair failed", e);
         }
     }
 
