@@ -1,19 +1,20 @@
 package dev.jlibra.transaction.argument;
 
+import org.immutables.value.Value;
+
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.lcs.LCS;
 
-public class U8VectorArgument implements TransactionArgument {
-
-    private ByteSequence bytes;
-
-    public U8VectorArgument(ByteSequence bytes) {
-        this.bytes = bytes;
-    }
+@Value.Immutable
+public interface U8VectorArgument extends TransactionArgument {
 
     @LCS.Field(0)
-    public ByteSequence getValue() {
-        return bytes;
+    ByteSequence value();
+
+    public static U8VectorArgument from(ByteSequence value) {
+        return ImmutableU8VectorArgument.builder()
+                .value(value)
+                .build();
     }
 
 }

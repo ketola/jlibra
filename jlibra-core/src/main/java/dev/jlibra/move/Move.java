@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 
@@ -29,7 +30,7 @@ public class Move {
         try {
             return ByteArray.from(streamToByteArray(Move.class.getResourceAsStream(fileName)));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new LibraRuntimeException("Reading move script failed", e);
         }
     }
 

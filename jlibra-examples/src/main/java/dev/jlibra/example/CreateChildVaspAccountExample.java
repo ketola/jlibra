@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
+import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.faucet.Faucet;
@@ -80,10 +81,10 @@ public class CreateChildVaspAccountExample {
 
         logger.info("Child vasp authentication key: {} address: {}", childVaspAccountAuthKey, childVaspAccountAddress);
 
-        AccountAddressArgument childAccountArgument = new AccountAddressArgument(childVaspAccountAddress);
-        U8VectorArgument authKeyPrefixArgument = new U8VectorArgument(childVaspAccountAuthKey.prefix());
-        BoolArgument createAllCurrenciesArgument = new BoolArgument(false);
-        U64Argument initialBalanceArgument = new U64Argument(1_000_000);
+        AccountAddressArgument childAccountArgument = AccountAddressArgument.from(childVaspAccountAddress);
+        U8VectorArgument authKeyPrefixArgument = U8VectorArgument.from(childVaspAccountAuthKey.prefix());
+        BoolArgument createAllCurrenciesArgument = BoolArgument.from(false);
+        U64Argument initialBalanceArgument = U64Argument.from(1_000_000);
 
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(parentVaspSequenceNumber)
@@ -133,7 +134,7 @@ public class CreateChildVaspAccountExample {
         try {
             return KeyPairGenerator.getInstance("Ed25519", "BC");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new RuntimeException(e);
+            throw new LibraRuntimeException("generate key pair failed", e);
         }
     }
 

@@ -1,18 +1,19 @@
 package dev.jlibra.transaction.argument;
 
+import org.immutables.value.Value;
+
 import dev.jlibra.serialization.lcs.LCS;
 
-public class BoolArgument implements TransactionArgument {
-
-    private boolean value;
-
-    public BoolArgument(boolean value) {
-        this.value = value;
-    }
+@Value.Immutable
+public interface BoolArgument extends TransactionArgument {
 
     @LCS.Field(0)
-    public byte getValue() {
-        return (byte) (value ? 1 : 0);
+    boolean value();
+
+    public static BoolArgument from(boolean value) {
+        return ImmutableBoolArgument.builder()
+                .value(value)
+                .build();
     }
 
 }

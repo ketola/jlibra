@@ -58,6 +58,9 @@ public class LCSSerializer {
             } else if (returnType.equals(byte.class)) {
                 byte value = (byte) invokeMethod(serializable, m);
                 s = s.appendByte(value);
+            } else if (returnType.equals(boolean.class)) {
+                boolean value = (boolean) invokeMethod(serializable, m);
+                s = s.appendBoolean(value);
             } else if (returnType.equals(int.class)) {
                 int value = (int) invokeMethod(serializable, m);
                 s = s.appendLong(value);

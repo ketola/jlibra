@@ -141,7 +141,7 @@ public class KeyRotationExample {
             BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
             int sequenceNumber, LibraClient client) {
 
-        U8VectorArgument newAuthenticationKeyArgument = new U8VectorArgument(
+        U8VectorArgument newAuthenticationKeyArgument = U8VectorArgument.from(
                 AuthenticationKey.fromPublicKey(publicKeyNew));
 
         Transaction transaction = ImmutableTransaction.builder()

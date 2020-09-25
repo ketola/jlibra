@@ -52,8 +52,6 @@ Start sample Main classes in `dev.jlibra.example` package for examples (for a co
 
 [`TransferMultisigExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferMultisigExample.java)
 
-[`TransferWithMetadataExample`](jlibra-examples/src/main/java/dev/jlibra/example/TransferWithMetadataExample.java)
-
 
 ## Use JLibra in your project
 
