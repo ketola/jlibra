@@ -1,19 +1,19 @@
 package dev.jlibra.client;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.arteam.simplejsonrpc.client.Transport;
+
+import dev.jlibra.LibraRuntimeException;
 
 public class LibraJsonRpcTransport implements Transport {
 
@@ -23,27 +23,32 @@ public class LibraJsonRpcTransport implements Transport {
 
     private static final String CONTENT_TYPE_JSON = "application/json";
 
-    private CloseableHttpClient httpClient;
+    private HttpClient httpClient;
 
     private String url;
 
-    public LibraJsonRpcTransport(CloseableHttpClient httpClient, String url) {
+    public LibraJsonRpcTransport(HttpClient httpClient, String url) {
         this.httpClient = httpClient;
         this.url = url;
     }
 
     @Override
-    public String pass(String request) throws IOException {
-        HttpPost post = new HttpPost(url);
-        post.setEntity(new StringEntity(request, UTF_8));
-        post.setHeader(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE_JSON);
-        post.setHeader(HttpHeaders.USER_AGENT, USER_AGENT);
+    public String pass(String body) throws IOException {
+        log.debug("Request: {}", body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .header("Content-Type", CONTENT_TYPE_JSON)
+                .header("User-Agent", USER_AGENT)
+                .uri(URI.create(url))
+                .POST(BodyPublishers.ofString(body))
+                .build();
 
-        log.debug("Request: {}", log.isDebugEnabled() ? EntityUtils.toString(post.getEntity()) : "");
-        try (CloseableHttpResponse httpResponse = httpClient.execute(post)) {
-            String response = EntityUtils.toString(httpResponse.getEntity(), UTF_8);
-            log.debug("Response: {}", response);
-            return response;
+        try {
+            HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+            String responseBody = response.body();
+            log.debug("Response: {}", responseBody);
+            return responseBody;
+        } catch (IOException | InterruptedException e) {
+            throw new LibraRuntimeException("Http request failed", e);
         }
     }
 }

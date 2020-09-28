@@ -1,50 +1,47 @@
 package dev.jlibra.faucet;
 
-import static org.apache.http.HttpHeaders.USER_AGENT;
-
 import java.io.IOException;
-import java.net.URISyntaxException;
-
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.LibraRuntimeException;
 
 public class Faucet {
 
-    private CloseableHttpClient httpClient;
+    private HttpClient httpClient;
 
     private String url;
 
-    private Faucet(CloseableHttpClient httpClient, String url) {
+    private Faucet(HttpClient httpClient, String url) {
         this.httpClient = httpClient;
         this.url = url;
     }
 
     public void mint(AuthenticationKey authenticationKey, long amountInMicroLibras, String currencyCode) {
-        try {
-            URIBuilder builder = new URIBuilder(url)
-                    .setParameter("amount", Long.toString(amountInMicroLibras))
-                    .setParameter("auth_key", authenticationKey.toString())
-                    .setParameter("currency_code", currencyCode);
-            HttpPost httpPost = new HttpPost(builder.build().toString());
-            httpPost.addHeader(new BasicHeader(USER_AGENT, "JLibra"));
-            httpPost.setEntity(new StringEntity(""));
+        HttpRequest request = HttpRequest.newBuilder()
+                .header("User-Agent", "JLibra")
+                .POST(BodyPublishers.ofString(""))
+                .uri(URI.create(url + String.format("?amount=%s&auth_key=%s&currency_code=%s",
+                        Long.toString(amountInMicroLibras), authenticationKey.toString(), currencyCode)))
+                .build();
 
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            if (response.getStatusLine().getStatusCode() != 200) {
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(request, BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
                 throw new LibraRuntimeException(String.format("Mint failed. Status code: %d, message: %s",
-                        response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase()));
+                        response.statusCode(), response.body()));
             }
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | InterruptedException e) {
             throw new LibraRuntimeException("Mint failed", e);
         }
+
     }
 
     public static Builder builder() {
@@ -55,14 +52,14 @@ public class Faucet {
 
         private static final String DEFAULT_URL = "http://faucet.testnet.libra.org";
 
-        private CloseableHttpClient httpClient;
+        private HttpClient httpClient;
 
         private String url;
 
         private Builder() {
         }
 
-        public Builder withHttpClient(CloseableHttpClient httpClient) {
+        public Builder withHttpClient(HttpClient httpClient) {
             this.httpClient = httpClient;
             return this;
         }
@@ -74,7 +71,9 @@ public class Faucet {
 
         public Faucet build() {
             if (httpClient == null) {
-                this.httpClient = HttpClients.createDefault();
+                this.httpClient = HttpClient.newBuilder()
+                        .version(Version.HTTP_2)
+                        .build();
             }
             if (url == null) {
                 this.url = DEFAULT_URL;

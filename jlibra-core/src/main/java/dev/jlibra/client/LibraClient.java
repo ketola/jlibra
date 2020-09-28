@@ -1,9 +1,10 @@
 package dev.jlibra.client;
 
+import static java.net.http.HttpClient.Version.HTTP_2;
+
+import java.net.http.HttpClient;
 import java.util.List;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.bouncycastle.util.encoders.Hex;
 
 import com.github.arteam.simplejsonrpc.client.JsonRpcClient;
@@ -136,11 +137,11 @@ public class LibraClient {
 
     public static class LibraClientBuilder {
 
-        private CloseableHttpClient httpClient;
+        private HttpClient httpClient;
 
         private String url;
 
-        public LibraClientBuilder withHttpClient(CloseableHttpClient httpClient) {
+        public LibraClientBuilder withHttpClient(HttpClient httpClient) {
             this.httpClient = httpClient;
             return this;
         }
@@ -152,7 +153,9 @@ public class LibraClient {
 
         public LibraClient build() {
             if (httpClient == null) {
-                this.httpClient = HttpClients.createDefault();
+                this.httpClient = HttpClient.newBuilder()
+                        .version(HTTP_2)
+                        .build();
             }
             return new LibraClient(new JsonRpcClient(new LibraJsonRpcTransport(httpClient, url))
                     .onDemand(LibraJsonRpcClient.class));
