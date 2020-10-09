@@ -12,7 +12,7 @@ JLibra simplifies integration to Libra but does not hide any features of the Lib
 
 ## Prerequisites
 
-*   JDK 8+ 
+*   JDK 11+ 
 *   Maven 3+ 
 
 ## Setup
