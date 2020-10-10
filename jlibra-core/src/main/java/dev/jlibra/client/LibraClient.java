@@ -137,7 +137,7 @@ public class LibraClient {
                         .version(HTTP_2)
                         .build();
             }
-            return new LibraClient(new LibraJsonRpcClient(url));
+            return new LibraClient(new LibraJsonRpcClient(url, httpClient));
         }
     }
 
