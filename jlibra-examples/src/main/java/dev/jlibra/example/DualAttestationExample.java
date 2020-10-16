@@ -44,6 +44,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
  */
 public class DualAttestationExample {
 
+    private static final String CURRENCY = "Coin1";
     private static final Logger logger = LoggerFactory.getLogger(DualAttestationExample.class);
 
     public static void main(String[] args) throws Exception {
@@ -63,7 +64,7 @@ public class DualAttestationExample {
         PublicKey vasp1PublicKey = PublicKey.fromPublicKey(vasp1KeyPair.getPublic());
         AuthenticationKey authenticationKeyVasp1 = AuthenticationKey.fromPublicKey(vasp1PublicKey);
         AccountAddress accountAddressVasp1 = AccountAddress.fromAuthenticationKey(authenticationKeyVasp1);
-        faucet.mint(authenticationKeyVasp1, 300_000L * 1_000_000L, "LBR");
+        faucet.mint(authenticationKeyVasp1, 300_000L * 1_000_000L, CURRENCY);
         Wait.until(accountHasPositiveBalance(accountAddressVasp1, client));
         logger.info("Vasp 1 account address: {}, auth key: {}", accountAddressVasp1, authenticationKeyVasp1);
 
@@ -73,7 +74,7 @@ public class DualAttestationExample {
         PublicKey vasp2PublicKey = PublicKey.fromPublicKey(vasp2KeyPair.getPublic());
         AuthenticationKey authenticationKeyVasp2 = AuthenticationKey.fromPublicKey(vasp2PublicKey);
         AccountAddress accountAddressVasp2 = AccountAddress.fromAuthenticationKey(authenticationKeyVasp2);
-        faucet.mint(authenticationKeyVasp2, 10_000L * 1_000_000L, "LBR");
+        faucet.mint(authenticationKeyVasp2, 10_000L * 1_000_000L, CURRENCY);
         Wait.until(accountHasPositiveBalance(accountAddressVasp2, client));
         logger.info("Vasp 2 account address: {}, auth key: {}", accountAddressVasp2, authenticationKeyVasp2);
 
@@ -130,14 +131,14 @@ public class DualAttestationExample {
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(2_000_000)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .gasUnitPrice(1)
                 .sender(AccountAddress
                         .fromAuthenticationKey(authenticationKeySource))
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadata())
-                        .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
+                        .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
                 .chainId(ChainId.TESTNET)
@@ -175,7 +176,7 @@ public class DualAttestationExample {
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .sender(AccountAddress
                         .fromAuthenticationKey(AuthenticationKey.fromPublicKey(parentVaspKeyPair.getPublic())))
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)

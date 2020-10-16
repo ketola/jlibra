@@ -14,7 +14,7 @@ public class GetAccountTransactionsExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountTransactionsExample.class);
 
     public static void main(String[] args) {
-        String address = "330952f689e737312bbfd6c9f85ad31e";
+        String address = "25407727b0b497be4f31f8dd82843a9c";
 
         LibraClient client = LibraClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")

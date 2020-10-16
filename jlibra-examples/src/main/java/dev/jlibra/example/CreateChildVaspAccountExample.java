@@ -38,6 +38,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class CreateChildVaspAccountExample {
 
+    private static final String CURRENCY = "Coin1";
     private static final Logger logger = LoggerFactory.getLogger(CreateChildVaspAccountExample.class);
 
     /**
@@ -61,7 +62,7 @@ public class CreateChildVaspAccountExample {
         // In the testnet new VASP accounts can be created by minting money to a new
         // address:
         AuthenticationKey parentVaspAuthKey = AuthenticationKey.fromPublicKey(parentVaspKeyPair.getPublic());
-        faucet.mint(parentVaspAuthKey, 100L * 1_000_000L, "LBR");
+        faucet.mint(parentVaspAuthKey, 100L * 1_000_000L, CURRENCY);
         Wait.until(accountHasPositiveBalance(AccountAddress.fromAuthenticationKey(parentVaspAuthKey), client));
 
         int parentVaspSequenceNumber = 0;
@@ -90,11 +91,11 @@ public class CreateChildVaspAccountExample {
                 .sequenceNumber(parentVaspSequenceNumber)
                 .maxGasAmount(640000)
                 .gasUnitPrice(1)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .sender(AccountAddress.fromAuthenticationKey(parentVaspAuthKey))
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
+                        .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .code(Move.createChildVaspAccount())
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
