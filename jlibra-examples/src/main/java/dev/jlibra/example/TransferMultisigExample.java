@@ -1,5 +1,6 @@
 package dev.jlibra.example;
 
+import static dev.jlibra.poller.Conditions.transactionFound;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 
@@ -18,6 +19,7 @@ import dev.jlibra.MultiSignaturePublicKey;
 import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.move.Move;
+import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
@@ -34,6 +36,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class TransferMultisigExample {
 
+    private static final String CURRENCY = "Coin1";
     private static final Logger logger = LoggerFactory.getLogger(TransferMultisigExample.class);
 
     public static void main(String[] args) throws Exception {
@@ -56,7 +59,7 @@ public class TransferMultisigExample {
                 Arrays.asList(publicKey1, publicKey2), 2);
 
         // Arguments for the peer to peer transaction
-        U64Argument amountArgument = U64Argument.from(2 * 1_000_000);
+        U64Argument amountArgument = U64Argument.from(1_000_000);
         AccountAddressArgument addressArgument = AccountAddressArgument
                 .from(AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
@@ -73,16 +76,17 @@ public class TransferMultisigExample {
         logger.info("Receiver auth key {}, receiver address {}", authenticationKeyTarget,
                 AccountAddress.fromAuthenticationKey(authenticationKeyTarget));
 
+        int sequenceNumber = 3;
         Transaction transaction = ImmutableTransaction.builder()
-                .sequenceNumber(0)
+                .sequenceNumber(sequenceNumber)
                 .maxGasAmount(640000)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .gasUnitPrice(1)
                 .sender(senderAddress)
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
                         .code(Move.peerToPeerTransferWithMetadata())
-                        .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
+                        .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
                 .chainId(ChainId.TESTNET)
@@ -105,6 +109,12 @@ public class TransferMultisigExample {
                 .build();
 
         client.submit(signedTransaction);
+
+        Wait.until(transactionFound(AccountAddress.fromHexString("4fa2be7ad55936c5702e8b7e3fdedb05"),
+                sequenceNumber, client));
+
+        logger.info("Receiver account: {}",
+                client.getAccount(AccountAddress.fromHexString("b3f7e8e38f8c8393f281a2f0792a2849")));
     }
 
 }

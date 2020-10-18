@@ -19,8 +19,8 @@ public class GetTransactionsExample {
     private static final Logger logger = LoggerFactory.getLogger(GetTransactionsExample.class);
 
     public static void main(String[] args) {
-        long start = 1461404;
-        long limit = 20;
+        long start = 781507;
+        long limit = 100;
         boolean fetchEvent = true;
 
         LibraClient client = LibraClient.builder()

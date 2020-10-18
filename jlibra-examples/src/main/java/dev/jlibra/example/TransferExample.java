@@ -18,7 +18,7 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
-import dev.jlibra.client.views.transaction.PeerToPeerTransactionScript;
+import dev.jlibra.client.views.transaction.PeerToPeerWithMetadataScript;
 import dev.jlibra.client.views.transaction.UserTransaction;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
@@ -116,7 +116,7 @@ public class TransferExample {
                 client));
         UserTransaction t = (UserTransaction) client.getAccountTransaction(sourceAccount, sequenceNumber, true)
                 .transaction();
-        PeerToPeerTransactionScript script = (PeerToPeerTransactionScript) t.script();
+        PeerToPeerWithMetadataScript script = (PeerToPeerWithMetadataScript) t.script();
 
         logger.info("Metadata: {}", new String(Hex.decode(script.metadata())));
     }

@@ -1,6 +1,6 @@
 package dev.jlibra.example;
 
-import static dev.jlibra.poller.Conditions.accountExists;
+import static dev.jlibra.poller.Conditions.accountHasPositiveBalance;
 import static dev.jlibra.poller.Conditions.transactionFound;
 
 import java.math.BigDecimal;
@@ -35,6 +35,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class KeyRotationExample {
 
+    private static final String CURRENCY = "Coin1";
     private static final Logger logger = LoggerFactory.getLogger(KeyRotationExample.class);
 
     public static void main(String[] args) throws Exception {
@@ -59,9 +60,9 @@ public class KeyRotationExample {
         logger.info("Account address: {}", addressOriginal.toString());
         logger.info("Authentication key: {}", authenticationKeyOriginal.toString());
 
-        faucet.mint(authenticationKeyOriginal, 10L * 1_000_000L, "LBR");
+        faucet.mint(authenticationKeyOriginal, 100L * 1_000_000L, CURRENCY);
 
-        Wait.until(accountExists(addressOriginal, client));
+        Wait.until(accountHasPositiveBalance(addressOriginal, client));
 
         /*
          * Get the account state to verify that the account exists and the coins were
@@ -147,7 +148,7 @@ public class KeyRotationExample {
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(640000)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .gasUnitPrice(1)
                 .sender(address)
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
