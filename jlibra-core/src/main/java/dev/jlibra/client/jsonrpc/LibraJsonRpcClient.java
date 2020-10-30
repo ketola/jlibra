@@ -126,8 +126,10 @@ public class LibraJsonRpcClient {
             throw new LibraRuntimeException("Converting the response from JSON failed", e);
         }
 
-        // TODO: verify request / response ids
-
+        if (!jsonRequest.id().equals(response.id())) {
+            throw new LibraRuntimeException(String.format(
+                    "The json rpc request id (%s) and response id (%s) do not match", jsonRequest.id(), response.id()));
+        }
         return response.result();
     }
 
