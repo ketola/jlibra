@@ -18,7 +18,7 @@ import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
 import dev.jlibra.client.LibraClient;
 import dev.jlibra.client.views.Account;
-import dev.jlibra.client.views.transaction.PeerToPeerTransactionScript;
+import dev.jlibra.client.views.transaction.PeerToPeerWithMetadataScript;
 import dev.jlibra.client.views.transaction.UserTransaction;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
@@ -36,8 +36,15 @@ import dev.jlibra.transaction.argument.AccountAddressArgument;
 import dev.jlibra.transaction.argument.U64Argument;
 import dev.jlibra.transaction.argument.U8VectorArgument;
 
+/**
+ * Both accounts have to exist before making the transaction. Use
+ * GenerateKeysExample and MintExample to create accounts with some money in
+ * them.
+ * 
+ */
 public class TransferExample {
 
+    private static final String CURRENCY = "Coin1";
     private static final Logger logger = LoggerFactory.getLogger(TransferExample.class);
 
     public static void main(String[] args) {
@@ -48,9 +55,9 @@ public class TransferExample {
                 .build();
 
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
-                "3051020101300506032b6570042204208096fec0a03f968bbece0c717525dded07a4bb123827cf1f8df48920f6def2758121001a9115b2b15e182dc94d8abc15404cb1dbe48211192ecb6c8fca00c369dd1969"));
+                "3051020101300506032b657004220420aeff20e881cd4c7f32b23b74ab6c9ffce5b2764047d141b1c84e47f6c3b656d08121006495a72dd63c25c3173eeaa9b5f5c03050a669b4845db67f779f8d8839911562"));
         PublicKey publicKey = PublicKey.fromHexString(
-                "302a300506032b65700321001a9115b2b15e182dc94d8abc15404cb1dbe48211192ecb6c8fca00c369dd1969");
+                "302a300506032b65700321006495a72dd63c25c3173eeaa9b5f5c03050a669b4845db67f779f8d8839911562");
 
         AuthenticationKey authenticationKey = AuthenticationKey.fromPublicKey(publicKey);
         AccountAddress sourceAccount = AccountAddress.fromAuthenticationKey(authenticationKey);
@@ -60,7 +67,7 @@ public class TransferExample {
         // If the account already exists, then the authentication key of the target
         // account is not required and the account address would be enough
         AuthenticationKey authenticationKeyTarget = AuthenticationKey
-                .fromHexString("f792ee6e15298b234bfcef1d6d00c6c6fc4c85260cdccd2ee25f217da715e5dc");
+                .fromHexString("37b1b993c4d932b6830332d01f3cde4afe7f9fc36a7b207ef8960d2b81259180");
 
         long amount = 1;
         long sequenceNumber = accountState.sequenceNumber();
@@ -79,23 +86,17 @@ public class TransferExample {
         U8VectorArgument signatureArgument = U8VectorArgument.from(
                 ByteArray.from(new byte[0]));
 
-        // When you are sending money to an account that does not exist, you need to
-        // provide the auth key prefix parameter. You can leave it as an empty byte
-        // array if
-        // the account exists.
-        U8VectorArgument authkeyPrefixArgument = U8VectorArgument.from(authenticationKeyTarget.prefix());
-
         Transaction transaction = ImmutableTransaction.builder()
                 .sequenceNumber(sequenceNumber)
                 .maxGasAmount(1640000)
-                .gasCurrencyCode("LBR")
+                .gasCurrencyCode(CURRENCY)
                 .gasUnitPrice(1)
                 .sender(sourceAccount)
                 .expirationTimestampSecs(Instant.now().getEpochSecond() + 60)
                 .payload(ImmutableScript.builder()
-                        .typeArguments(asList(Struct.typeTagForCurrency("LBR")))
+                        .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .code(Move.peerToPeerTransferWithMetadata())
-                        .addArguments(addressArgument, authkeyPrefixArgument, amountArgument, metadataArgument,
+                        .addArguments(addressArgument, amountArgument, metadataArgument,
                                 signatureArgument)
                         .build())
                 .chainId(ChainId.TESTNET)
@@ -116,7 +117,7 @@ public class TransferExample {
                 client));
         UserTransaction t = (UserTransaction) client.getAccountTransaction(sourceAccount, sequenceNumber, true)
                 .transaction();
-        PeerToPeerTransactionScript script = (PeerToPeerTransactionScript) t.script();
+        PeerToPeerWithMetadataScript script = (PeerToPeerWithMetadataScript) t.script();
 
         logger.info("Metadata: {}", new String(Hex.decode(script.metadata())));
     }

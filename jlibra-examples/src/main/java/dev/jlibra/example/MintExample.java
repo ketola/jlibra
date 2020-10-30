@@ -26,14 +26,15 @@ import dev.jlibra.poller.Wait;
  */
 public class MintExample {
 
+    private static final String CURRENCY = "Coin1";
     private static final Logger logger = LoggerFactory.getLogger(MintExample.class);
 
     public static void main(String[] args) {
         AuthenticationKey authenticationKey = AuthenticationKey
-                .fromHexString("efb54d5bd7e280c637eb7772d211be172ab3189806488e73014e2e429e45c143");
+                .fromHexString("c0c19d6b1d48371ea28f0cdc5f74bba7b3f7e8e38f8c8393f281a2f0792a2849");
 
         Faucet faucet = Faucet.builder().build();
-        faucet.mint(authenticationKey, 100L * 1_000_000L, "LBR");
+        faucet.mint(authenticationKey, 100L * 1_000_000L, CURRENCY);
 
         LibraClient client = LibraClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")

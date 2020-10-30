@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
-@JsonDeserialize(as = ImmutablePeerToPeerTransactionScript.class)
-public interface PeerToPeerTransactionScript extends Script {
+@JsonDeserialize(as = ImmutablePeerToPeerWithMetadataScript.class)
+public interface PeerToPeerWithMetadataScript extends Script {
 
     @JsonProperty("amount")
     Long amount();

@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
 @JsonSubTypes({
+        @JsonSubTypes.Type(value = ImmutableBaseUrlRotationEventData.class, name = "baseurlrotation"),
         @JsonSubTypes.Type(value = ImmutableBurnEventData.class, name = "burn"),
         @JsonSubTypes.Type(value = ImmutableCancelBurnEventData.class, name = "cancelburn"),
+        @JsonSubTypes.Type(value = ImmutableComplianceKeyRotationEventData.class, name = "compliancekeyrotation"),
         @JsonSubTypes.Type(value = ImmutableMintEventData.class, name = "mint"),
         @JsonSubTypes.Type(value = ImmutablePreBurnEventData.class, name = "preburn"),
         @JsonSubTypes.Type(value = ImmutableSentPaymentEventData.class, name = "sentpayment"),
