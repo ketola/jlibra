@@ -25,15 +25,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.arteam</groupId>
-      <artifactId>simple-json-rpc-client</artifactId>
-      <version>1.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jetbrains</groupId>
-          <artifactId>annotations</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+      <version>2.11.1</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
