@@ -9,7 +9,6 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ public class LibraJsonRpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(LibraJsonRpcClient.class);
 
-    private static final Object[] EMTPY_PARAMS = new Object[0];
+    private static final Object[] EMPTY_PARAMS = new Object[0];
 
     private static final String USER_AGENT = "JLibra";
 
@@ -40,15 +39,18 @@ public class LibraJsonRpcClient {
 
     private HttpClient httpClient;
 
+    private RequestIdGenerator requestIdGenerator;
+
     private final String url;
 
     private final ObjectMapper objectMapper;
 
-    public LibraJsonRpcClient(String url, HttpClient client) {
+    public LibraJsonRpcClient(String url, HttpClient client, RequestIdGenerator requestIdGenerator) {
         this.url = url;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new Jdk8Module());
         this.httpClient = client;
+        this.requestIdGenerator = requestIdGenerator;
     }
 
     public Optional<Account> getAccount(String address) {
@@ -56,7 +58,7 @@ public class LibraJsonRpcClient {
     }
 
     public BlockMetadata getMetadata() {
-        return request("get_metadata", EMTPY_PARAMS, BlockMetadata.class).get();
+        return request("get_metadata", EMPTY_PARAMS, BlockMetadata.class).get();
     }
 
     @SuppressWarnings("unchecked")
@@ -86,16 +88,16 @@ public class LibraJsonRpcClient {
 
     @SuppressWarnings("unchecked")
     public List<CurrencyInfo> currenciesInfo() {
-        return request("currencies_info", EMTPY_PARAMS, List.class).get();
+        return request("currencies_info", EMPTY_PARAMS, List.class).get();
     }
 
     public void submit(String payload) {
         request("submit", new Object[] { payload }, Void.class);
     }
 
-    public <T> Optional<T> request(String method, Object[] params, Class<T> resultType) {
+    private <T> Optional<T> request(String method, Object[] params, Class<T> resultType) {
         JsonRpcRequest jsonRequest = ImmutableJsonRpcRequest.builder()
-                .id(UUID.randomUUID().toString())
+                .id(requestIdGenerator.generateRequestId())
                 .jsonrpc("2.0")
                 .method(method)
                 .params(params)

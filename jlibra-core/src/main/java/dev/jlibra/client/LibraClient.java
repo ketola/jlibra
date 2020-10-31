@@ -4,6 +4,7 @@ import static java.net.http.HttpClient.Version.HTTP_2;
 
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.UUID;
 
 import org.bouncycastle.util.encoders.Hex;
 
@@ -137,7 +138,7 @@ public class LibraClient {
                         .version(HTTP_2)
                         .build();
             }
-            return new LibraClient(new LibraJsonRpcClient(url, httpClient));
+            return new LibraClient(new LibraJsonRpcClient(url, httpClient, () -> UUID.randomUUID().toString()));
         }
     }
 
