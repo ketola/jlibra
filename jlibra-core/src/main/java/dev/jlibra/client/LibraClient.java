@@ -10,6 +10,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.client.jsonrpc.BatchRequest;
 import dev.jlibra.client.jsonrpc.LibraJsonRpcClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
@@ -114,6 +115,10 @@ public class LibraClient {
         } catch (Exception e) {
             throw new LibraRuntimeException("submit failed", e);
         }
+    }
+
+    public BatchRequest newBatchRequest() {
+        return libraJsonRpcClient.newBatchRequest();
     }
 
     public static class LibraClientBuilder {
