@@ -61,7 +61,7 @@ public class BatchRequest {
 
     private final ObjectMapper objectMapper;
 
-    Map<Request, CompletableFuture> requestToResponse = new HashMap<>();
+    private Map<Request, CompletableFuture> requestToResponse = new HashMap<>();
 
     private BatchRequest(String url, HttpClient client, RequestIdGenerator requestIdGenerator,
             ObjectMapper objectMapper) {
@@ -183,8 +183,6 @@ public class BatchRequest {
         logger.debug("Response: {}", responseBody);
 
         List<JsonNode> responses = deserializeResponse(responseBody);
-
-        System.out.println(responses);
 
         for (JsonNode r : responses) {
             String id = r.get("id").asText();
