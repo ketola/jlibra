@@ -43,8 +43,6 @@ public class LibraJsonRpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(LibraJsonRpcClient.class);
 
-    private static final Object[] EMPTY_PARAMS = new Object[0];
-
     private static final String USER_AGENT = "JLibra";
 
     private static final String CONTENT_TYPE_JSON = "application/json";
@@ -66,42 +64,48 @@ public class LibraJsonRpcClient {
     }
 
     public Optional<Account> getAccount(String address) {
-        return call(Request.create(GET_ACCOUNT, asList(address)));
+        return call(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT, asList(address)));
     }
 
     public BlockMetadata getMetadata() {
-        return (BlockMetadata) call(Request.create(GET_METADATA, new ArrayList<>())).get();
+        return (BlockMetadata) call(
+                Request.create(requestIdGenerator.generateRequestId(), GET_METADATA, new ArrayList<>())).get();
     }
 
     @SuppressWarnings("unchecked")
     public List<Transaction> getTransactions(long version, long limit, boolean includeEvents) {
-        return (List<Transaction>) call(Request.create(GET_TRANSACTIONS, asList(version, limit, includeEvents)))
-                .get();
+        return (List<Transaction>) call(Request.create(requestIdGenerator.generateRequestId(), GET_TRANSACTIONS,
+                asList(version, limit, includeEvents)))
+                        .get();
     }
 
     @SuppressWarnings("unchecked")
     public List<Transaction> getAccountTransactions(String address, long start, long limit, boolean includeEvents) {
-        return (List<Transaction>) call(Request.create(GET_ACCOUNT_TRANSACTIONS,
+        return (List<Transaction>) call(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT_TRANSACTIONS,
                 asList(address, start, limit, includeEvents)))
                         .get();
     }
 
     public Optional<Transaction> getAccountTransaction(String address, long sequenceNumber, boolean includeEvents) {
-        return call(Request.create(GET_ACCOUNT_TRANSACTION, asList(address, sequenceNumber, includeEvents)));
+        return call(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT_TRANSACTION,
+                asList(address, sequenceNumber, includeEvents)));
     }
 
     @SuppressWarnings("unchecked")
     public List<Event> getEvents(String eventKey, long start, long limit) {
-        return (List<Event>) call(Request.create(GET_EVENTS, asList(eventKey, start, limit))).get();
+        return (List<Event>) call(
+                Request.create(requestIdGenerator.generateRequestId(), GET_EVENTS, asList(eventKey, start, limit)))
+                        .get();
     }
 
     public Optional<StateProof> getStateProof(long knownVersion) {
-        return call(Request.create(GET_STATE_PROOF, asList(knownVersion)));
+        return call(Request.create(requestIdGenerator.generateRequestId(), GET_STATE_PROOF, asList(knownVersion)));
     }
 
     @SuppressWarnings("unchecked")
     public List<CurrencyInfo> currenciesInfo() {
-        return (List<CurrencyInfo>) call(Request.create(CURRENCIES_INFO, new ArrayList<>())).get();
+        return (List<CurrencyInfo>) call(
+                Request.create(requestIdGenerator.generateRequestId(), CURRENCIES_INFO, new ArrayList<>())).get();
     }
 
     public BatchRequest newBatchRequest() {
@@ -109,12 +113,12 @@ public class LibraJsonRpcClient {
     }
 
     public void submit(String payload) {
-        call(Request.create(SUBMIT, asList(payload)));
+        call(Request.create(requestIdGenerator.generateRequestId(), SUBMIT, asList(payload)));
     }
 
     private <T> Optional<T> call(Request request) {
         JsonRpcRequest jsonRequest = ImmutableJsonRpcRequest.builder()
-                .id(requestIdGenerator.generateRequestId())
+                .id(request.id())
                 .jsonrpc("2.0")
                 .method(request.method().name().toLowerCase())
                 .params(request.params().toArray())

@@ -7,12 +7,15 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface Request {
 
+    String id();
+
     JsonRpcMethod method();
 
     List<Object> params();
 
-    public static Request create(JsonRpcMethod method, List<Object> params) {
+    public static Request create(String id, JsonRpcMethod method, List<Object> params) {
         return ImmutableRequest.builder()
+                .id(id)
                 .method(method)
                 .params(params)
                 .build();

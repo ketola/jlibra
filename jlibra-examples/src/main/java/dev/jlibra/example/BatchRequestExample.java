@@ -25,15 +25,23 @@ public class BatchRequestExample {
 
         BatchRequest batchRequest = client.newBatchRequest();
 
-        CompletableFuture<Optional<Account>> r1 = batchRequest.getAccount(address);
-        CompletableFuture<Optional<Transaction>> t1 = batchRequest.getAccountTransaction(address, 0, true);
-        CompletableFuture<BlockMetadata> m = batchRequest.getMetadata();
+        CompletableFuture<Optional<Account>> okRequestWithOptional = batchRequest.getAccount(address);
+        CompletableFuture<Optional<Account>> failingRequest = batchRequest
+                .getAccount("b3f7e8e38f8c8393f281a2f0792a2849aa");
+        CompletableFuture<Optional<Transaction>> emptyResponse = batchRequest.getAccountTransaction(address, 0, true);
+        CompletableFuture<BlockMetadata> okRequest = batchRequest.getMetadata();
 
         batchRequest.execute();
 
-        logger.info("Account: {}", r1.get().orElse(null));
-        logger.info("Transaction: {}", t1.get().orElse(null));
-        logger.info("Metadata: {}", m.get());
+        logger.info("Account: {}", okRequestWithOptional.get().orElse(null));
+        logger.info("Transaction: {}", emptyResponse.get().orElse(null));
+        logger.info("Metadata: {}", okRequest.get());
 
+        try {
+            logger.info("Account: {}", failingRequest.get().orElse(null));
+        } catch (Exception e) {
+            logger.info("Request failed: " + e.getMessage());
+        }
     }
+
 }
