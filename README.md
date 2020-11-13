@@ -24,6 +24,8 @@ JLibra simplifies integration to Libra but does not hide any features of the Lib
 
 Start sample Main classes in `dev.jlibra.example` package for examples (for a complete example with creating accounts to moving coins between them check the [how to](https://github.com/ketola/jlibra/blob/master/docs/HOWTO.md))
 
+[`BatchRequestExample`](jlibra-examples/src/main/java/dev/jlibra/example/BatchRequestExample.java)
+
 [`CreateChildVaspAccountExample`](jlibra-examples/src/main/java/dev/jlibra/example/CreateChildVaspAccountExample.java)
 
 [`DualAttestationExample`](jlibra-examples/src/main/java/dev/jlibra/example/DualAttestationExample.java)

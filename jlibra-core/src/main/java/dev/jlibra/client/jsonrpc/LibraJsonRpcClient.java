@@ -1,5 +1,16 @@
 package dev.jlibra.client.jsonrpc;
 
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.CURRENCIES_INFO;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTION;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTIONS;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_EVENTS;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_METADATA;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_STATE_PROOF;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_TRANSACTIONS;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.SUBMIT;
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -7,6 +18,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.client.LibraServerErrorException;
@@ -30,8 +41,6 @@ import dev.jlibra.client.views.transaction.Transaction;
 public class LibraJsonRpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(LibraJsonRpcClient.class);
-
-    private static final Object[] EMPTY_PARAMS = new Object[0];
 
     private static final String USER_AGENT = "JLibra";
 
@@ -47,60 +56,70 @@ public class LibraJsonRpcClient {
 
     public LibraJsonRpcClient(String url, HttpClient client, RequestIdGenerator requestIdGenerator) {
         this.url = url;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new Jdk8Module());
+        this.objectMapper = ObjectMapperFactory.create();
         this.httpClient = client;
         this.requestIdGenerator = requestIdGenerator;
     }
 
     public Optional<Account> getAccount(String address) {
-        return request("get_account", new Object[] { address }, Account.class);
+        return call(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT, asList(address)));
     }
 
     public BlockMetadata getMetadata() {
-        return request("get_metadata", EMPTY_PARAMS, BlockMetadata.class).get();
+        return (BlockMetadata) call(
+                Request.create(requestIdGenerator.generateRequestId(), GET_METADATA, new ArrayList<>())).get();
     }
 
     @SuppressWarnings("unchecked")
     public List<Transaction> getTransactions(long version, long limit, boolean includeEvents) {
-        return request("get_transactions", new Object[] { version, limit, includeEvents }, List.class).get();
+        return (List<Transaction>) call(Request.create(requestIdGenerator.generateRequestId(), GET_TRANSACTIONS,
+                asList(version, limit, includeEvents)))
+                        .get();
     }
 
     @SuppressWarnings("unchecked")
     public List<Transaction> getAccountTransactions(String address, long start, long limit, boolean includeEvents) {
-        return request("get_account_transactions", new Object[] { address, start, limit, includeEvents }, List.class)
-                .get();
+        return (List<Transaction>) call(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT_TRANSACTIONS,
+                asList(address, start, limit, includeEvents)))
+                        .get();
     }
 
     public Optional<Transaction> getAccountTransaction(String address, long sequenceNumber, boolean includeEvents) {
-        return request("get_account_transaction", new Object[] { address, sequenceNumber, includeEvents },
-                Transaction.class);
+        return call(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT_TRANSACTION,
+                asList(address, sequenceNumber, includeEvents)));
     }
 
     @SuppressWarnings("unchecked")
     public List<Event> getEvents(String eventKey, long start, long limit) {
-        return request("get_events", new Object[] { eventKey, start, limit }, List.class).get();
+        return (List<Event>) call(
+                Request.create(requestIdGenerator.generateRequestId(), GET_EVENTS, asList(eventKey, start, limit)))
+                        .get();
     }
 
     public Optional<StateProof> getStateProof(long knownVersion) {
-        return request("get_state_proof", new Object[] { knownVersion }, StateProof.class);
+        return call(Request.create(requestIdGenerator.generateRequestId(), GET_STATE_PROOF, asList(knownVersion)));
     }
 
     @SuppressWarnings("unchecked")
     public List<CurrencyInfo> currenciesInfo() {
-        return request("currencies_info", EMPTY_PARAMS, List.class).get();
+        return (List<CurrencyInfo>) call(
+                Request.create(requestIdGenerator.generateRequestId(), CURRENCIES_INFO, new ArrayList<>())).get();
+    }
+
+    public BatchRequest newBatchRequest() {
+        return BatchRequest.newBatchRequest(url, httpClient, requestIdGenerator, objectMapper);
     }
 
     public void submit(String payload) {
-        request("submit", new Object[] { payload }, Void.class);
+        call(Request.create(requestIdGenerator.generateRequestId(), SUBMIT, asList(payload)));
     }
 
-    private <T> Optional<T> request(String method, Object[] params, Class<T> resultType) {
+    private <T> Optional<T> call(Request request) {
         JsonRpcRequest jsonRequest = ImmutableJsonRpcRequest.builder()
-                .id(requestIdGenerator.generateRequestId())
+                .id(request.id())
                 .jsonrpc("2.0")
-                .method(method)
-                .params(params)
+                .method(request.method().name().toLowerCase())
+                .params(request.params().toArray())
                 .build();
 
         String requestJson = convertToJson(jsonRequest);
@@ -122,7 +141,8 @@ public class LibraJsonRpcClient {
 
         JsonRpcResponse<T> response;
         try {
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class, resultType);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class,
+                    request.method().resultType());
             response = objectMapper.readValue(responseBody, type);
         } catch (JsonProcessingException e) {
             throw new LibraRuntimeException("Converting the response from JSON failed", e);

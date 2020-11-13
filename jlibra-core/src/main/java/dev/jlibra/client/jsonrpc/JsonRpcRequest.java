@@ -15,4 +15,13 @@ public interface JsonRpcRequest {
     Object[] params();
 
     String id();
+
+    public static JsonRpcRequest create(String requestId, String method, Object[] params) {
+        return ImmutableJsonRpcRequest.builder()
+                .id(requestId)
+                .jsonrpc("2.0")
+                .method(method)
+                .params(params)
+                .build();
+    }
 }
