@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import dev.jlibra.LibraRuntimeException;
 import dev.jlibra.client.LibraServerErrorException;
@@ -57,8 +56,7 @@ public class LibraJsonRpcClient {
 
     public LibraJsonRpcClient(String url, HttpClient client, RequestIdGenerator requestIdGenerator) {
         this.url = url;
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new Jdk8Module());
+        this.objectMapper = ObjectMapperFactory.create();
         this.httpClient = client;
         this.requestIdGenerator = requestIdGenerator;
     }

@@ -53,15 +53,17 @@ public class BatchRequest {
 
     private static final String CONTENT_TYPE_JSON = "application/json";
 
-    private HttpClient httpClient;
+    private final HttpClient httpClient;
 
-    private RequestIdGenerator requestIdGenerator;
+    private final RequestIdGenerator requestIdGenerator;
 
     private final String url;
 
     private final ObjectMapper objectMapper;
 
-    private Map<Request, CompletableFuture> requestToResponse = new HashMap<>();
+    private boolean executed = false;
+
+    private final Map<Request, CompletableFuture> requestToResponse = new HashMap<>();
 
     private BatchRequest(String url, HttpClient client, RequestIdGenerator requestIdGenerator,
             ObjectMapper objectMapper) {
@@ -150,6 +152,10 @@ public class BatchRequest {
     }
 
     public void execute() {
+        if (this.executed) {
+            throw new IllegalStateException("This batch request has already been executed");
+        }
+        this.executed = true;
         call(requestToResponse.keySet());
     }
 
@@ -186,7 +192,7 @@ public class BatchRequest {
 
         for (JsonNode r : responses) {
             String id = r.get("id").asText();
-            if (r.get("error") != null) {
+            if (containsError(r)) {
                 JsonRpcErrorResponse errorResponse = deserializeErrorResponse(r);
                 requestToResponse.get(requestIdToRequest.get(id)).completeExceptionally(
                         new LibraServerErrorException(errorResponse.error().code(), errorResponse.error().message()));
@@ -201,6 +207,10 @@ public class BatchRequest {
                 }
             }
         }
+    }
+
+    private boolean containsError(JsonNode r) {
+        return r.get("error") != null;
     }
 
     private JsonRpcErrorResponse deserializeErrorResponse(JsonNode r) {
