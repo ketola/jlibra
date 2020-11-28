@@ -101,7 +101,7 @@ public class LibraClient {
 
     public List<CurrencyInfo> currenciesInfo() {
         try {
-            return libraJsonRpcClient.currenciesInfo();
+            return libraJsonRpcClient.getCurrencies();
         } catch (Exception e) {
             throw new LibraRuntimeException("currenciesInfo failed", e);
         }

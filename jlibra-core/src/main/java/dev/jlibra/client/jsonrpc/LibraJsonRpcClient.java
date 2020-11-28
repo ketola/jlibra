@@ -1,6 +1,6 @@
 package dev.jlibra.client.jsonrpc;
 
-import static dev.jlibra.client.jsonrpc.JsonRpcMethod.CURRENCIES_INFO;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_CURRENCIES;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTION;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTIONS;
@@ -101,9 +101,9 @@ public class LibraJsonRpcClient {
     }
 
     @SuppressWarnings("unchecked")
-    public List<CurrencyInfo> currenciesInfo() {
+    public List<CurrencyInfo> getCurrencies() {
         return (List<CurrencyInfo>) call(
-                Request.create(requestIdGenerator.generateRequestId(), CURRENCIES_INFO, new ArrayList<>())).get();
+                Request.create(requestIdGenerator.generateRequestId(), GET_CURRENCIES, new ArrayList<>())).get();
     }
 
     public BatchRequest newBatchRequest() {
