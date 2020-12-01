@@ -1,6 +1,6 @@
 package dev.jlibra.client.jsonrpc;
 
-import static dev.jlibra.client.jsonrpc.JsonRpcMethod.CURRENCIES_INFO;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_CURRENCIES;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTION;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTIONS;
@@ -136,10 +136,10 @@ public class BatchRequest {
         return future;
     }
 
-    public CompletableFuture<List<CurrencyInfo>> currenciesInfo() {
+    public CompletableFuture<List<CurrencyInfo>> getCurrencies() {
         CompletableFuture<List<CurrencyInfo>> future = new CompletableFuture<>();
         requestToResponse.put(
-                Request.create(requestIdGenerator.generateRequestId(), CURRENCIES_INFO, new ArrayList<>()),
+                Request.create(requestIdGenerator.generateRequestId(), GET_CURRENCIES, new ArrayList<>()),
                 future);
         return future;
     }

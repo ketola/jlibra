@@ -15,8 +15,8 @@ public enum JsonRpcMethod {
     GET_ACCOUNT_TRANSACTIONS(List.class, false),
     GET_ACCOUNT_TRANSACTION(Transaction.class, true),
     GET_EVENTS(List.class, false),
-    GET_STATE_PROOF(StateProof.class, false),
-    CURRENCIES_INFO(List.class, false),
+    GET_STATE_PROOF(StateProof.class, true),
+    GET_CURRENCIES(List.class, false),
     SUBMIT(Void.class, false);
 
     private Class resultType;
