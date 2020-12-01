@@ -15,4 +15,7 @@ public interface VmStatusMoveAbort extends VmStatus {
     @JsonProperty("abort_code")
     Integer abortCode();
 
+    @JsonProperty("explanation")
+    MoveAbortExplanation explanation();
+
 }
