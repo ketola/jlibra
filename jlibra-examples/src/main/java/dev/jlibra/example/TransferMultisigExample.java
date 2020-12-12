@@ -105,7 +105,7 @@ public class TransferMultisigExample {
                 .build();
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         client.submit(signedTransaction);

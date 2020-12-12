@@ -17,7 +17,7 @@ public class GetAccountTransactionsExample {
         String address = "25407727b0b497be4f31f8dd82843a9c";
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         List<Transaction> transactions = client.getAccountTransactions(AccountAddress.fromHexString(address), 0, 5,

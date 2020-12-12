@@ -16,7 +16,7 @@ public class GetAccountTransactionBySequenceNumberExample {
         int sequenceNumber = 0;
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         Transaction t = client.getAccountTransaction(AccountAddress.fromHexString(address), sequenceNumber, true);

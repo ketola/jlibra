@@ -15,7 +15,7 @@ public class GetAccountStateExample {
         String address = "b3f7e8e38f8c8393f281a2f0792a2849";
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         Account accountView = client.getAccount(AccountAddress.fromHexString(address));

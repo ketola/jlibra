@@ -24,7 +24,7 @@ public class GetTransactionsExample {
         boolean fetchEvent = true;
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         List<Transaction> transactions = client.getTransactions(start, limit, fetchEvent);

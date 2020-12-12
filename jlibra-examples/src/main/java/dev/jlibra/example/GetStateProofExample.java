@@ -11,7 +11,7 @@ public class GetStateProofExample {
 
     public static void main(String[] args) {
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         StateProof stateProof = client.getStateProof(324);

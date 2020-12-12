@@ -51,7 +51,7 @@ public class TransferExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://client.testnet.libra.org/v1/")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
