@@ -17,7 +17,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 
 public class ExtendedPrivKey {
 
@@ -34,7 +34,7 @@ public class ExtendedPrivKey {
             this.publicKey = BouncyCastleProvider.getPublicKey(new SubjectPublicKeyInfo(
                     new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), keyInfo.getPublicKeyData().getBytes()));
         } catch (IOException | InvalidKeySpecException e) {
-            throw new LibraRuntimeException("Key creation failed", e);
+            throw new DiemRuntimeException("Key creation failed", e);
         }
     }
 

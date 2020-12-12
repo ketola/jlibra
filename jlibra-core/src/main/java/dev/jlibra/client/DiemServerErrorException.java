@@ -1,14 +1,14 @@
 package dev.jlibra.client;
 
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 
-public class LibraServerErrorException extends LibraRuntimeException {
+public class DiemServerErrorException extends DiemRuntimeException {
 
     private int code;
 
     private String errorMessage;
 
-    public LibraServerErrorException(int code, String message) {
+    public DiemServerErrorException(int code, String message) {
         super(String.format("%d: %s", code, message));
         this.code = code;
         this.errorMessage = message;

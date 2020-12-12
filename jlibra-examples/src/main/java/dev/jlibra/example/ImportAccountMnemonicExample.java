@@ -25,7 +25,7 @@ public class ImportAccountMnemonicExample {
         LibraKeyFactory libraKeyFactory = new LibraKeyFactory(seed);
         ExtendedPrivKey extendedPrivKey = libraKeyFactory.privateChild(new ChildNumber(0));
 
-        logger.info("Libra address: {}", extendedPrivKey.getAddress());
+        logger.info("Diem address: {}", extendedPrivKey.getAddress());
         logger.info("Public key: {}", extendedPrivKey.publicKey);
         logger.info("Private key: {}", extendedPrivKey.privateKey);
     }

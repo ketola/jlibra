@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.PublicKey;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
@@ -42,7 +42,7 @@ public class CreateChildVaspAccountExample {
     private static final Logger logger = LoggerFactory.getLogger(CreateChildVaspAccountExample.class);
 
     /**
-     * Based on Libra white paper, VASPs are: "Virtual Asset Service Providers
+     * Based on Diem white paper, VASPs are: "Virtual Asset Service Providers
      * (exchanges and custodial wallets) that are registered or licensed as VASPs in
      * a Financial Action Task Force (FATF) member jurisdiction, or are registered
      * or licensed in a FATF member jurisdiction and are permitted to perform VASP
@@ -52,7 +52,7 @@ public class CreateChildVaspAccountExample {
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
         Faucet faucet = Faucet.builder().build();
@@ -135,7 +135,7 @@ public class CreateChildVaspAccountExample {
         try {
             return KeyPairGenerator.getInstance("Ed25519", "BC");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new LibraRuntimeException("generate key pair failed", e);
+            throw new DiemRuntimeException("generate key pair failed", e);
         }
     }
 

@@ -8,7 +8,7 @@ import java.security.spec.KeySpec;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 
 public class Seed {
 
@@ -26,7 +26,7 @@ public class Seed {
 
             data = key.getEncoded();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new LibraRuntimeException(e.getMessage(), e);
+            throw new DiemRuntimeException(e.getMessage(), e);
         }
     }
 

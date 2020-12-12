@@ -17,7 +17,7 @@ import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.MultiSignaturePublicKey;
 import dev.jlibra.PublicKey;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.move.Move;
 import dev.jlibra.poller.Wait;
 import dev.jlibra.serialization.ByteArray;
@@ -104,7 +104,7 @@ public class TransferMultisigExample {
                 .transaction(transaction)
                 .build();
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 

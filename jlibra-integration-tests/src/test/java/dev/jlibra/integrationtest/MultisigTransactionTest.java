@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.MultiSignaturePublicKey;
 import dev.jlibra.PublicKey;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
@@ -53,12 +53,12 @@ public class MultisigTransactionTest {
 
     private static final String CURRENCY = "Coin1";
 
-    private LibraClient client;
+    private DiemClient client;
 
     @BeforeEach
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
-        client = LibraClient.builder()
+        client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
     }
@@ -149,7 +149,7 @@ public class MultisigTransactionTest {
         try {
             return KeyPairGenerator.getInstance("Ed25519", "BC");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new LibraRuntimeException("Generate key pair failed", e);
+            throw new DiemRuntimeException("Generate key pair failed", e);
         }
     }
 

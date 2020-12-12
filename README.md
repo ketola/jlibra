@@ -4,11 +4,13 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/ketola/jlibra/badge.svg?targetFile=jlibra-core%2Fpom.xml)](https://snyk.io/test/github/ketola/jlibra?targetFile=jlibra-core%2Fpom.xml)
 [![Maven Central](https://img.shields.io/maven-central/v/dev.jlibra/jlibra-core?color=%232ECC71&style=plastic)](https://search.maven.org/search?q=g:dev.jlibra)
  
-A Java library for building applications on [Libra](https://libra.org/)
+A Java library for building applications on [Diem](https://diem.com/)
 
-The API for creating transactions and querying the database of Libra uses [json-rpc](https://www.jsonrpc.org/specification) - a simple remote procedure call protocol utilizing JSON for encoding data. Sending new transactions to the Libra network requires also another type of serialization - the Libra Canonical Serialization. JLibra implements both of these and provides a simple api for Java applications to integrate to Libra.
+The project previously know as Libra has been renamed to Diem. Read more about it from here: [Announcing the name Diem](https://www.diem.com/en-us/updates/diem-association/). JLibra is still in the process of renaming all the references to the old name but all the features are functional despite the old naming in some places.
 
-JLibra simplifies integration to Libra but does not hide any features of the Libra api, this makes it possible to implement anything supported by Libra with Java. 
+The API for creating transactions and querying the database of Diem uses [json-rpc](https://www.jsonrpc.org/specification) - a simple remote procedure call protocol utilizing JSON for encoding data. Sending new transactions to the Diem network requires also another type of serialization - the Diem Canonical Serialization. JLibra implements both of these and provides a simple api for Java applications to integrate to Diem.
+
+JLibra simplifies integration to Diem but does not hide any features of the Diem api, this makes it possible to implement anything supported by Diem with Java. 
 
 ## Prerequisites
 

@@ -8,7 +8,7 @@ Create public/private key pair with [`GenerateKeysExample`](https://github.com/k
 Example output:
 
 ```text
-Libra address: cf97548205a125bf4184256480721e73e1d7fcd0d8126da719549d705812872b
+Diem address: cf97548205a125bf4184256480721e73e1d7fcd0d8126da719549d705812872b
 Public key: 302a300506032b6570032100328f6805...
 Private key: 3051020101300506032b657004220420950c732062792d7c8b344e029afe...
 ```

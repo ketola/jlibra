@@ -1,6 +1,6 @@
 package dev.jlibra.transaction;
 
-import dev.jlibra.serialization.lcs.LCS.ExternallyTaggedEnumeration;
+import dev.jlibra.serialization.dcs.DCS.ExternallyTaggedEnumeration;
 
 @ExternallyTaggedEnumeration(classes = { NotImplemented.class, NotImplemented.class, NotImplemented.class,
         NotImplemented.class, NotImplemented.class, NotImplemented.class, NotImplemented.class, Struct.class })

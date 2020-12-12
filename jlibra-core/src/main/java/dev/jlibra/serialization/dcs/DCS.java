@@ -1,4 +1,4 @@
-package dev.jlibra.serialization.lcs;
+package dev.jlibra.serialization.dcs;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 
 /**
  * Contains annotations to instruct the serialization of the java types to byte
- * arrays using the Libra Canonical Serialization.
+ * arrays using the Diem Canonical Serialization.
  * 
  * To find out more about the details of the serialization, see
  * https://github.com/libra/libra/blob/master/common/lcs/src/lib.rs
  */
-public class LCS {
+public class DCS {
 
     /**
      * An annotation for marking a method that is capable of returning the the value
@@ -50,7 +50,7 @@ public class LCS {
 
     /**
      * An annotation for marking a java type as a data structure serializable with
-     * the Libra Canonical Serialization.
+     * the Diem Canonical Serialization.
      */
     @Target(TYPE)
     @Retention(RUNTIME)

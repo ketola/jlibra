@@ -3,15 +3,15 @@ package dev.jlibra.transaction;
 import org.immutables.value.Value;
 
 import dev.jlibra.PublicKey;
-import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.serialization.dcs.DCS;
 
 @Value.Immutable
 public interface TransactionAuthenticatorEd25519 extends Authenticator {
 
-    @LCS.Field(0)
+    @DCS.Field(0)
     PublicKey getPublicKey();
 
-    @LCS.Field(1)
+    @DCS.Field(1)
     Signature getSignature();
 
 }

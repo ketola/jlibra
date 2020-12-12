@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
-import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.DiemRuntimeException;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.move.Move;
@@ -40,7 +40,7 @@ public class KeyRotationExample {
 
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 
@@ -109,7 +109,7 @@ public class KeyRotationExample {
             rotateAuthenticationKey(privateKeyOriginal, publicKeyOriginal, addressOriginal,
                     publicKeyNew2, 1, client);
 
-        } catch (LibraRuntimeException e) {
+        } catch (DiemRuntimeException e) {
             logger.error(e.getMessage());
             logger.error("This failed because the the original keys cannot be used anymore");
         }
@@ -140,7 +140,7 @@ public class KeyRotationExample {
 
     private static void rotateAuthenticationKey(BCEdDSAPrivateKey privateKey,
             BCEdDSAPublicKey publicKey, AccountAddress address, BCEdDSAPublicKey publicKeyNew,
-            int sequenceNumber, LibraClient client) {
+            int sequenceNumber, DiemClient client) {
 
         U8VectorArgument newAuthenticationKeyArgument = U8VectorArgument.from(
                 AuthenticationKey.fromPublicKey(publicKeyNew));
@@ -171,7 +171,7 @@ public class KeyRotationExample {
         client.submit(signedTransaction);
     }
 
-    private static void getAccountState(AccountAddress accountAddress, LibraClient libraClient) {
+    private static void getAccountState(AccountAddress accountAddress, DiemClient libraClient) {
         Account account = libraClient.getAccount(accountAddress);
 
         logger.info(

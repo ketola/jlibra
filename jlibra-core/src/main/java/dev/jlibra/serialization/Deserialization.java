@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 
 public class Deserialization {
 
@@ -32,7 +32,7 @@ public class Deserialization {
         try {
             int available = in.available();
             if (available < len) {
-                throw new LibraRuntimeException(String.format(
+                throw new DiemRuntimeException(String.format(
                         "Message is not long enough (%d) to read %d bytes from it. It could mean the message is corrupted or different format than expected.",
                         available, len));
             }
@@ -41,7 +41,7 @@ public class Deserialization {
             in.read(data);
             return data;
         } catch (IOException e) {
-            throw new LibraRuntimeException("Could not read input stream", e);
+            throw new DiemRuntimeException("Could not read input stream", e);
         }
     }
 }

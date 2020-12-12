@@ -36,8 +36,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.client.LibraServerErrorException;
+import dev.jlibra.DiemRuntimeException;
+import dev.jlibra.client.DiemServerErrorException;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
@@ -195,7 +195,7 @@ public class BatchRequest {
             if (containsError(r)) {
                 JsonRpcErrorResponse errorResponse = deserializeErrorResponse(r);
                 requestToResponse.get(requestIdToRequest.get(id)).completeExceptionally(
-                        new LibraServerErrorException(errorResponse.error().code(), errorResponse.error().message()));
+                        new DiemServerErrorException(errorResponse.error().code(), errorResponse.error().message()));
             } else {
                 JsonRpcMethod method = requestIdToRequest.get(id).method();
                 Object value = deserializeResponseResultObject(r, method);
@@ -217,7 +217,7 @@ public class BatchRequest {
         try {
             return objectMapper.treeToValue(r, JsonRpcErrorResponse.class);
         } catch (JsonProcessingException e) {
-            throw new LibraRuntimeException("json rpc error response deserialization failed", e);
+            throw new DiemRuntimeException("json rpc error response deserialization failed", e);
         }
     }
 
@@ -225,7 +225,7 @@ public class BatchRequest {
         try {
             return objectMapper.treeToValue(r.get("result"), method.resultType());
         } catch (JsonProcessingException e) {
-            throw new LibraRuntimeException("json rpc response result object deserialization failed", e);
+            throw new DiemRuntimeException("json rpc response result object deserialization failed", e);
         }
     }
 
@@ -237,7 +237,7 @@ public class BatchRequest {
             return (List<JsonNode>) objectMapper.readValue(responseBody,
                     responseType);
         } catch (JsonProcessingException e) {
-            throw new LibraRuntimeException("json rpc response deserialization failed", e);
+            throw new DiemRuntimeException("json rpc response deserialization failed", e);
         }
     }
 
@@ -245,7 +245,7 @@ public class BatchRequest {
         try {
             return objectMapper.writeValueAsString(jsonRequests);
         } catch (JsonProcessingException e) {
-            throw new LibraRuntimeException("Converting the request to JSON failed", e);
+            throw new DiemRuntimeException("Converting the request to JSON failed", e);
         }
     }
 
@@ -259,7 +259,7 @@ public class BatchRequest {
         try {
             return httpClient.send(request, BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new LibraRuntimeException("HTTP Request failed", e);
+            throw new DiemRuntimeException("HTTP Request failed", e);
         }
     }
 }

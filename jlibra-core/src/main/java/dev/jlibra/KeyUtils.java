@@ -13,7 +13,7 @@ public class KeyUtils {
         try {
             return getKeyFactory().generatePrivate(new PKCS8EncodedKeySpec(privateKey.toArray()));
         } catch (InvalidKeySpecException e) {
-            throw new LibraRuntimeException("PrivateKey generation failed", e);
+            throw new DiemRuntimeException("PrivateKey generation failed", e);
         }
     }
 
@@ -21,7 +21,7 @@ public class KeyUtils {
         try {
             return KeyFactory.getInstance("Ed25519");
         } catch (NoSuchAlgorithmException e) {
-            throw new LibraRuntimeException("Could not get KeyFactory", e);
+            throw new DiemRuntimeException("Could not get KeyFactory", e);
         }
     }
 
