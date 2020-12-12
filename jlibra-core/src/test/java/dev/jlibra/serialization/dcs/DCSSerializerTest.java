@@ -1,4 +1,4 @@
-package dev.jlibra.serialization.lcs;
+package dev.jlibra.serialization.dcs;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
+import dev.jlibra.serialization.dcs.DCSSerializer;
 import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableTransaction;

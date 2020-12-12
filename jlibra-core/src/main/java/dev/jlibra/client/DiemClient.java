@@ -18,7 +18,7 @@ import dev.jlibra.client.views.CurrencyInfo;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.event.Event;
 import dev.jlibra.client.views.transaction.Transaction;
-import dev.jlibra.serialization.lcs.DCSSerializer;
+import dev.jlibra.serialization.dcs.DCSSerializer;
 import dev.jlibra.transaction.SignedTransaction;
 
 public class DiemClient {

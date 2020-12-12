@@ -2,7 +2,7 @@ package dev.jlibra.transaction;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.serialization.lcs.DCS;
+import dev.jlibra.serialization.dcs.DCS;
 
 @Value.Immutable
 @DCS.Structure

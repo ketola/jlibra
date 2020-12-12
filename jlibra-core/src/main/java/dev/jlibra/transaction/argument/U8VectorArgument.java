@@ -3,7 +3,7 @@ package dev.jlibra.transaction.argument;
 import org.immutables.value.Value;
 
 import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.lcs.DCS;
+import dev.jlibra.serialization.dcs.DCS;
 
 @Value.Immutable
 public interface U8VectorArgument extends TransactionArgument {

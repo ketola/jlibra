@@ -1,4 +1,4 @@
-package dev.jlibra.serialization.lcs;
+package dev.jlibra.serialization.dcs;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;

@@ -1,4 +1,4 @@
-package dev.jlibra.serialization.lcs;
+package dev.jlibra.serialization.dcs;
 
 import static java.util.stream.Collectors.toList;
 
@@ -13,7 +13,7 @@ import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
-import dev.jlibra.serialization.lcs.DCS.ExternallyTaggedEnumeration;
+import dev.jlibra.serialization.dcs.DCS.ExternallyTaggedEnumeration;
 
 public class DCSSerializer {
 

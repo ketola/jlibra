@@ -3,7 +3,7 @@ package dev.jlibra.transaction.argument;
 import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.serialization.lcs.DCS;
+import dev.jlibra.serialization.dcs.DCS;
 
 @Value.Immutable
 public interface AccountAddressArgument extends TransactionArgument {

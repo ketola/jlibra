@@ -7,8 +7,8 @@ import org.immutables.value.Value;
 import dev.jlibra.Hash;
 import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteArray;
-import dev.jlibra.serialization.lcs.DCS;
-import dev.jlibra.serialization.lcs.DCSSerializer;
+import dev.jlibra.serialization.dcs.DCS;
+import dev.jlibra.serialization.dcs.DCSSerializer;
 
 @Value.Immutable
 @DCS.Structure
