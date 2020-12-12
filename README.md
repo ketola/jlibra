@@ -3,7 +3,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dd682f23555c48aca137eb4c657d9497)](https://www.codacy.com/app/ketola/jlibra?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ketola/jlibra&amp;utm_campaign=Badge_Grade)
 [![Known Vulnerabilities](https://snyk.io/test/github/ketola/jlibra/badge.svg?targetFile=jlibra-core%2Fpom.xml)](https://snyk.io/test/github/ketola/jlibra?targetFile=jlibra-core%2Fpom.xml)
 [![Maven Central](https://img.shields.io/maven-central/v/dev.jlibra/jlibra-core?color=%232ECC71&style=plastic)](https://search.maven.org/search?q=g:dev.jlibra)
- 
+[![javadoc](https://javadoc.io/badge2/dev.jlibra/jlibra-core/javadoc.svg)](https://javadoc.io/doc/dev.jlibra/jlibra-core) 
+
 A Java library for building applications on [Diem](https://diem.com/)
 
 The project previously know as Libra has been renamed to Diem. Read more about it from here: [Announcing the name Diem](https://www.diem.com/en-us/updates/diem-association/). JLibra is still in the process of renaming all the references to the old name but all the features are functional despite the old naming in some places.
