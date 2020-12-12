@@ -5,7 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.transaction.Transaction;
 
 /**
@@ -23,7 +23,7 @@ public class GetTransactionsExample {
         long limit = 100;
         boolean fetchEvent = true;
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 

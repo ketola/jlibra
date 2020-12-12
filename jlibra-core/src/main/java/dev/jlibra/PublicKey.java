@@ -32,7 +32,7 @@ public class PublicKey implements ByteSequence {
         try {
             return fromPublicKey(getKeyFactory().generatePublic(new X509EncodedKeySpec(Hex.decode(hexString))));
         } catch (InvalidKeySpecException e) {
-            throw new LibraRuntimeException("PrivateKey generation failed", e);
+            throw new DiemRuntimeException("PrivateKey generation failed", e);
         }
     }
 
@@ -44,7 +44,7 @@ public class PublicKey implements ByteSequence {
         try {
             return KeyFactory.getInstance("Ed25519");
         } catch (NoSuchAlgorithmException e) {
-            throw new LibraRuntimeException("Could not get KeyFactory", e);
+            throw new DiemRuntimeException("Could not get KeyFactory", e);
         }
     }
 

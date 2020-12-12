@@ -10,7 +10,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 import dev.jlibra.AuthenticationKey;
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 
 public class Faucet {
 
@@ -35,11 +35,11 @@ public class Faucet {
         try {
             response = httpClient.send(request, BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new LibraRuntimeException(String.format("Mint failed. Status code: %d, message: %s",
+                throw new DiemRuntimeException(String.format("Mint failed. Status code: %d, message: %s",
                         response.statusCode(), response.body()));
             }
         } catch (IOException | InterruptedException e) {
-            throw new LibraRuntimeException("Mint failed", e);
+            throw new DiemRuntimeException("Mint failed", e);
         }
 
     }

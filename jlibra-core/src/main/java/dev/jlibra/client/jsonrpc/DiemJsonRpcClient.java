@@ -29,8 +29,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dev.jlibra.LibraRuntimeException;
-import dev.jlibra.client.LibraServerErrorException;
+import dev.jlibra.DiemRuntimeException;
+import dev.jlibra.client.DiemServerErrorException;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
@@ -38,9 +38,9 @@ import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.event.Event;
 import dev.jlibra.client.views.transaction.Transaction;
 
-public class LibraJsonRpcClient {
+public class DiemJsonRpcClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(LibraJsonRpcClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiemJsonRpcClient.class);
 
     private static final String USER_AGENT = "JLibra";
 
@@ -54,7 +54,7 @@ public class LibraJsonRpcClient {
 
     private final ObjectMapper objectMapper;
 
-    public LibraJsonRpcClient(String url, HttpClient client, RequestIdGenerator requestIdGenerator) {
+    public DiemJsonRpcClient(String url, HttpClient client, RequestIdGenerator requestIdGenerator) {
         this.url = url;
         this.objectMapper = ObjectMapperFactory.create();
         this.httpClient = client;
@@ -133,9 +133,9 @@ public class LibraJsonRpcClient {
         if (isJsonRpcErrorResponse(responseBody)) {
             try {
                 JsonRpcErrorResponse errorResponse = objectMapper.readValue(responseBody, JsonRpcErrorResponse.class);
-                throw new LibraServerErrorException(errorResponse.error().code(), errorResponse.error().message());
+                throw new DiemServerErrorException(errorResponse.error().code(), errorResponse.error().message());
             } catch (JsonProcessingException e) {
-                throw new LibraRuntimeException("Converting the response from JSON failed", e);
+                throw new DiemRuntimeException("Converting the response from JSON failed", e);
             }
         }
 
@@ -145,11 +145,11 @@ public class LibraJsonRpcClient {
                     request.method().resultType());
             response = objectMapper.readValue(responseBody, type);
         } catch (JsonProcessingException e) {
-            throw new LibraRuntimeException("Converting the response from JSON failed", e);
+            throw new DiemRuntimeException("Converting the response from JSON failed", e);
         }
 
         if (!jsonRequest.id().equals(response.id())) {
-            throw new LibraRuntimeException(String.format(
+            throw new DiemRuntimeException(String.format(
                     "The json rpc request id (%s) and response id (%s) do not match", jsonRequest.id(), response.id()));
         }
         return response.result();
@@ -163,7 +163,7 @@ public class LibraJsonRpcClient {
         try {
             return objectMapper.writeValueAsString(jsonRequest);
         } catch (JsonProcessingException e) {
-            throw new LibraRuntimeException("Converting the request to JSON failed", e);
+            throw new DiemRuntimeException("Converting the request to JSON failed", e);
         }
     }
 
@@ -178,7 +178,7 @@ public class LibraJsonRpcClient {
         try {
             return httpClient.send(request, BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new LibraRuntimeException("HTTP Request failed", e);
+            throw new DiemRuntimeException("HTTP Request failed", e);
         }
     }
 }

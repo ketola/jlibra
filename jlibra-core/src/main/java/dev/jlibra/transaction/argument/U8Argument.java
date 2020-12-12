@@ -2,12 +2,12 @@ package dev.jlibra.transaction.argument;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.serialization.lcs.DCS;
 
 @Value.Immutable
 public interface U8Argument extends TransactionArgument {
 
-    @LCS.Field(0)
+    @DCS.Field(0)
     byte value();
 
     public static U8Argument from(byte value) {

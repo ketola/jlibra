@@ -1,6 +1,6 @@
 package dev.jlibra.mnemonic;
 
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteSequence;
 
 public class SecretKey {
@@ -11,7 +11,7 @@ public class SecretKey {
         this.byteSequence = byteSequence;
         byte[] data = byteSequence.toArray();
         if (data == null || data.length != 32) {
-            throw new LibraRuntimeException(
+            throw new DiemRuntimeException(
                     "SecretKey requires 32 bytes but found " + (data == null ? 0 : data.length));
         }
     }

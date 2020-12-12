@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.faucet.Faucet;
 import dev.jlibra.poller.Wait;
@@ -19,7 +19,7 @@ import dev.jlibra.poller.Wait;
  * If the request is successful, the service returns an id number and the minted
  * amount should be available for the account.
  * 
- * This works only for the libra testnet, to mint in another (t. ex. local)
+ * This works only for the diem testnet, to mint in another (t. ex. local)
  * environment, you would need to create a mint transaction which requires
  * special permissions.
  * 
@@ -36,7 +36,7 @@ public class MintExample {
         Faucet faucet = Faucet.builder().build();
         faucet.mint(authenticationKey, 100L * 1_000_000L, CURRENCY);
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 

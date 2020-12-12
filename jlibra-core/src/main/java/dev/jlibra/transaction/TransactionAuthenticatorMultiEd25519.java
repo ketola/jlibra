@@ -3,15 +3,15 @@ package dev.jlibra.transaction;
 import org.immutables.value.Value;
 
 import dev.jlibra.MultiSignaturePublicKey;
-import dev.jlibra.serialization.lcs.LCS;
+import dev.jlibra.serialization.lcs.DCS;
 
 @Value.Immutable
 public interface TransactionAuthenticatorMultiEd25519 extends Authenticator {
 
-    @LCS.Field(0)
+    @DCS.Field(0)
     MultiSignaturePublicKey getPublicKey();
 
-    @LCS.Field(1)
+    @DCS.Field(1)
     Signature getSignature();
 
 }

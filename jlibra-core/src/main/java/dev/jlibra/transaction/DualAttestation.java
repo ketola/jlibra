@@ -6,7 +6,7 @@ import java.security.PrivateKey;
 import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.Serializer;
 
@@ -45,7 +45,7 @@ public interface DualAttestation {
             sgr.update(messageBytes);
             signature = sgr.sign();
         } catch (Exception e) {
-            throw new LibraRuntimeException("Signing failed", e);
+            throw new DiemRuntimeException("Signing failed", e);
         }
 
         return ByteArray.from(signature);

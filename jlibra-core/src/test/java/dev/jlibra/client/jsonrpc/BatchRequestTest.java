@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import dev.jlibra.client.LibraServerErrorException;
+import dev.jlibra.client.DiemServerErrorException;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.transaction.Transaction;
@@ -97,9 +97,9 @@ public class BatchRequestTest {
             account.get().orElse(null);
         });
 
-        assertEquals(-32602, ((LibraServerErrorException) ex.getCause()).getCode());
+        assertEquals(-32602, ((DiemServerErrorException) ex.getCause()).getCode());
         assertEquals("Invalid param account address(params[0]): should be hex-encoded string",
-                ((LibraServerErrorException) ex.getCause()).getErrorMessage());
+                ((DiemServerErrorException) ex.getCause()).getErrorMessage());
     }
 
     @Test

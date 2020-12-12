@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.Account;
 
 public class GetAccountStateExample {
@@ -14,7 +14,7 @@ public class GetAccountStateExample {
     public static void main(String[] args) throws Exception {
         String address = "b3f7e8e38f8c8393f281a2f0792a2849";
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 

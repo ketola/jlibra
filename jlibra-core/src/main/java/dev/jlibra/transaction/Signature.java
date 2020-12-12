@@ -5,24 +5,24 @@ import java.security.PrivateKey;
 import org.immutables.value.Value;
 
 import dev.jlibra.Hash;
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteArray;
-import dev.jlibra.serialization.lcs.LCS;
-import dev.jlibra.serialization.lcs.LCSSerializer;
+import dev.jlibra.serialization.lcs.DCS;
+import dev.jlibra.serialization.lcs.DCSSerializer;
 
 @Value.Immutable
-@LCS.Structure
+@DCS.Structure
 public interface Signature {
 
     public static final int SIGNATURE_LENGTH = 64;
 
     public static final int BITMAP_LENGTH = 4;
 
-    @LCS.Field(0)
+    @DCS.Field(0)
     ByteArray getSignature();
 
     public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteArray transactionBytes = LCSSerializer.create().serialize(transaction, Transaction.class);
+        ByteArray transactionBytes = DCSSerializer.create().serialize(transaction, Transaction.class);
 
         byte[] signature;
 
@@ -34,7 +34,7 @@ public interface Signature {
                     .toArray());
             signature = sgr.sign();
         } catch (Exception e) {
-            throw new LibraRuntimeException("Signing the transaction failed", e);
+            throw new DiemRuntimeException("Signing the transaction failed", e);
         }
 
         return ImmutableSignature.builder()

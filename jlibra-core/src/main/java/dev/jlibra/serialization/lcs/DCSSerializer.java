@@ -9,45 +9,45 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import dev.jlibra.LibraRuntimeException;
+import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
-import dev.jlibra.serialization.lcs.LCS.ExternallyTaggedEnumeration;
+import dev.jlibra.serialization.lcs.DCS.ExternallyTaggedEnumeration;
 
-public class LCSSerializer {
+public class DCSSerializer {
 
-    private LCSSerializer() {
+    private DCSSerializer() {
     }
 
-    public static LCSSerializer create() {
-        return new LCSSerializer();
+    public static DCSSerializer create() {
+        return new DCSSerializer();
     }
 
     public ByteArray serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 
-        LCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(LCS.ExternallyTaggedEnumeration.class);
+        DCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(DCS.ExternallyTaggedEnumeration.class);
         if (enumAnnotation != null) {
             List<Class<?>> classes = Arrays.asList(enumAnnotation.classes());
             Class enumMemberType = classes.stream()
                     .filter(c -> serializable.getClass().equals(c) || c.isAssignableFrom(serializable.getClass()))
                     .findFirst()
-                    .orElseThrow(() -> new LibraRuntimeException(
+                    .orElseThrow(() -> new DiemRuntimeException(
                             "Enum membership not found for " + serializable.getClass()));
             s = s.appendIntAsLeb128(classes.indexOf(enumMemberType));
             type = enumMemberType;
         }
 
         List<Method> methods = Stream.of(type.getMethods())
-                .filter(m -> m.getAnnotation(LCS.Field.class) != null)
-                .sorted((m1, m2) -> m1.getDeclaredAnnotation(LCS.Field.class).value()
-                        - m2.getDeclaredAnnotation(LCS.Field.class).value())
+                .filter(m -> m.getAnnotation(DCS.Field.class) != null)
+                .sorted((m1, m2) -> m1.getDeclaredAnnotation(DCS.Field.class).value()
+                        - m2.getDeclaredAnnotation(DCS.Field.class).value())
                 .collect(toList());
 
         for (Method m : methods) {
             Class<?> returnType = m.getReturnType();
-            if (returnType.getAnnotation(LCS.Structure.class) != null
+            if (returnType.getAnnotation(DCS.Structure.class) != null
                     || returnType.getAnnotation(ExternallyTaggedEnumeration.class) != null) {
                 Object l = invokeMethod(serializable, m);
                 ByteSequence value = serialize(l, returnType);
@@ -68,7 +68,7 @@ public class LCSSerializer {
                 String value = (String) invokeMethod(serializable, m);
                 s = s.appendString(value);
             } else if (ByteSequence.class.isAssignableFrom(returnType)) {
-                if (m.getAnnotation(LCS.Field.class).fixedLength()) {
+                if (m.getAnnotation(DCS.Field.class).fixedLength()) {
                     s = s.appendFixedLength((ByteSequence) invokeMethod(serializable, m));
                 } else {
                     s = s.append((ByteSequence) invokeMethod(serializable, m));
@@ -82,7 +82,7 @@ public class LCSSerializer {
                             (Class) ((ParameterizedType) m.getGenericReturnType()).getActualTypeArguments()[0]));
                 }
             } else {
-                throw new LibraRuntimeException("Return type " + returnType + " is not recognized for serialization.");
+                throw new DiemRuntimeException("Return type " + returnType + " is not recognized for serialization.");
             }
         }
         return s.toByteArray();
@@ -92,7 +92,7 @@ public class LCSSerializer {
         try {
             return m.invoke(serializable);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new LibraRuntimeException("Method invoke failed", e);
+            throw new DiemRuntimeException("Method invoke failed", e);
         }
     }
 

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.PublicKey;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.role.ParentVASPAccountRole;
 import dev.jlibra.faucet.Faucet;
@@ -50,7 +50,7 @@ public class DualAttestationExample {
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
         Faucet faucet = Faucet.builder()
@@ -107,7 +107,7 @@ public class DualAttestationExample {
                 dualAttestation.sign(vasp2ComplianceKeyPair.getPrivate()), 0);
     }
 
-    private static void transferFromVaspToVasp(LibraClient client, KeyPair sourceKeyPair, KeyPair targetKeyPair,
+    private static void transferFromVaspToVasp(DiemClient client, KeyPair sourceKeyPair, KeyPair targetKeyPair,
             byte[] metadata,
             ByteArray dualAttestationSignature, int sequenceNumber) {
         AuthenticationKey authenticationKeySource = AuthenticationKey.fromPublicKey(sourceKeyPair.getPublic());
@@ -164,7 +164,7 @@ public class DualAttestationExample {
      * This transaction will set the compliance key for the account, the compliance
      * key is used to sign the dual attestation information
      */
-    private static void rotateDualAttestationInfoForVaspAccount(LibraClient client, KeyPair parentVaspKeyPair,
+    private static void rotateDualAttestationInfoForVaspAccount(DiemClient client, KeyPair parentVaspKeyPair,
             KeyPair vaspComplianceKeyPair,
             int sequenceNumber) {
 

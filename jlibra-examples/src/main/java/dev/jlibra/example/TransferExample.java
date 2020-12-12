@@ -16,7 +16,7 @@ import dev.jlibra.AccountAddress;
 import dev.jlibra.AuthenticationKey;
 import dev.jlibra.KeyUtils;
 import dev.jlibra.PublicKey;
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.transaction.PeerToPeerWithMetadataScript;
 import dev.jlibra.client.views.transaction.UserTransaction;
@@ -50,7 +50,7 @@ public class TransferExample {
     public static void main(String[] args) {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-        LibraClient client = LibraClient.builder()
+        DiemClient client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
 

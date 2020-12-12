@@ -12,7 +12,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import dev.jlibra.client.LibraClient;
+import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.jsonrpc.BatchRequest;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.CurrencyInfo;
@@ -21,12 +21,12 @@ import dev.jlibra.client.views.transaction.Transaction;
 
 public class BatchRequestIntegrationTest {
 
-    private LibraClient client;
+    private DiemClient client;
 
     @BeforeEach
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
-        client = LibraClient.builder()
+        client = DiemClient.builder()
                 .withUrl("https://client.testnet.libra.org/v1/")
                 .build();
     }
