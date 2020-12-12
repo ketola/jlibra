@@ -64,13 +64,13 @@ Maven:
 <dependency>
   <groupId>dev.jlibra</groupId>
   <artifactId>jlibra-core</artifactId>
-  <version>0.14.0</version>
+  <version>0.15.0</version>
 </dependency>
 ```
 
 Gradle:
 
-`compile("dev.jlibra:jlibra-core:0.14.0")`
+`compile("dev.jlibra:jlibra-core:0.15.0")`
 
 ## How-Tos & Step-by-Step Guides
 
