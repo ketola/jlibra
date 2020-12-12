@@ -19,8 +19,8 @@ public class Wait {
                 .onFailedAttempt(
                         e -> logger.info("Condition was not met. Retrying..", e.getLastFailure()))
                 .withDelay(Duration.ofMillis(1000))
-                .withMaxRetries(5)
-                .withMaxDuration(Duration.ofSeconds(10))
+                .withMaxRetries(10)
+                .withMaxDuration(Duration.ofSeconds(15))
                 .handleResult(Boolean.FALSE);
 
         Boolean result = Failsafe.with(retryPolicy).get((e) -> waitCondition.isFulfilled());
