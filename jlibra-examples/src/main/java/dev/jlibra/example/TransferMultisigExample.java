@@ -36,7 +36,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
 
 public class TransferMultisigExample {
 
-    private static final String CURRENCY = "Coin1";
+    private static final String CURRENCY = "XUS";
     private static final Logger logger = LoggerFactory.getLogger(TransferMultisigExample.class);
 
     public static void main(String[] args) throws Exception {

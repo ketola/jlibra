@@ -23,7 +23,7 @@ public interface BlockMetadata {
     @JsonProperty("chain_id")
     Long chainId();
 
-    @JsonProperty("libra_version")
+    @JsonProperty("diem_version")
     Long libraVersion();
 
     @JsonProperty("module_publishing_allowed")
@@ -31,5 +31,8 @@ public interface BlockMetadata {
 
     @JsonProperty("script_hash_allow_list")
     List<String> scriptHashAllowList();
+
+    @JsonProperty("dual_attestation_limit")
+    Long dualAttestationLimit();
 
 }

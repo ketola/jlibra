@@ -1,8 +1,8 @@
 [
 	{
-		"libra_chain_id": 2,
-		"libra_ledger_version": 11606967,
-		"libra_ledger_timestampusec": 1605267898722291,
+		"diem_chain_id": 2,
+		"diem_ledger_version": 11606967,
+		"diem_ledger_timestampusec": 1605267898722291,
 		"jsonrpc": "2.0",
 		"id": "abe36913-051c-4d81-856d-f0fa9b5f0c42",
 		"result": [
@@ -132,15 +132,16 @@
 		]
 	},
 	{
-		"libra_chain_id": 2,
-		"libra_ledger_version": 11606967,
-		"libra_ledger_timestampusec": 1605267898722291,
+		"diem_chain_id": 2,
+		"diem_ledger_version": 11606967,
+		"diem_ledger_timestampusec": 1605267898722291,
 		"jsonrpc": "2.0",
 		"id": "db88b755-f890-4afb-a13f-c326adae4751",
 		"result": {
 			"accumulator_root_hash": "3442dde58cb03ae7d586e179afd63f3182407e950b6abebba56ae8442449df03",
 			"chain_id": 2,
-			"libra_version": 1,
+			"dual_attestation_limit": 999999,
+			"diem_version": 1,
 			"module_publishing_allowed": false,
 			"script_hash_allow_list": [
 				"6d9d309c5cc6df4c7082817eb657904781b06b2071552ae762806fce3b623463",
@@ -183,9 +184,9 @@
 		}
 	},
 	{
-		"libra_chain_id": 2,
-		"libra_ledger_version": 11606967,
-		"libra_ledger_timestampusec": 1605267898722291,
+		"diem_chain_id": 2,
+		"diem_ledger_version": 11606967,
+		"diem_ledger_timestampusec": 1605267898722291,
 		"jsonrpc": "2.0",
 		"id": "f831dd4f-6e74-4967-83b6-edb4c058ffe5",
 		"result": {

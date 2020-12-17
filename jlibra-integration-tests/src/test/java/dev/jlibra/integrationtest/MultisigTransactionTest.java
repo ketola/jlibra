@@ -51,7 +51,7 @@ public class MultisigTransactionTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MultisigTransactionTest.class);
 
-    private static final String CURRENCY = "Coin1";
+    private static final String CURRENCY = "XUS";
 
     private DiemClient client;
 

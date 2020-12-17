@@ -38,6 +38,6 @@ public class DualAttestationTest {
         ByteArray signature = s.sign(privateKey);
 
         assertThat(Hex.toHexString(signature.toArray()), is(
-                "59feb0682aa7d683d248ae34bc4a0b97f06b4751cab28724f3282d42a8b6d28531411bd7ae3a1d54ff4f89391c07d8a24741e0f78c48b78e329b0475b437250f"));
+                "21356359434e29f6fa74d990d74e4f24bb69f2722ff8d7a2c789b67d361e7a3f0853009772ca21e327243a18d921bfd450245538b01e54cf047010d2fd05750e"));
     }
 }
