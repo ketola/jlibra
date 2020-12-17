@@ -9,13 +9,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableJsonRpcErrorResponse.class)
 public interface JsonRpcErrorResponse {
 
-    @JsonProperty("libra_chain_id")
+    @JsonProperty("diem_chain_id")
     Long libraChainId();
 
-    @JsonProperty("libra_ledger_version")
+    @JsonProperty("diem_ledger_version")
     Long libraLedgerVersion();
 
-    @JsonProperty("libra_ledger_timestampusec")
+    @JsonProperty("diem_ledger_timestampusec")
     Long libraLedgerTimestampusec();
 
     @JsonProperty("jsonrpc")

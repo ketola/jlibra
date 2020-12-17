@@ -44,7 +44,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
  */
 public class DualAttestationExample {
 
-    private static final String CURRENCY = "Coin1";
+    private static final String CURRENCY = "XUS";
     private static final Logger logger = LoggerFactory.getLogger(DualAttestationExample.class);
 
     public static void main(String[] args) throws Exception {

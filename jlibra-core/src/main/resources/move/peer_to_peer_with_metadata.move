@@ -1,48 +1,57 @@
 script {
-use 0x1::LibraAccount;
-// Prover deps:
-use 0x1::LibraAccount::{Balance, LibraAccount, WithdrawCapability};
-use 0x1::AccountFreezing;
-use 0x1::AccountLimits;
-use 0x1::DualAttestation;
-use 0x1::Option;
-use 0x1::Signer;
-use 0x1::VASP;
+use 0x1::DiemAccount;
 
-/// Transfer `amount` coins of type `Currency` from `payer` to `payee` with (optional) associated
+/// # Summary
+/// Transfers a given number of coins in a specified currency from one account to another.
+/// Transfers over a specified amount defined on-chain that are between two different VASPs, or
+/// other accounts that have opted-in will be subject to on-chain checks to ensure the receiver has
+/// agreed to receive the coins.  This transaction can be sent by any account that can hold a
+/// balance, and to any account that can hold a balance. Both accounts must hold balances in the
+/// currency being transacted.
+///
+/// # Technical Description
+///
+/// Transfers `amount` coins of type `Currency` from `payer` to `payee` with (optional) associated
 /// `metadata` and an (optional) `metadata_signature` on the message
 /// `metadata` | `Signer::address_of(payer)` | `amount` | `DualAttestation::DOMAIN_SEPARATOR`.
 /// The `metadata` and `metadata_signature` parameters are only required if `amount` >=
-/// `DualAttestation::get_cur_microlibra_limit` LBR and `payer` and `payee` are distinct entities
-/// (e.g., different VASPs, or a VASP and a DesignatedDealer).
-/// Standardized `metadata` LCS format can be found in `libra_types::transaction::metadata::Metadata`.
+/// `DualAttestation::get_cur_microdiem_limit` XDX and `payer` and `payee` are distinct VASPs.
+/// However, a transaction sender can opt in to dual attestation even when it is not required
+/// (e.g., a DesignatedDealer -> VASP payment) by providing a non-empty `metadata_signature`.
+/// Standardized `metadata` BCS format can be found in `diem_types::transaction::metadata::Metadata`.
 ///
 /// ## Events
-/// When this script executes without aborting, it emits two events:
-/// `SentPaymentEvent { amount, currency_code = Currency, payee, metadata }`
-/// on `payer`'s `LibraAccount::sent_events` handle, and
-///  `ReceivedPaymentEvent { amount, currency_code = Currency, payer, metadata }`
-/// on `payee`'s `LibraAccount::received_events` handle.
+/// Successful execution of this script emits two events:
+/// * A `DiemAccount::SentPaymentEvent` on `payer`'s `DiemAccount::DiemAccount` `sent_events` handle; and
+/// * A `DiemAccount::ReceivedPaymentEvent` on `payee`'s `DiemAccount::DiemAccount` `received_events` handle.
 ///
-/// ## Common Aborts
-/// These aborts can in occur in any payment.
-/// * Aborts with `LibraAccount::EINSUFFICIENT_BALANCE` if `amount` is greater than `payer`'s balance in `Currency`.
-/// * Aborts with `LibraAccount::ECOIN_DEPOSIT_IS_ZERO` if `amount` is zero.
-/// * Aborts with `LibraAccount::EPAYEE_DOES_NOT_EXIST` if no account exists at the address `payee`.
-/// * Aborts with `LibraAccount::EPAYEE_CANT_ACCEPT_CURRENCY_TYPE` if an account exists at `payee`, but it does not accept payments in `Currency`.
+/// # Parameters
+/// | Name                 | Type         | Description                                                                                                                  |
+/// | ------               | ------       | -------------                                                                                                                |
+/// | `Currency`           | Type         | The Move type for the `Currency` being sent in this transaction. `Currency` must be an already-registered currency on-chain. |
+/// | `payer`              | `&signer`    | The signer reference of the sending account that coins are being transferred from.                                           |
+/// | `payee`              | `address`    | The address of the account the coins are being transferred to.                                                               |
+/// | `metadata`           | `vector<u8>` | Optional metadata about this payment.                                                                                        |
+/// | `metadata_signature` | `vector<u8>` | Optional signature over `metadata` and payment information. See                                                              |
 ///
-/// ## Dual Attestation Aborts
-/// These aborts can occur in any payment subject to dual attestation.
-/// * Aborts with `DualAttestation::EMALFORMED_METADATA_SIGNATURE` if `metadata_signature`'s is not 64 bytes.
-/// * Aborts with `DualAttestation:EINVALID_METADATA_SIGNATURE` if `metadata_signature` does not verify on the message `metadata` | `payer` | `value` | `DOMAIN_SEPARATOR` using the `compliance_public_key` published in the `payee`'s `DualAttestation::Credential` resource.
+/// # Common Abort Conditions
+/// | Error Category             | Error Reason                                     | Description                                                                                                                         |
+/// | ----------------           | --------------                                   | -------------                                                                                                                       |
+/// | `Errors::NOT_PUBLISHED`    | `DiemAccount::EPAYER_DOESNT_HOLD_CURRENCY`      | `payer` doesn't hold a balance in `Currency`.                                                                                       |
+/// | `Errors::LIMIT_EXCEEDED`   | `DiemAccount::EINSUFFICIENT_BALANCE`            | `amount` is greater than `payer`'s balance in `Currency`.                                                                           |
+/// | `Errors::INVALID_ARGUMENT` | `DiemAccount::ECOIN_DEPOSIT_IS_ZERO`            | `amount` is zero.                                                                                                                   |
+/// | `Errors::NOT_PUBLISHED`    | `DiemAccount::EPAYEE_DOES_NOT_EXIST`            | No account exists at the `payee` address.                                                                                           |
+/// | `Errors::INVALID_ARGUMENT` | `DiemAccount::EPAYEE_CANT_ACCEPT_CURRENCY_TYPE` | An account exists at `payee`, but it does not accept payments in `Currency`.                                                        |
+/// | `Errors::INVALID_STATE`    | `AccountFreezing::EACCOUNT_FROZEN`               | The `payee` account is frozen.                                                                                                      |
+/// | `Errors::INVALID_ARGUMENT` | `DualAttestation::EMALFORMED_METADATA_SIGNATURE` | `metadata_signature` is not 64 bytes.                                                                                               |
+/// | `Errors::INVALID_ARGUMENT` | `DualAttestation::EINVALID_METADATA_SIGNATURE`   | `metadata_signature` does not verify on the against the `payee'`s `DualAttestation::Credential` `compliance_public_key` public key. |
+/// | `Errors::LIMIT_EXCEEDED`   | `DiemAccount::EWITHDRAWAL_EXCEEDS_LIMITS`       | `payer` has exceeded its daily withdrawal limits for the backing coins of XDX.                                                      |
+/// | `Errors::LIMIT_EXCEEDED`   | `DiemAccount::EDEPOSIT_EXCEEDS_LIMITS`          | `payee` has exceeded its daily deposit limits for XDX.                                                                              |
 ///
-/// ## Other Aborts
-/// These aborts should only happen when `payer` or `payee` have account limit restrictions or
-/// have been frozen by Libra administrators.
-/// * Aborts with `LibraAccount::EWITHDRAWAL_EXCEEDS_LIMITS` if `payer` has exceeded their daily
-/// withdrawal limits.
-/// * Aborts with `LibraAccount::EDEPOSIT_EXCEEDS_LIMITS` if `payee` has exceeded their daily deposit limits.
-/// * Aborts with `LibraAccount::EACCOUNT_FROZEN` if `payer`'s account is frozen.
+/// # Related Scripts
+/// * `Script::create_child_vasp_account`
+/// * `Script::create_parent_vasp_account`
+/// * `Script::add_currency_to_account`
 
 fun peer_to_peer_with_metadata<Currency>(
     payer: &signer,
@@ -51,106 +60,43 @@ fun peer_to_peer_with_metadata<Currency>(
     metadata: vector<u8>,
     metadata_signature: vector<u8>
 ) {
-    let payer_withdrawal_cap = LibraAccount::extract_withdraw_capability(payer);
-    LibraAccount::pay_from<Currency>(
+    let payer_withdrawal_cap = DiemAccount::extract_withdraw_capability(payer);
+    DiemAccount::pay_from<Currency>(
         &payer_withdrawal_cap, payee, amount, metadata, metadata_signature
     );
-    LibraAccount::restore_withdraw_capability(payer_withdrawal_cap);
+    DiemAccount::restore_withdraw_capability(payer_withdrawal_cap);
 }
-
 spec fun peer_to_peer_with_metadata {
+    use 0x1::Signer;
+    use 0x1::Errors;
 
-    /// > TODO(emmazzz): This pre-condition is supposed to be a global property in LibraAccount:
-    ///  The LibraAccount under addr holds either no withdraw capability
-    ///  or the withdraw capability for addr itself.
-    requires spec_get_withdraw_cap(Signer::spec_address_of(payer)).account_address
-        == Signer::spec_address_of(payer);
+    include DiemAccount::TransactionChecks{sender: payer}; // properties checked by the prologue.
+    let payer_addr = Signer::spec_address_of(payer);
+    let cap = DiemAccount::spec_get_withdraw_cap(payer_addr);
+    include DiemAccount::ExtractWithdrawCapAbortsIf{sender_addr: payer_addr};
+    include DiemAccount::PayFromAbortsIf<Currency>{cap: cap};
 
-    include AbortsIfPayerInvalid<Currency>;
-    include AbortsIfPayeeInvalid<Currency>;
-    include AbortsIfAmountInvalid<Currency>;
-    include DualAttestation::AssertPaymentOkAbortsIf<Currency>{payer: Signer::spec_address_of(payer), value: amount};
-    include AbortsIfAmountExceedsLimit<Currency>;
+    /// The balances of payer and payee change by the correct amount.
+    ensures payer_addr != payee
+        ==> DiemAccount::balance<Currency>(payer_addr)
+        == old(DiemAccount::balance<Currency>(payer_addr)) - amount;
+    ensures payer_addr != payee
+        ==> DiemAccount::balance<Currency>(payee)
+        == old(DiemAccount::balance<Currency>(payee)) + amount;
+    ensures payer_addr == payee
+        ==> DiemAccount::balance<Currency>(payee)
+        == old(DiemAccount::balance<Currency>(payee));
 
-    /// Post condition: the balances of payer and payee are changed correctly.
-    ensures Signer::spec_address_of(payer) != payee
-                ==> spec_balance_of<Currency>(payee) == old(spec_balance_of<Currency>(payee)) + amount;
-    ensures Signer::spec_address_of(payer) != payee
-                ==> spec_balance_of<Currency>(Signer::spec_address_of(payer))
-                    == old(spec_balance_of<Currency>(Signer::spec_address_of(payer))) - amount;
-    /// If payer and payee are the same, the balance does not change.
-    ensures Signer::spec_address_of(payer) == payee
-                ==> spec_balance_of<Currency>(payee) == old(spec_balance_of<Currency>(payee));
-}
+    aborts_with [check]
+        Errors::NOT_PUBLISHED,
+        Errors::INVALID_STATE,
+        Errors::INVALID_ARGUMENT,
+        Errors::LIMIT_EXCEEDED;
 
-spec module {
-    pragma verify = true, aborts_if_is_strict = true;
-
-    /// Returns the `withdrawal_capability` of LibraAccount under `addr`.
-    define spec_get_withdraw_cap(addr: address): WithdrawCapability {
-        Option::spec_get(global<LibraAccount>(addr).withdrawal_capability)
-    }
-
-    /// Returns the value of balance under addr.
-    define spec_balance_of<Currency>(addr: address): u64 {
-        global<Balance<Currency>>(addr).coin.value
-    }
-}
-
-spec schema AbortsIfPayerInvalid<Currency> {
-    payer: signer;
-    aborts_if !exists<LibraAccount>(Signer::spec_address_of(payer));
-    aborts_if AccountFreezing::spec_account_is_frozen(Signer::spec_address_of(payer));
-    aborts_if !exists<Balance<Currency>>(Signer::spec_address_of(payer));
-    /// Aborts if payer's withdrawal_capability has been delegated.
-    aborts_if Option::spec_is_none(
-        global<LibraAccount>(
-            Signer::spec_address_of(payer)
-        ).withdrawal_capability);
-}
-
-spec schema AbortsIfPayeeInvalid<Currency> {
-    payee: address;
-    aborts_if !exists<LibraAccount>(payee);
-    aborts_if AccountFreezing::spec_account_is_frozen(payee);
-    aborts_if !exists<Balance<Currency>>(payee);
-}
-
-spec schema AbortsIfAmountInvalid<Currency> {
-    payer: &signer;
-    payee: address;
-    amount: u64;
-    aborts_if amount == 0;
-    /// Aborts if arithmetic overflow happens.
-    aborts_if global<Balance<Currency>>(Signer::spec_address_of(payer)).coin.value < amount;
-    aborts_if Signer::spec_address_of(payer) != payee
-            && global<Balance<Currency>>(payee).coin.value + amount > max_u64();
-}
-
-spec schema AbortsIfAmountExceedsLimit<Currency> {
-    payer: &signer;
-    payee: address;
-    amount: u64;
-    /// Aborts if the amount exceeds payee's deposit limit.
-    aborts_if LibraAccount::spec_should_track_limits_for_account(Signer::spec_address_of(payer), payee, false)
-                && (!LibraAccount::spec_has_account_operations_cap()
-                    || !AccountLimits::spec_update_deposit_limits<Currency>(
-                            amount,
-                            VASP::spec_parent_address(payee)
-                        )
-                    );
-    /// Aborts if the amount exceeds payer's withdraw limit.
-    aborts_if LibraAccount::spec_should_track_limits_for_account(Signer::spec_address_of(payer), payee, true)
-                && (!LibraAccount::spec_has_account_operations_cap()
-                    || !AccountLimits::spec_update_withdrawal_limits<Currency>(
-                            amount,
-                            VASP::spec_parent_address(Signer::spec_address_of(payer))
-                        )
-                    );
-}
-
-spec module {
-    /// > TODO(emmazzz): turn verify on when non-termination issue is resolved.
-    pragma verify = false;
+    /// **Access Control:**
+    /// Both the payer and the payee must hold the balances of the Currency. Only Designated Dealers,
+    /// Parent VASPs, and Child VASPs can hold balances [[D1]][ROLE][[D2]][ROLE][[D3]][ROLE][[D4]][ROLE][[D5]][ROLE][[D6]][ROLE][[D7]][ROLE].
+    aborts_if !exists<DiemAccount::Balance<Currency>>(payer_addr) with Errors::NOT_PUBLISHED;
+    aborts_if !exists<DiemAccount::Balance<Currency>>(payee) with Errors::INVALID_ARGUMENT;
 }
 }

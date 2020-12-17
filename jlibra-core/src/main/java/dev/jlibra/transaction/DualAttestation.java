@@ -14,7 +14,7 @@ import dev.jlibra.serialization.Serializer;
 public interface DualAttestation {
 
     public static final ByteArray DOMAIN_SEPARATOR = ByteArray
-            .from("@@$$LIBRA_ATTEST$$@@".getBytes(StandardCharsets.UTF_8));
+            .from("@@$$DIEM_ATTEST$$@@".getBytes(StandardCharsets.UTF_8));
 
     ByteArray metadata();
 

@@ -4,8 +4,8 @@ import java.security.PrivateKey;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.Hash;
 import dev.jlibra.DiemRuntimeException;
+import dev.jlibra.Hash;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.dcs.DCS;
 import dev.jlibra.serialization.dcs.DCSSerializer;
@@ -30,7 +30,7 @@ public interface Signature {
             java.security.Signature sgr = java.security.Signature.getInstance("Ed25519", "BC");
             sgr.initSign(privateKey);
             sgr.update(Hash.ofInput(transactionBytes)
-                    .hash(ByteArray.from("LIBRA::RawTransaction".getBytes()))
+                    .hash(ByteArray.from("DIEM::RawTransaction".getBytes()))
                     .toArray());
             signature = sgr.sign();
         } catch (Exception e) {

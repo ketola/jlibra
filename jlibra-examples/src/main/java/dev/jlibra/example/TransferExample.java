@@ -44,7 +44,7 @@ import dev.jlibra.transaction.argument.U8VectorArgument;
  */
 public class TransferExample {
 
-    private static final String CURRENCY = "Coin1";
+    private static final String CURRENCY = "XUS";
     private static final Logger logger = LoggerFactory.getLogger(TransferExample.class);
 
     public static void main(String[] args) {

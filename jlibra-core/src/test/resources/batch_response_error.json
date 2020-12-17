@@ -1,8 +1,8 @@
 [
 	{
-		"libra_chain_id": 2,
-		"libra_ledger_version": 11627584,
-		"libra_ledger_timestampusec": 1605271378249497,
+		"diem_chain_id": 2,
+		"diem_ledger_version": 11627584,
+		"diem_ledger_timestampusec": 1605271378249497,
 		"jsonrpc": "2.0",
 		"id": "ff8854c1-2983-4c9c-b3a2-8391a4719f7e",
 		"error": {
