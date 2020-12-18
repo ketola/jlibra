@@ -3,12 +3,12 @@ package dev.jlibra.transaction.argument;
 import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.serialization.dcs.DCS;
+import dev.jlibra.serialization.bcs.BCS;
 
 @Value.Immutable
 public interface AccountAddressArgument extends TransactionArgument {
 
-    @DCS.Field(value = 0, fixedLength = true)
+    @BCS.Field(value = 0, fixedLength = true)
     AccountAddress value();
 
     public static AccountAddressArgument from(AccountAddress accountAddress) {

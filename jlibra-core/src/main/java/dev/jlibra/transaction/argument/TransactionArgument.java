@@ -1,6 +1,6 @@
 package dev.jlibra.transaction.argument;
 
-import dev.jlibra.serialization.dcs.DCS.ExternallyTaggedEnumeration;
+import dev.jlibra.serialization.bcs.BCS.ExternallyTaggedEnumeration;
 import dev.jlibra.transaction.NotImplemented;
 
 @ExternallyTaggedEnumeration(classes = { U8Argument.class, U64Argument.class, NotImplemented.class,

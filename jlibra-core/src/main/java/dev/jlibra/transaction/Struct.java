@@ -6,21 +6,21 @@ import java.util.List;
 import org.immutables.value.Value;
 
 import dev.jlibra.AccountAddress;
-import dev.jlibra.serialization.dcs.DCS;
+import dev.jlibra.serialization.bcs.BCS;
 
 @Value.Immutable
 public interface Struct extends TypeTag {
 
-    @DCS.Field(value = 0, fixedLength = true)
+    @BCS.Field(value = 0, fixedLength = true)
     public AccountAddress address();
 
-    @DCS.Field(value = 1)
+    @BCS.Field(value = 1)
     String module();
 
-    @DCS.Field(value = 2)
+    @BCS.Field(value = 2)
     String name();
 
-    @DCS.Field(value = 3)
+    @BCS.Field(value = 3)
     List<?> getTypeParams();
 
     public static Struct typeTagForCurrency(String currencyCode) {

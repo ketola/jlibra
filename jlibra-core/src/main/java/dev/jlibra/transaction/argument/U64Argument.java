@@ -2,12 +2,12 @@ package dev.jlibra.transaction.argument;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.serialization.dcs.DCS;
+import dev.jlibra.serialization.bcs.BCS;
 
 @Value.Immutable
 public interface U64Argument extends TransactionArgument {
 
-    @DCS.Field(0)
+    @BCS.Field(0)
     long value();
 
     public static U64Argument from(long value) {

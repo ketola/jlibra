@@ -1,4 +1,4 @@
-package dev.jlibra.serialization.dcs;
+package dev.jlibra.serialization.bcs;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 
 /**
  * Contains annotations to instruct the serialization of the java types to byte
- * arrays using the Diem Canonical Serialization.
+ * arrays using the Object Canonical Serialization.
  * 
  * To find out more about the details of the serialization, see
- * https://github.com/libra/libra/blob/master/common/lcs/src/lib.rs
+ * https://docs.rs/bcs/
  */
-public class DCS {
+public class BCS {
 
     /**
      * An annotation for marking a method that is capable of returning the the value

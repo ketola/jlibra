@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import dev.jlibra.AccountAddress;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
-import dev.jlibra.serialization.dcs.DCSSerializer;
+import dev.jlibra.serialization.bcs.BCSSerializer;
 import dev.jlibra.transaction.ChainId;
 import dev.jlibra.transaction.ImmutableScript;
 import dev.jlibra.transaction.ImmutableTransaction;
@@ -17,7 +17,7 @@ import dev.jlibra.transaction.Struct;
 import dev.jlibra.transaction.Transaction;
 import dev.jlibra.transaction.argument.AccountAddressArgument;
 
-public class DCSSerializerTest {
+public class BCSSerializerTest {
 
     @Test
     public void serializeTransaction() {
@@ -40,7 +40,7 @@ public class DCSSerializerTest {
                 .chainId(ChainId.TESTNET)
                 .build();
 
-        ByteSequence bytes = DCSSerializer.create().serialize(transaction, Transaction.class);
+        ByteSequence bytes = BCSSerializer.create().serialize(transaction, Transaction.class);
 
         assertThat(bytes.toString(), Matchers.is(
                 "4e03aec69589026b4a095c9cd2e53ca60300000000000000010100010700000000000000000000000000000001034c4252034c42520001038f5fbb9486acc5fb90f1a6be43a0013d4a7f7f06e3d5fe995be1e9b272c09b5d02000000000000000100000000000000034c4252010000000000000002"));

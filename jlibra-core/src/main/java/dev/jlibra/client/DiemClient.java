@@ -18,7 +18,7 @@ import dev.jlibra.client.views.CurrencyInfo;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.event.Event;
 import dev.jlibra.client.views.transaction.Transaction;
-import dev.jlibra.serialization.dcs.DCSSerializer;
+import dev.jlibra.serialization.bcs.BCSSerializer;
 import dev.jlibra.transaction.SignedTransaction;
 
 public class DiemClient {
@@ -111,7 +111,7 @@ public class DiemClient {
         try {
             diemJsonRpcClient
                     .submit(Hex.toHexString(
-                            DCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()));
+                            BCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()));
         } catch (Exception e) {
             throw new DiemRuntimeException("submit failed", e);
         }

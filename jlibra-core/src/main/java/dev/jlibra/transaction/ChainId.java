@@ -2,10 +2,10 @@ package dev.jlibra.transaction;
 
 import org.immutables.value.Value;
 
-import dev.jlibra.serialization.dcs.DCS;
+import dev.jlibra.serialization.bcs.BCS;
 
 @Value.Immutable
-@DCS.Structure
+@BCS.Structure
 public interface ChainId {
 
     public static final ChainId MAINNET = fromInt(1);
@@ -13,7 +13,7 @@ public interface ChainId {
     public static final ChainId DEVNET = fromInt(3);
     public static final ChainId TESTING = fromInt(4);
 
-    @DCS.Field(0)
+    @BCS.Field(0)
     byte value();
 
     public static ChainId fromInt(int value) {

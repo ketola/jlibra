@@ -1,4 +1,4 @@
-package dev.jlibra.serialization.dcs;
+package dev.jlibra.serialization.bcs;
 
 import static java.util.stream.Collectors.toList;
 
@@ -13,21 +13,21 @@ import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.serialization.ByteArray;
 import dev.jlibra.serialization.ByteSequence;
 import dev.jlibra.serialization.Serializer;
-import dev.jlibra.serialization.dcs.DCS.ExternallyTaggedEnumeration;
+import dev.jlibra.serialization.bcs.BCS.ExternallyTaggedEnumeration;
 
-public class DCSSerializer {
+public class BCSSerializer {
 
-    private DCSSerializer() {
+    private BCSSerializer() {
     }
 
-    public static DCSSerializer create() {
-        return new DCSSerializer();
+    public static BCSSerializer create() {
+        return new BCSSerializer();
     }
 
     public ByteArray serialize(Object serializable, Class<?> type) {
         Serializer s = Serializer.builder();
 
-        DCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(DCS.ExternallyTaggedEnumeration.class);
+        BCS.ExternallyTaggedEnumeration enumAnnotation = type.getAnnotation(BCS.ExternallyTaggedEnumeration.class);
         if (enumAnnotation != null) {
             List<Class<?>> classes = Arrays.asList(enumAnnotation.classes());
             Class enumMemberType = classes.stream()
@@ -40,14 +40,14 @@ public class DCSSerializer {
         }
 
         List<Method> methods = Stream.of(type.getMethods())
-                .filter(m -> m.getAnnotation(DCS.Field.class) != null)
-                .sorted((m1, m2) -> m1.getDeclaredAnnotation(DCS.Field.class).value()
-                        - m2.getDeclaredAnnotation(DCS.Field.class).value())
+                .filter(m -> m.getAnnotation(BCS.Field.class) != null)
+                .sorted((m1, m2) -> m1.getDeclaredAnnotation(BCS.Field.class).value()
+                        - m2.getDeclaredAnnotation(BCS.Field.class).value())
                 .collect(toList());
 
         for (Method m : methods) {
             Class<?> returnType = m.getReturnType();
-            if (returnType.getAnnotation(DCS.Structure.class) != null
+            if (returnType.getAnnotation(BCS.Structure.class) != null
                     || returnType.getAnnotation(ExternallyTaggedEnumeration.class) != null) {
                 Object l = invokeMethod(serializable, m);
                 ByteSequence value = serialize(l, returnType);
@@ -68,7 +68,7 @@ public class DCSSerializer {
                 String value = (String) invokeMethod(serializable, m);
                 s = s.appendString(value);
             } else if (ByteSequence.class.isAssignableFrom(returnType)) {
-                if (m.getAnnotation(DCS.Field.class).fixedLength()) {
+                if (m.getAnnotation(BCS.Field.class).fixedLength()) {
                     s = s.appendFixedLength((ByteSequence) invokeMethod(serializable, m));
                 } else {
                     s = s.append((ByteSequence) invokeMethod(serializable, m));
