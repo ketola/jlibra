@@ -7,22 +7,22 @@ import org.immutables.value.Value;
 import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.Hash;
 import dev.jlibra.serialization.ByteArray;
-import dev.jlibra.serialization.dcs.DCS;
-import dev.jlibra.serialization.dcs.DCSSerializer;
+import dev.jlibra.serialization.bcs.BCS;
+import dev.jlibra.serialization.bcs.BCSSerializer;
 
 @Value.Immutable
-@DCS.Structure
+@BCS.Structure
 public interface Signature {
 
     public static final int SIGNATURE_LENGTH = 64;
 
     public static final int BITMAP_LENGTH = 4;
 
-    @DCS.Field(0)
+    @BCS.Field(0)
     ByteArray getSignature();
 
     public static Signature signTransaction(Transaction transaction, PrivateKey privateKey) {
-        ByteArray transactionBytes = DCSSerializer.create().serialize(transaction, Transaction.class);
+        ByteArray transactionBytes = BCSSerializer.create().serialize(transaction, Transaction.class);
 
         byte[] signature;
 
