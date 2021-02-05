@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.client.DiemServerErrorException;
 import dev.jlibra.client.views.Account;
 import dev.jlibra.client.views.BlockMetadata;
@@ -41,7 +42,8 @@ public class BatchRequestTest {
         this.httpClient = mock(HttpClient.class);
         this.httpResponse = mock(HttpResponse.class);
         this.requestIdGenerator = mock(RequestIdGenerator.class);
-        when(httpClient.send(Mockito.any(), Mockito.any())).thenReturn(httpResponse);
+        when(httpClient.sendAsync(Mockito.any(), Mockito.any()))
+                .thenReturn(CompletableFuture.completedFuture(httpResponse));
     }
 
     @Test
@@ -56,9 +58,10 @@ public class BatchRequestTest {
                 ObjectMapperFactory.create());
 
         CompletableFuture<List<Transaction>> accountTransactions = batchRequest
-                .getAccountTransactions("6bb714ccebc343c0bf3e6ff7f5f73001", 0, 5, true);
+                .getAccountTransactions(AccountAddress.fromHexString("6bb714ccebc343c0bf3e6ff7f5f73001"), 0, 5, true);
         CompletableFuture<BlockMetadata> blockmetadata = batchRequest.getMetadata();
-        CompletableFuture<Optional<Account>> account = batchRequest.getAccount("b3f7e8e38f8c8393f281a2f0792a2849");
+        CompletableFuture<Optional<Account>> account = batchRequest
+                .getAccount(AccountAddress.fromHexString("b3f7e8e38f8c8393f281a2f0792a2849"));
 
         assertFalse(accountTransactions.isDone());
         assertFalse(blockmetadata.isDone());
@@ -85,7 +88,8 @@ public class BatchRequestTest {
         BatchRequest batchRequest = BatchRequest.newBatchRequest(URL, httpClient, requestIdGenerator,
                 ObjectMapperFactory.create());
 
-        CompletableFuture<Optional<Account>> account = batchRequest.getAccount("b3f7e8e38f8c8393f281a2f0792a2849aa");
+        CompletableFuture<Optional<Account>> account = batchRequest
+                .getAccount(AccountAddress.fromHexString("b3f7e8e38f8c8393f281a2f0792a2849aa"));
 
         batchRequest.execute();
 
@@ -113,7 +117,8 @@ public class BatchRequestTest {
         BatchRequest batchRequest = BatchRequest.newBatchRequest(URL, httpClient, requestIdGenerator,
                 ObjectMapperFactory.create());
 
-        CompletableFuture<Optional<Account>> account = batchRequest.getAccount("b3f7e8e38f8c8393f281a2f0792a28aa");
+        CompletableFuture<Optional<Account>> account = batchRequest
+                .getAccount(AccountAddress.fromHexString("b3f7e8e38f8c8393f281a2f0792a28aa"));
 
         batchRequest.execute();
 

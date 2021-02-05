@@ -4,7 +4,9 @@ import static java.net.http.HttpClient.Version.HTTP_2;
 
 import java.net.http.HttpClient;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bouncycastle.util.encoders.Hex;
 
@@ -21,11 +23,11 @@ import dev.jlibra.client.views.transaction.Transaction;
 import dev.jlibra.serialization.bcs.BCSSerializer;
 import dev.jlibra.transaction.SignedTransaction;
 
-public class DiemClient {
+public class DiemAsyncClient {
 
     private DiemJsonRpcClient diemJsonRpcClient;
 
-    private DiemClient(DiemJsonRpcClient diemJsonRpcClient) {
+    private DiemAsyncClient(DiemJsonRpcClient diemJsonRpcClient) {
         this.diemJsonRpcClient = diemJsonRpcClient;
     }
 
@@ -33,86 +35,85 @@ public class DiemClient {
         return new DiemClientBuilder();
     }
 
-    public Account getAccount(AccountAddress accountAddress) {
+    public CompletableFuture<Optional<Account>> getAccount(AccountAddress accountAddress) {
         try {
-            return diemJsonRpcClient.getAccount(Hex.toHexString(accountAddress.toArray())).get().orElse(null);
+            return diemJsonRpcClient.getAccount(Hex.toHexString(accountAddress.toArray()));
         } catch (Exception e) {
             throw new DiemRuntimeException("getAccountState failed", e);
         }
     }
 
-    public BlockMetadata getMetadata() {
+    public CompletableFuture<Optional<BlockMetadata>> getMetadata() {
         try {
-            return diemJsonRpcClient.getMetadata().get().get();
+            return diemJsonRpcClient.getMetadata();
         } catch (Exception e) {
             throw new DiemRuntimeException("getMetadata failed", e);
         }
     }
 
-    public List<Transaction> getTransactions(long version, long limit,
+    public CompletableFuture<Optional<List<Transaction>>> getTransactions(long version, long limit,
             boolean includeEvents) {
         try {
-            return diemJsonRpcClient.getTransactions(version, limit, includeEvents).get().orElse(null);
+            return diemJsonRpcClient.getTransactions(version, limit, includeEvents);
         } catch (Exception e) {
             throw new DiemRuntimeException("getTransactions failed", e);
         }
     }
 
-    public Transaction getAccountTransaction(AccountAddress accountAddress,
+    public CompletableFuture<Optional<Transaction>> getAccountTransaction(AccountAddress accountAddress,
             long sequenceNumber,
             boolean includeEvents) {
         try {
             return diemJsonRpcClient.getAccountTransaction(Hex.toHexString(accountAddress.toArray()), sequenceNumber,
-                    includeEvents).get().orElse(null);
+                    includeEvents);
         } catch (Exception e) {
             throw new DiemRuntimeException("getAccountTransaction failed", e);
         }
     }
 
-    public List<Transaction> getAccountTransactions(AccountAddress accountAddress,
+    public CompletableFuture<Optional<List<Transaction>>> getAccountTransactions(AccountAddress accountAddress,
             long start,
             long limit,
             boolean includeEvents) {
         try {
             return diemJsonRpcClient.getAccountTransactions(Hex.toHexString(accountAddress.toArray()), start, limit,
-                    includeEvents).get().orElse(null);
+                    includeEvents);
         } catch (Exception e) {
             throw new DiemRuntimeException("getAccountTransactions failed", e);
         }
     }
 
-    public List<Event> getEvents(String eventKey,
+    public CompletableFuture<Optional<List<Event>>> getEvents(String eventKey,
             long start,
             long limit) {
         try {
-            return diemJsonRpcClient.getEvents(eventKey, start, limit).get().orElse(null);
+            return diemJsonRpcClient.getEvents(eventKey, start, limit);
         } catch (Exception e) {
             throw new DiemRuntimeException("getEvents failed", e);
         }
     }
 
-    public StateProof getStateProof(long knownVersion) {
+    public CompletableFuture<Optional<StateProof>> getStateProof(long knownVersion) {
         try {
-            return diemJsonRpcClient.getStateProof(knownVersion).get().orElse(null);
+            return diemJsonRpcClient.getStateProof(knownVersion);
         } catch (Exception e) {
             throw new DiemRuntimeException("getStateProof failed", e);
         }
     }
 
-    public List<CurrencyInfo> currenciesInfo() {
+    public CompletableFuture<Optional<List<CurrencyInfo>>> currenciesInfo() {
         try {
-            return diemJsonRpcClient.getCurrencies().get().orElse(null);
+            return diemJsonRpcClient.getCurrencies();
         } catch (Exception e) {
             throw new DiemRuntimeException("currenciesInfo failed", e);
         }
     }
 
-    public void submit(SignedTransaction signedTransaction) {
+    public CompletableFuture<Optional<Void>> submit(SignedTransaction signedTransaction) {
         try {
-            diemJsonRpcClient
+            return diemJsonRpcClient
                     .submit(Hex.toHexString(
-                            BCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()))
-                    .get();
+                            BCSSerializer.create().serialize(signedTransaction, SignedTransaction.class).toArray()));
         } catch (Exception e) {
             throw new DiemRuntimeException("submit failed", e);
         }
@@ -138,15 +139,14 @@ public class DiemClient {
             return this;
         }
 
-        public DiemClient build() {
+        public DiemAsyncClient build() {
             if (httpClient == null) {
                 this.httpClient = HttpClient.newBuilder()
                         .version(HTTP_2)
                         .build();
             }
-            return new DiemClient(
+            return new DiemAsyncClient(
                     new DiemJsonRpcClient(url, httpClient, () -> UUID.randomUUID().toString()));
         }
     }
-
 }

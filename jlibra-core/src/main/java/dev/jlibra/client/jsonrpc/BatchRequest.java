@@ -1,9 +1,9 @@
 package dev.jlibra.client.jsonrpc;
 
-import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_CURRENCIES;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTION;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_ACCOUNT_TRANSACTIONS;
+import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_CURRENCIES;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_EVENTS;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_METADATA;
 import static dev.jlibra.client.jsonrpc.JsonRpcMethod.GET_STATE_PROOF;
@@ -13,7 +13,6 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,7 +26,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.DiemRuntimeException;
 import dev.jlibra.client.DiemServerErrorException;
 import dev.jlibra.client.views.Account;
@@ -78,9 +80,11 @@ public class BatchRequest {
         return new BatchRequest(url, client, requestIdGenerator, objectMapper);
     }
 
-    public CompletableFuture<Optional<Account>> getAccount(String address) {
+    public CompletableFuture<Optional<Account>> getAccount(AccountAddress accountAddress) {
         CompletableFuture<Optional<Account>> future = new CompletableFuture<>();
-        requestToResponse.put(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT, asList(address)),
+        requestToResponse.put(
+                Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT,
+                        asList(Hex.toHexString(accountAddress.toArray()))),
                 future);
         return future;
     }
@@ -101,21 +105,23 @@ public class BatchRequest {
         return future;
     }
 
-    public CompletableFuture<List<Transaction>> getAccountTransactions(String address, long start, long limit,
+    public CompletableFuture<List<Transaction>> getAccountTransactions(AccountAddress accountAddress, long start,
+            long limit,
             boolean includeEvents) {
         CompletableFuture<List<Transaction>> future = new CompletableFuture<>();
         requestToResponse.put(Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT_TRANSACTIONS,
-                asList(address, start, limit, includeEvents)),
+                asList(Hex.toHexString(accountAddress.toArray()), start, limit, includeEvents)),
                 future);
         return future;
     }
 
-    public CompletableFuture<Optional<Transaction>> getAccountTransaction(String address, long sequenceNumber,
+    public CompletableFuture<Optional<Transaction>> getAccountTransaction(AccountAddress accountAddress,
+            long sequenceNumber,
             boolean includeEvents) {
         CompletableFuture<Optional<Transaction>> future = new CompletableFuture<>();
         requestToResponse.put(
                 Request.create(requestIdGenerator.generateRequestId(), GET_ACCOUNT_TRANSACTION,
-                        asList(address, sequenceNumber, includeEvents)),
+                        asList(Hex.toHexString(accountAddress.toArray()), sequenceNumber, includeEvents)),
                 future);
         return future;
     }
@@ -152,11 +158,19 @@ public class BatchRequest {
     }
 
     public void execute() {
+        try {
+            executeAsync().get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new DiemRuntimeException("Batch request failed", e);
+        }
+    }
+
+    public CompletableFuture<Void> executeAsync() {
         if (this.executed) {
             throw new IllegalStateException("This batch request has already been executed");
         }
         this.executed = true;
-        call(requestToResponse.keySet());
+        return call(requestToResponse.keySet());
     }
 
     private JsonRpcRequestInfo createJsonRpcRequest(Request request) {
@@ -171,7 +185,7 @@ public class BatchRequest {
                 .build();
     }
 
-    private void call(Set<Request> requests) {
+    private CompletableFuture<Void> call(Set<Request> requests) {
         Map<String, Request> requestIdToRequest = requestToResponse.keySet().stream()
                 .collect(toMap(i -> i.id(), i -> i));
 
@@ -183,30 +197,37 @@ public class BatchRequest {
 
         logger.debug("Request: {}", requestJson);
 
-        HttpResponse<String> httpResponse = sendHttpRequest(requestJson);
+        return sendHttpRequest(requestJson).handle((httpResponse, ex) -> {
+            if (ex != null) {
+                throw new DiemRuntimeException("Diem json-rpc batch request failed", ex);
+            }
 
-        String responseBody = httpResponse.body();
-        logger.debug("Response: {}", responseBody);
+            String responseBody = httpResponse.body();
+            logger.debug("Response: {}", responseBody);
 
-        List<JsonNode> responses = deserializeResponse(responseBody);
+            List<JsonNode> responses = deserializeResponse(responseBody);
 
-        for (JsonNode r : responses) {
-            String id = r.get("id").asText();
-            if (containsError(r)) {
-                JsonRpcErrorResponse errorResponse = deserializeErrorResponse(r);
-                requestToResponse.get(requestIdToRequest.get(id)).completeExceptionally(
-                        new DiemServerErrorException(errorResponse.error().code(), errorResponse.error().message()));
-            } else {
-                JsonRpcMethod method = requestIdToRequest.get(id).method();
-                Object value = deserializeResponseResultObject(r, method);
-                if (method.isOptional()) {
-                    requestToResponse.get(requestIdToRequest.get(id))
-                            .complete(value == null ? Optional.empty() : Optional.of(value));
+            for (JsonNode r : responses) {
+                String id = r.get("id").asText();
+                if (containsError(r)) {
+                    JsonRpcErrorResponse errorResponse = deserializeErrorResponse(r);
+                    requestToResponse.get(requestIdToRequest.get(id)).completeExceptionally(
+                            new DiemServerErrorException(errorResponse.error().code(),
+                                    errorResponse.error().message()));
                 } else {
-                    requestToResponse.get(requestIdToRequest.get(id)).complete(value);
+                    JsonRpcMethod method = requestIdToRequest.get(id).method();
+                    Object value = deserializeResponseResultObject(r, method);
+                    if (method.isOptional()) {
+                        requestToResponse.get(requestIdToRequest.get(id))
+                                .complete(value == null ? Optional.empty() : Optional.of(value));
+                    } else {
+                        requestToResponse.get(requestIdToRequest.get(id)).complete(value);
+                    }
                 }
             }
-        }
+
+            return null;
+        });
     }
 
     private boolean containsError(JsonNode r) {
@@ -249,17 +270,13 @@ public class BatchRequest {
         }
     }
 
-    private HttpResponse<String> sendHttpRequest(String requestJson) {
+    private CompletableFuture<HttpResponse<String>> sendHttpRequest(String requestJson) {
         HttpRequest request = HttpRequest.newBuilder()
                 .header("Content-Type", CONTENT_TYPE_JSON)
                 .header("User-Agent", USER_AGENT)
                 .uri(URI.create(url))
                 .POST(BodyPublishers.ofString(requestJson))
                 .build();
-        try {
-            return httpClient.send(request, BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new DiemRuntimeException("HTTP Request failed", e);
-        }
+        return httpClient.sendAsync(request, BodyHandlers.ofString());
     }
 }
