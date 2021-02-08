@@ -9,7 +9,7 @@
   <parent>
   	<groupId>dev.jlibra</groupId>
     <artifactId>jlibra-parent</artifactId>
-    <version>0.15.1-SNAPSHOT</version>
+    <version>0.16.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
