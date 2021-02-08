@@ -27,6 +27,8 @@ JLibra simplifies integration to Diem but does not hide any features of the Diem
 
 Start sample Main classes in `dev.jlibra.example` package for examples (for a complete example with creating accounts to moving coins between them check the [how to](https://github.com/ketola/jlibra/blob/master/docs/HOWTO.md))
 
+[`AsyncExample`](jlibra-examples/src/main/java/dev/jlibra/example/AsyncExample.java)
+
 [`BatchRequestExample`](jlibra-examples/src/main/java/dev/jlibra/example/BatchRequestExample.java)
 
 [`CreateChildVaspAccountExample`](jlibra-examples/src/main/java/dev/jlibra/example/CreateChildVaspAccountExample.java)
