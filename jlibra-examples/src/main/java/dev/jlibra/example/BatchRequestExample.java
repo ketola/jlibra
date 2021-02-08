@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.jlibra.AccountAddress;
 import dev.jlibra.client.DiemClient;
 import dev.jlibra.client.jsonrpc.BatchRequest;
 import dev.jlibra.client.views.Account;
@@ -22,7 +23,7 @@ public class BatchRequestExample {
     private static final Logger logger = LoggerFactory.getLogger(BatchRequestExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "b3f7e8e38f8c8393f281a2f0792a2849";
+        String address = "346ab4c79c27dd7596dbf26cbab8be6b";
 
         DiemClient client = DiemClient.builder()
                 .withUrl("https://testnet.diem.com/v1")
@@ -33,10 +34,12 @@ public class BatchRequestExample {
 
         // 2. Fill the batch request by calling the methods you want to include in the
         // batch
-        CompletableFuture<Optional<Account>> okRequestWithOptional = batchRequest.getAccount(address);
+        CompletableFuture<Optional<Account>> okRequestWithOptional = batchRequest
+                .getAccount(AccountAddress.fromHexString(address));
         CompletableFuture<Optional<Account>> failingRequest = batchRequest
-                .getAccount("b3f7e8e38f8c8393f281a2f0792a2849aa");
-        CompletableFuture<Optional<Transaction>> emptyResponse = batchRequest.getAccountTransaction(address, 0, true);
+                .getAccount(AccountAddress.fromHexString("b3f7e8e38f8c8393f281a2f0792a2849aa"));
+        CompletableFuture<Optional<Transaction>> emptyResponse = batchRequest
+                .getAccountTransaction(AccountAddress.fromHexString(address), 0, true);
         CompletableFuture<BlockMetadata> okRequest = batchRequest.getMetadata();
 
         // 3. Execute the batch and the requests will be sent to the api, the method
