@@ -43,4 +43,7 @@ public interface Account {
     @JsonProperty("is_frozen")
     Boolean isFrozen();
 
+    @JsonProperty("version")
+    Long version();
+
 }
