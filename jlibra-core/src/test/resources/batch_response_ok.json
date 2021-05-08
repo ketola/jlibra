@@ -213,7 +213,8 @@
 				"type": "parent_vasp"
 			},
 			"sent_events_key": "0300000000000000b3f7e8e38f8c8393f281a2f0792a2849",
-			"sequence_number": 0
+			"sequence_number": 0,
+			"version": 1
 		}
 	}
 ]
