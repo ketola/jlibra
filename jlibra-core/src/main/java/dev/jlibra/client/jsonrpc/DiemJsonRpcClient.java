@@ -130,8 +130,15 @@ public class DiemJsonRpcClient {
 
             JsonRpcResponse<T> response;
             try {
-                JavaType type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class,
-                        request.method().resultType());
+            	JavaType type;
+            	if(request.method().isListResult()) {
+            		JavaType inner = objectMapper.getTypeFactory().constructParametricType(List.class, request.method().resultType());
+            		type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class, inner);
+            	} else {
+            		type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class,
+                            request.method().resultType());
+            	}
+                
                 response = objectMapper.readValue(responseBody, type);
             } catch (JsonProcessingException e) {
                 throw new DiemRuntimeException("Converting the response from JSON failed", e);

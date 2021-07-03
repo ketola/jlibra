@@ -13,7 +13,7 @@ public class GetEventsByEventKeyExample {
     private static final Logger logger = LoggerFactory.getLogger(GetEventsByEventKeyExample.class);
 
     public static void main(String[] args) {
-        String eventKey = "010000000000000025407727b0b497be4f31f8dd82843a9c";
+        String eventKey = "00000000000000000000000000000000000000000a550c18";
 
         DiemClient client = DiemClient.builder()
                 .withUrl("https://testnet.diem.com/v1")
