@@ -1,6 +1,7 @@
 package dev.jlibra.client.views.role;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.immutables.value.Value;
 
@@ -31,4 +32,7 @@ public interface ParentVASPAccountRole extends AccountRole {
 
     @JsonProperty("compliance_key_rotation_events_key")
     String complianceKeyRotationEventsKey();
+    
+    @JsonProperty("diem_id_domains")
+    List<String> diemIdDomains();
 }

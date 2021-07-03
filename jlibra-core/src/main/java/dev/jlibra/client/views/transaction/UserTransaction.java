@@ -1,5 +1,7 @@
 package dev.jlibra.client.views.transaction;
 
+import java.util.List;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,5 +49,17 @@ public interface UserTransaction extends TransactionData {
 
     @JsonProperty("script_bytes")
     String scriptBytes();
-
+    
+    @JsonProperty("secondary_signers")
+    List<String> secondarySigners();
+    
+    @JsonProperty("secondary_signature_schemes")
+    List<String> secondarySignatureSchemes();
+    
+    @JsonProperty("secondary_signatures")
+    List<String> secondarySignatures();
+    
+    @JsonProperty("secondary_public_keys")
+    List<String> secondaryPublicKeys();
+    
 }
