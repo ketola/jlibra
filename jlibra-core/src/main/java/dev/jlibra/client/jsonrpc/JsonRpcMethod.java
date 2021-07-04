@@ -1,29 +1,31 @@
 package dev.jlibra.client.jsonrpc;
 
-import java.util.List;
-
 import dev.jlibra.client.views.Account;
+import dev.jlibra.client.views.CurrencyInfo;
+import dev.jlibra.client.views.event.Event;
 import dev.jlibra.client.views.BlockMetadata;
 import dev.jlibra.client.views.StateProof;
 import dev.jlibra.client.views.transaction.Transaction;
 
 public enum JsonRpcMethod {
 
-    GET_ACCOUNT(Account.class, true),
-    GET_METADATA(BlockMetadata.class, false),
-    GET_TRANSACTIONS(List.class, false),
-    GET_ACCOUNT_TRANSACTIONS(List.class, false),
-    GET_ACCOUNT_TRANSACTION(Transaction.class, true),
-    GET_EVENTS(List.class, false),
-    GET_STATE_PROOF(StateProof.class, true),
-    GET_CURRENCIES(List.class, false),
-    SUBMIT(Void.class, false);
+    GET_ACCOUNT(Account.class, false, true),
+    GET_METADATA(BlockMetadata.class, false, false),
+    GET_TRANSACTIONS(Transaction.class, true, false),
+    GET_ACCOUNT_TRANSACTIONS(Transaction.class, true, false),
+    GET_ACCOUNT_TRANSACTION(Transaction.class, false, true),
+    GET_EVENTS(Event.class, true, false),
+    GET_STATE_PROOF(StateProof.class, false, true),
+    GET_CURRENCIES(CurrencyInfo.class, true, false),
+    SUBMIT(Void.class, false, false);
 
     private Class resultType;
+    private boolean listResult;
     private boolean optional;
 
-    private JsonRpcMethod(Class resultType, boolean optional) {
+    private JsonRpcMethod(Class resultType, boolean listResult, boolean optional) {
         this.resultType = resultType;
+        this.listResult = listResult;
         this.optional = optional;
     }
 
@@ -33,6 +35,10 @@ public enum JsonRpcMethod {
 
     public boolean isOptional() {
         return optional;
+    }
+    
+    public boolean isListResult() {
+    	return listResult;
     }
 
 }

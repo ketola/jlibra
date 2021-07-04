@@ -13,6 +13,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -216,13 +217,8 @@ public class BatchRequest {
                                     errorResponse.error().message()));
                 } else {
                     JsonRpcMethod method = requestIdToRequest.get(id).method();
-                    Object value = deserializeResponseResultObject(r, method);
-                    if (method.isOptional()) {
-                        requestToResponse.get(requestIdToRequest.get(id))
-                                .complete(value == null ? Optional.empty() : Optional.of(value));
-                    } else {
-                        requestToResponse.get(requestIdToRequest.get(id)).complete(value);
-                    }
+                    JsonRpcResponse value = deserializeResponseResultObject(r, method);
+                    requestToResponse.get(requestIdToRequest.get(id)).complete(value.result());
                 }
             }
 
@@ -242,12 +238,21 @@ public class BatchRequest {
         }
     }
 
-    private Object deserializeResponseResultObject(JsonNode r, JsonRpcMethod method) {
+    private JsonRpcResponse deserializeResponseResultObject(JsonNode r, JsonRpcMethod method) {   
+    	JavaType type;
+    	if(method.isListResult()) {
+    		JavaType inner = objectMapper.getTypeFactory().constructParametricType(List.class, method.resultType());
+    		type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class, inner);
+    	} else {
+    		type = objectMapper.getTypeFactory().constructParametricType(JsonRpcResponse.class,
+                    method.resultType());
+    	}
+        
         try {
-            return objectMapper.treeToValue(r.get("result"), method.resultType());
-        } catch (JsonProcessingException e) {
-            throw new DiemRuntimeException("json rpc response result object deserialization failed", e);
-        }
+			return objectMapper.readValue(r.toString(), type);
+		} catch (IOException e) {
+			throw new DiemRuntimeException("json rpc response result object deserialization failed", e);
+		}
     }
 
     @SuppressWarnings("unchecked")
