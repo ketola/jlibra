@@ -23,7 +23,7 @@ public class BatchRequestExample {
     private static final Logger logger = LoggerFactory.getLogger(BatchRequestExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "346ab4c79c27dd7596dbf26cbab8be6b";
+        String address = "79153273a34e0aadf26c963367973760";
 
         DiemClient client = DiemClient.builder()
                 .withUrl("https://testnet.diem.com/v1")
