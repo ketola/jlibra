@@ -35,4 +35,7 @@ public interface ParentVASPAccountRole extends AccountRole {
     
     @JsonProperty("diem_id_domains")
     List<String> diemIdDomains();
+    
+    @JsonProperty("vasp_domains")
+    List<String> vaspDomains();
 }
