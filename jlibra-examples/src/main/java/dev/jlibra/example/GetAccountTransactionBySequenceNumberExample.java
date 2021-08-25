@@ -12,7 +12,7 @@ public class GetAccountTransactionBySequenceNumberExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountTransactionBySequenceNumberExample.class);
 
     public static void main(String[] args) {
-        String address = "c1e431460cae9772400fcd254e3cf912";
+        String address = "9ed85589fb5617a18521636181a12b88";
         int sequenceNumber = 0;
 
         DiemClient client = DiemClient.builder()

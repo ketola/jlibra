@@ -12,7 +12,7 @@ public class GetAccountStateExample {
     private static final Logger logger = LoggerFactory.getLogger(GetAccountStateExample.class);
 
     public static void main(String[] args) throws Exception {
-        String address = "b3f7e8e38f8c8393f281a2f0792a2849";
+        String address = "79153273a34e0aadf26c963367973760";
 
         DiemClient client = DiemClient.builder()
                 .withUrl("https://testnet.diem.com/v1")
