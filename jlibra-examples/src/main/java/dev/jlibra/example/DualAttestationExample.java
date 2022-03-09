@@ -141,7 +141,7 @@ public class DualAttestationExample {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         Signature signature = Signature.signTransaction(transaction, sourceKeyPair.getPrivate());
@@ -184,7 +184,7 @@ public class DualAttestationExample {
                         .code(Move.rotateDualAttestationInfo())
                         .addArguments(newUrlArgument, compliancePublicKey)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         Signature signature = Signature.signTransaction(transaction, parentVaspKeyPair.getPrivate());

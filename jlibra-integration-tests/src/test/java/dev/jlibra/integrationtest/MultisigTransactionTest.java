@@ -59,7 +59,7 @@ public class MultisigTransactionTest {
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://testnet.diem.com/v1")
                 .build();
     }
 
@@ -113,7 +113,7 @@ public class MultisigTransactionTest {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);
@@ -184,7 +184,7 @@ public class MultisigTransactionTest {
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);

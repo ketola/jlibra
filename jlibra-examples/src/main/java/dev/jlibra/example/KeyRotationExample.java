@@ -157,7 +157,7 @@ public class KeyRotationExample {
                         .code(Move.rotateAuthenticationKey())
                         .addArguments(newAuthenticationKeyArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
