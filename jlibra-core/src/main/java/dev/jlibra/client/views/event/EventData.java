@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
         @JsonSubTypes.Type(value = ImmutableSentPaymentEventData.class, name = "sentpayment"),
         @JsonSubTypes.Type(value = ImmutableReceivedPaymentEventData.class, name = "receivedpayment"),
         @JsonSubTypes.Type(value = ImmutableUpgradeEventData.class, name = "upgrade"),
-        @JsonSubTypes.Type(value = ImmutableNewEpochEventData.class, name = "epoch"),
+        @JsonSubTypes.Type(value = ImmutableNewEpochEventData.class, name = "newepoch"),
         @JsonSubTypes.Type(value = ImmutableNewBlockEventData.class, name = "newblock"),
         @JsonSubTypes.Type(value = ImmutableUnknownEventData.class, name = "unknown")
 })
