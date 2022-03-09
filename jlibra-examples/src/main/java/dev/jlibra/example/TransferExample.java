@@ -99,7 +99,7 @@ public class TransferExample {
                         .addArguments(addressArgument, amountArgument, metadataArgument,
                                 signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

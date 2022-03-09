@@ -89,7 +89,7 @@ public class TransferMultisigExample {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         Signature signature = Signature.newMultisignature();

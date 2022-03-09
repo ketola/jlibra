@@ -100,7 +100,7 @@ public class CreateChildVaspAccountExample {
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.DEVNET)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()
