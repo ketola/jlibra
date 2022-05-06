@@ -5,17 +5,8 @@ import org.immutables.value.Value;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@Value.Immutable
-@JsonDeserialize(as = ImmutableStateProof.class)
-public interface StateProof {
-
-    @JsonProperty("ledger_consistency_proof")
-    String ledgetConsistencyProof();
-
-    @JsonProperty("ledger_info_with_signatures")
-    String ledgerInfoWithSignatures();
-
-    @JsonProperty("epoch_change_proof")
-    String epochChangeProof();
-
-}
+public record StateProof(
+    @JsonProperty("ledger_consistency_proof") String ledgerConsistencyProof,
+    @JsonProperty("ledger_info_with_signatures") String ledgerInfoWithSignatures,
+    @JsonProperty("epoch_change_proof") String epochChangeProof
+){}

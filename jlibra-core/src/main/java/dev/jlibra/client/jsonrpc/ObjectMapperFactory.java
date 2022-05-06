@@ -1,6 +1,7 @@
 package dev.jlibra.client.jsonrpc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 public class ObjectMapperFactory {
