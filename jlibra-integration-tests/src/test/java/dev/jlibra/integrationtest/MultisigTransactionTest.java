@@ -113,7 +113,7 @@ public class MultisigTransactionTest {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.DEVNET)
+                .chainId(ChainId.TESTNET)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);
@@ -184,7 +184,7 @@ public class MultisigTransactionTest {
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
-                .chainId(ChainId.DEVNET)
+                .chainId(ChainId.TESTNET)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);
