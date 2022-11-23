@@ -59,7 +59,7 @@ public class MultisigTransactionTest {
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         client = DiemClient.builder()
-                .withUrl("http://testnet.diem.com/v1")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
     }
 
