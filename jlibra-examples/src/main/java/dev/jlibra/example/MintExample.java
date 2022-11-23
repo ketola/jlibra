@@ -37,7 +37,7 @@ public class MintExample {
         faucet.mint(authenticationKey, 100L * 1_000_000L, CURRENCY);
 
         DiemClient client = DiemClient.builder()
-                .withUrl("http://testnet.diem.com/v1")
+                .withUrl("https://testnet.diem.com/v1")
                 .build();
 
         Wait.until(accountHasPositiveBalance(AccountAddress.fromAuthenticationKey(authenticationKey), client));

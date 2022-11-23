@@ -50,7 +50,7 @@ public class Faucet {
 
     public static class Builder {
 
-        private static final String DEFAULT_URL = "http://testnet.diem.com/mint";
+        private static final String DEFAULT_URL = "https://testnet.diem.com/mint";
 
         private HttpClient httpClient;
 
