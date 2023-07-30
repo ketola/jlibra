@@ -23,6 +23,13 @@ JLibra simplifies integration to Diem but does not hide any features of the Diem
 *   Clone this repo 
 *   Build project with `mvn install` (this is important because the project contains classes that will be created during the Maven build and simply checking the project out is not enough)
 
+## Start a local Diem instance
+A running local instance is required for the examples and the integration tests
+
+* `cd docker/validator-testnet`
+* define the Diem version to use `export IMAGE_TAG=release-1.1_639d5ab4`
+* `docker-compose up`
+
 ## Try the examples
 
 Start sample Main classes in `dev.jlibra.example` package for examples (for a complete example with creating accounts to moving coins between them check the [how to](https://github.com/ketola/jlibra/blob/master/docs/HOWTO.md))

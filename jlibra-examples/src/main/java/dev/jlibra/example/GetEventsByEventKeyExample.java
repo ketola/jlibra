@@ -16,7 +16,7 @@ public class GetEventsByEventKeyExample {
         String eventKey = "00000000000000000000000000000000000000000a550c18";
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
 
         List<Event> events = client.getEvents(eventKey, 0, 10);

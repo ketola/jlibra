@@ -53,9 +53,11 @@ public class CreateChildVaspAccountExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
-        Faucet faucet = Faucet.builder().build();
+        Faucet faucet = Faucet.builder()
+                .withUrl("http://localhost:8000")
+                .build();
 
         KeyPair parentVaspKeyPair = generateKeyPair();
 
@@ -100,7 +102,7 @@ public class CreateChildVaspAccountExample {
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

@@ -42,7 +42,7 @@ public class AsyncExample {
         Security.addProvider(new BouncyCastleProvider());
 
         DiemAsyncClient client = DiemAsyncClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
 
         // Note: minting and account creations is not done asynchronously, we just need
@@ -83,9 +83,11 @@ public class AsyncExample {
 
     private static void createAccount(AuthenticationKey authKey) {
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
-        Faucet faucet = Faucet.builder().build();
+        Faucet faucet = Faucet.builder()
+                .withUrl("http://localhost:8000")
+                .build();
         faucet.mint(authKey, 100L * 1_000_000L, CURRENCY);
         Wait.until(Conditions.accountExists(AccountAddress.fromAuthenticationKey(authKey), client));
     }

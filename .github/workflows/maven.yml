@@ -26,5 +26,7 @@ jobs:
         java-version: 11
         distribution: 'temurin'
         cache: 'maven'
+    - name: Start containers
+      run: export IMAGE_TAG=release-1.1_639d5ab4 && docker-compose -f "docker/validator-testnet/docker-compose.yaml" up -d
     - name: Build with Maven
       run: mvn -B package --file pom.xml

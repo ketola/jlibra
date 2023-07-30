@@ -41,10 +41,12 @@ public class KeyRotationExample {
     public static void main(String[] args) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
 
-        Faucet faucet = Faucet.builder().build();
+        Faucet faucet = Faucet.builder()
+                .withUrl("http://localhost:8000")
+                .build();
 
         /*
          * Create a key pair, calculate the libra address and add some coins to the
@@ -157,7 +159,7 @@ public class KeyRotationExample {
                         .code(Move.rotateAuthenticationKey())
                         .addArguments(newAuthenticationKeyArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

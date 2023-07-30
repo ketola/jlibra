@@ -89,7 +89,7 @@ public class TransferMultisigExample {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         Signature signature = Signature.newMultisignature();
@@ -105,7 +105,7 @@ public class TransferMultisigExample {
                 .build();
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
 
         client.submit(signedTransaction);
