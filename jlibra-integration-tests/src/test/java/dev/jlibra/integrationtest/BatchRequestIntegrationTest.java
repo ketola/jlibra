@@ -27,7 +27,7 @@ public class BatchRequestIntegrationTest {
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
     }
 

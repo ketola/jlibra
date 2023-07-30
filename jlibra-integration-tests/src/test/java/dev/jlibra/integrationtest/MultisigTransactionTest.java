@@ -59,13 +59,14 @@ public class MultisigTransactionTest {
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
         client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
     }
 
     @Test
     public void testMultisigTransaction() {
         Faucet faucet = Faucet.builder()
+                .withUrl("http://localhost:8000")
                 .build();
 
         // source account, multisig account with 32 keypairs, 30 threshold
@@ -113,7 +114,7 @@ public class MultisigTransactionTest {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);
@@ -184,7 +185,7 @@ public class MultisigTransactionTest {
                         .addArguments(childAccountArgument, authKeyPrefixArgument, createAllCurrenciesArgument,
                                 initialBalanceArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         Signature signature = createSignature(keyPairs, transaction);

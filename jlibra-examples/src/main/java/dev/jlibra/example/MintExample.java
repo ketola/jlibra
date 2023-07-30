@@ -33,11 +33,13 @@ public class MintExample {
         AuthenticationKey authenticationKey = AuthenticationKey
                 .fromHexString("71967329878ac3bb3b8e30a0aa389761133b573e1450c9e05c31a9041a6fcc67");
 
-        Faucet faucet = Faucet.builder().build();
+        Faucet faucet = Faucet.builder()
+                .withUrl("http://localhost:8000")
+                .build();
         faucet.mint(authenticationKey, 100L * 1_000_000L, CURRENCY);
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
 
         Wait.until(accountHasPositiveBalance(AccountAddress.fromAuthenticationKey(authenticationKey), client));

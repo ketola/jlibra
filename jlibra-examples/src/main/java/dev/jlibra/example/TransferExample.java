@@ -51,7 +51,7 @@ public class TransferExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
 
         PrivateKey privateKey = KeyUtils.privateKeyFromByteSequence(ByteArray.from(
@@ -99,7 +99,7 @@ public class TransferExample {
                         .addArguments(addressArgument, amountArgument, metadataArgument,
                                 signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         SignedTransaction signedTransaction = ImmutableSignedTransaction.builder()

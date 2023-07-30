@@ -51,9 +51,10 @@ public class DualAttestationExample {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         DiemClient client = DiemClient.builder()
-                .withUrl("https://testnet.diem.com/v1")
+                .withUrl("http://localhost:8080")
                 .build();
         Faucet faucet = Faucet.builder()
+                .withUrl("http://localhost:8000")
                 .build();
 
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance("Ed25519", "BC");
@@ -141,7 +142,7 @@ public class DualAttestationExample {
                         .typeArguments(asList(Struct.typeTagForCurrency(CURRENCY)))
                         .addArguments(addressArgument, amountArgument, metadataArgument, signatureArgument)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         Signature signature = Signature.signTransaction(transaction, sourceKeyPair.getPrivate());
@@ -184,7 +185,7 @@ public class DualAttestationExample {
                         .code(Move.rotateDualAttestationInfo())
                         .addArguments(newUrlArgument, compliancePublicKey)
                         .build())
-                .chainId(ChainId.TESTNET)
+                .chainId(ChainId.TESTING)
                 .build();
 
         Signature signature = Signature.signTransaction(transaction, parentVaspKeyPair.getPrivate());
